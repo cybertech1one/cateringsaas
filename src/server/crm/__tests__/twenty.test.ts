@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 /**
  * Tests for the Twenty CRM integration modules:
  * - TwentyClient: HTTP client for Twenty CRM REST API
- * - Mapping: transforms FeastQR domain objects to CRM entities
+ * - Mapping: transforms Diyafa domain objects to CRM entities
  * - Sync: orchestrates deduplication + batch sync via TwentyClient
  */
 

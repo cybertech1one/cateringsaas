@@ -9,8 +9,8 @@ import {
   type CookieConsentState,
 } from "./useCookieConsent";
 
-const CONSENT_KEY = "feastqr_cookie_consent";
-const CONSENT_VERSION_KEY = "feastqr_consent_version";
+const CONSENT_KEY = "Diyafa_cookie_consent";
+const CONSENT_VERSION_KEY = "Diyafa_consent_version";
 
 export function CookieConsent() {
   const { t } = useTranslation();

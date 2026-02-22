@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { cn } from "~/utils/cn";
 
 // Storage key for tracking visits
-const VISIT_COUNT_KEY = "feastqr_visit_count";
-const INSTALL_DISMISSED_KEY = "feastqr_install_dismissed";
+const VISIT_COUNT_KEY = "Diyafa_visit_count";
+const INSTALL_DISMISSED_KEY = "Diyafa_install_dismissed";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -134,7 +134,7 @@ export function InstallPrompt() {
         {/* Content */}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-foreground">
-            Add FeastQR to Home Screen
+            Add Diyafa to Home Screen
           </p>
           <p className="text-xs text-muted-foreground truncate">
             {isIOS

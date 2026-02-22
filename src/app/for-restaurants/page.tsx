@@ -4,33 +4,33 @@ import { getAppUrl } from "~/utils/getBaseUrl";
 const appUrl = getAppUrl();
 
 export const metadata: Metadata = {
-  title: "For Restaurants - FeastQR | Digital Menus, Ordering & Delivery",
+  title: "For Restaurants - Diyafa | Digital Menus, Ordering & Delivery",
   description:
-    "Create digital QR menus, accept online orders, manage deliveries — all zero commission. 2000+ restaurants in Morocco trust FeastQR. Free to start.",
+    "Create digital QR menus, accept online orders, manage deliveries — all zero commission. 2000+ restaurants in Morocco trust Diyafa. Free to start.",
   alternates: { canonical: `${appUrl}/for-restaurants` },
   keywords: [
     "restaurant QR menu Morocco",
     "digital menu Casablanca",
     "online ordering Morocco",
     "menu numérique Maroc",
-    "FeastQR restaurant",
+    "Diyafa restaurant",
     "قائمة رقمية المغرب",
     "zero commission food delivery",
   ],
   openGraph: {
-    title: "For Restaurants - FeastQR | Build Your Digital Menu",
+    title: "For Restaurants - Diyafa | Build Your Digital Menu",
     description:
       "Create beautiful QR menus, accept orders, manage your own delivery drivers. Zero commission. Free to start.",
     type: "website",
     url: `${appUrl}/for-restaurants`,
-    siteName: "FeastQR",
+    siteName: "Diyafa",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FeastQR for Restaurants — Zero Commission Platform",
+    title: "Diyafa for Restaurants — Zero Commission Platform",
     description:
-      "2000+ restaurants use FeastQR. Digital menus, online ordering, AI tools, and your own delivery network.",
+      "2000+ restaurants use Diyafa. Digital menus, online ordering, AI tools, and your own delivery network.",
   },
 };
 
@@ -42,7 +42,7 @@ function RestaurantsJsonLd() {
         "@type": "WebPage",
         "@id": `${appUrl}/for-restaurants`,
         url: `${appUrl}/for-restaurants`,
-        name: "FeastQR for Restaurants — Digital Menus & Online Ordering",
+        name: "Diyafa for Restaurants — Digital Menus & Online Ordering",
         description:
           "Create QR menus, accept online orders, and manage delivery drivers. Zero commission platform trusted by 2000+ restaurants in Morocco.",
         isPartOf: { "@id": `${appUrl}/#website` },
@@ -68,7 +68,7 @@ function RestaurantsJsonLd() {
       },
       {
         "@type": "SoftwareApplication",
-        name: "FeastQR",
+        name: "Diyafa",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
         description:
@@ -119,50 +119,50 @@ function RestaurantsJsonLd() {
         mainEntity: [
           {
             "@type": "Question",
-            name: "How much does FeastQR cost for restaurants?",
+            name: "How much does Diyafa cost for restaurants?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "FeastQR offers a free plan with 1 menu, 6 templates, and basic analytics. The Pro plan at 299 MAD/month unlocks unlimited menus, 30 templates, AI menu builder, delivery network management, and full analytics.",
+              text: "Diyafa offers a free plan with 1 menu, 6 templates, and basic analytics. The Pro plan at 299 MAD/month unlocks unlimited menus, 30 templates, AI menu builder, delivery network management, and full analytics.",
             },
           },
           {
             "@type": "Question",
-            name: "Does FeastQR take a commission on orders?",
+            name: "Does Diyafa take a commission on orders?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "No. FeastQR charges zero commission on orders. Unlike Glovo (30% commission) or Jumia Food, FeastQR uses a flat subscription model. You keep 100% of your order revenue.",
+              text: "No. Diyafa charges zero commission on orders. Unlike Glovo (30% commission) or Jumia Food, Diyafa uses a flat subscription model. You keep 100% of your order revenue.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I manage my own delivery drivers with FeastQR?",
+            name: "Can I manage my own delivery drivers with Diyafa?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. FeastQR's delivery network lets you recruit, approve, and manage your own drivers. You set delivery fees, control driver assignments, and use smart auto-dispatch algorithms — without paying platform commissions.",
+              text: "Yes. Diyafa's delivery network lets you recruit, approve, and manage your own drivers. You set delivery fees, control driver assignments, and use smart auto-dispatch algorithms — without paying platform commissions.",
             },
           },
           {
             "@type": "Question",
-            name: "Does FeastQR support Arabic menus with RTL?",
+            name: "Does Diyafa support Arabic menus with RTL?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. FeastQR fully supports English, French, and Arabic with proper right-to-left (RTL) layout. You can offer your menu in all three languages simultaneously with AI-powered auto-translation.",
+              text: "Yes. Diyafa fully supports English, French, and Arabic with proper right-to-left (RTL) layout. You can offer your menu in all three languages simultaneously with AI-powered auto-translation.",
             },
           },
           {
             "@type": "Question",
-            name: "How do I import my existing menu into FeastQR?",
+            name: "How do I import my existing menu into Diyafa?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "FeastQR's AI Menu Builder can import menus from photos or PDF files. Simply upload a picture of your menu and AI will extract all dishes, descriptions, and prices into an editable format.",
+              text: "Diyafa's AI Menu Builder can import menus from photos or PDF files. Simply upload a picture of your menu and AI will extract all dishes, descriptions, and prices into an editable format.",
             },
           },
           {
             "@type": "Question",
-            name: "Which cities does FeastQR operate in?",
+            name: "Which cities does Diyafa operate in?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "FeastQR is available in all Moroccan cities including Casablanca, Marrakech, Rabat, Fes, Tangier, Agadir, Meknes, Oujda, and Kenitra. The platform works anywhere with an internet connection.",
+              text: "Diyafa is available in all Moroccan cities including Casablanca, Marrakech, Rabat, Fes, Tangier, Agadir, Meknes, Oujda, and Kenitra. The platform works anywhere with an internet connection.",
             },
           },
         ],

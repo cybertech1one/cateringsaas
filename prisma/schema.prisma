@@ -3,7 +3,7 @@
 // =============================================================================
 // Purpose: Multi-tenant catering platform for Morocco/MENA market
 // Stack:   Next.js 14 + tRPC + Prisma + Supabase
-// Base:    Evolved from FeastQR restaurant menu system
+// Base:    Evolved from restaurant menu system foundation
 // =============================================================================
 
 generator client {
@@ -1550,7 +1550,7 @@ model BlockedDates {
 }
 
 // =============================================================================
-// SECTION 15: Directory & Discovery (Reused from FeastQR)
+// SECTION 15: Directory & Discovery
 // =============================================================================
 
 /// Geographic regions for directory organization (e.g., Grand Casablanca, Marrakech-Safi)

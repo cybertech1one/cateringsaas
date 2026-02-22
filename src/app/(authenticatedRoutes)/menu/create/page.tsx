@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Create Menu",
-  description: "Create a new restaurant menu with FeastQR.",
+  description: "Create a new restaurant menu with Diyafa.",
   robots: { index: false },
 };
 

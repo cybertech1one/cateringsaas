@@ -2,7 +2,7 @@
  * Real-Time Delivery Tracking Module
  *
  * Provides GPS location tracking, geofencing, ETA prediction, and delivery
- * status state machine for the FeastQR delivery platform.
+ * status state machine for the Diyafa delivery platform.
  *
  * Morocco-specific features:
  * - 9 city speed profiles (Casablanca, Rabat, Marrakech, Fes, Tangier, etc.)

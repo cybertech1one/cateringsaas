@@ -1,7 +1,7 @@
 /**
  * Atlas Score — Driver Scoring & Tier System
  *
- * Pure-function driver scoring engine for the FeastQR Delivery Platform.
+ * Pure-function driver scoring engine for the Diyafa Delivery Platform.
  * 5-metric composite scoring, tier system, deactivation rules,
  * and rating manipulation detection.
  *

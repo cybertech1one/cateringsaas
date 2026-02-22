@@ -9,7 +9,7 @@ import { api } from "~/trpc/react";
 // ---------------------------------------------------------------------------
 
 function getSessionId(): string {
-  const KEY = "feastqr-analytics-session";
+  const KEY = "Diyafa-analytics-session";
 
   if (typeof window === "undefined") return "ssr";
 

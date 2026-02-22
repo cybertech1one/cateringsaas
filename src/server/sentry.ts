@@ -58,7 +58,7 @@ export async function captureException(
     platform: "node",
     level: "error",
     environment: SENTRY_ENVIRONMENT,
-    server_name: "feastqr",
+    server_name: "Diyafa",
     exception: {
       values: [
         {
@@ -104,7 +104,7 @@ export async function captureMessage(
     platform: "node",
     level,
     environment: SENTRY_ENVIRONMENT,
-    server_name: "feastqr",
+    server_name: "Diyafa",
     message: { formatted: message },
     extra,
   };

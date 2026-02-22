@@ -148,7 +148,7 @@ export const DeliveryArt = () => {
             borderBottom: "1.5px solid hsla(0, 0%, 100%, 0.15)",
           }}
         />
-        {/* FeastQR logo on bag */}
+        {/* Diyafa logo on bag */}
         <div
           className="absolute top-[38%] left-1/2 -translate-x-1/2 w-6 h-3 rounded-sm"
           style={{

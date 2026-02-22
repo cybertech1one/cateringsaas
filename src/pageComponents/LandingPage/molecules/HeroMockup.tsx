@@ -30,7 +30,7 @@ export const HeroMockup = () => {
           <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
           <div className="ml-3 flex-1 h-5 rounded-md bg-white/[0.06] max-w-[200px] flex items-center px-2">
             <span className="text-[9px] text-white/30 font-mono">
-              feastqr.com/dashboard
+              diyafa.ma/dashboard
             </span>
           </div>
         </div>

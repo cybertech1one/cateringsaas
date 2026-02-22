@@ -20,11 +20,11 @@ export async function generateMetadata({
 
   const cityName = city?.name ?? staticCity?.name ?? "City";
   const restaurantCount = city?._count?.menus ?? 0;
-  const title = `Restaurants in ${cityName} - FeastQR | Browse Menus & Order`;
+  const title = `Restaurants in ${cityName} - Diyafa | Browse Menus & Order`;
   const description = city?.description ??
     (restaurantCount > 0
-      ? `Discover ${restaurantCount} restaurants in ${cityName}. Browse digital menus, read reviews, order online, and find your next meal on FeastQR.`
-      : `Discover the best restaurants in ${cityName}. Browse digital menus, read reviews, order online, and find your next meal on FeastQR.`);
+      ? `Discover ${restaurantCount} restaurants in ${cityName}. Browse digital menus, read reviews, order online, and find your next meal on Diyafa.`
+      : `Discover the best restaurants in ${cityName}. Browse digital menus, read reviews, order online, and find your next meal on Diyafa.`);
 
   return {
     title,
@@ -36,12 +36,12 @@ export async function generateMetadata({
       title,
       description,
       url: `${appUrl}/explore/${params.city}`,
-      siteName: "FeastQR",
+      siteName: "Diyafa",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `Restaurants in ${cityName} - FeastQR`,
+      title: `Restaurants in ${cityName} - Diyafa`,
       description,
     },
   };
@@ -103,7 +103,7 @@ export default async function Page({ params }: { params: { city: string } }) {
         url: `${appUrl}/explore/${params.city}`,
         isPartOf: {
           "@type": "WebSite",
-          name: "FeastQR",
+          name: "Diyafa",
           url: appUrl,
         },
         about: {

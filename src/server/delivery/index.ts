@@ -1,5 +1,5 @@
 /**
- * FeastQR Delivery Platform — Top-Level Barrel Export
+ * Diyafa Delivery Platform — Top-Level Barrel Export
  *
  * Usage:
  *   import { MosaicMatching, Sentinel, Temporal, Settlement, AtlasScore } from "~/server/delivery";

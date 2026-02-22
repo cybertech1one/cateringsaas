@@ -1,6 +1,6 @@
 # Shared Components and Hooks
 
-This directory contains reusable components and hooks designed to reduce code duplication across the FeastQR project.
+This directory contains reusable components and hooks designed to reduce code duplication across the Diyafa project.
 
 ## Hooks
 

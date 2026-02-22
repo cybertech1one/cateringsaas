@@ -240,7 +240,7 @@ INSERT INTO "public"."client_profiles" (
 );
 
 
--- ── FeastQR Legacy Menu (for base table compatibility) ─────────────────────
+-- ── Diyafa Legacy Menu (for base table compatibility) ─────────────────────
 INSERT INTO "public"."menus" (
   "id", "name", "user_id", "slug", "background_image_url", "city", "address",
   "is_published", "updated_at", "created_at", "contact_number", "currency"

@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "Dashboard",
-  description: "Manage your restaurant menus, track orders, and grow your business with FeastQR.",
+  description: "Manage your restaurant menus, track orders, and grow your business with Diyafa.",
 };
 
 // Lazy-load the Dashboard page component - it includes MenuItem cards

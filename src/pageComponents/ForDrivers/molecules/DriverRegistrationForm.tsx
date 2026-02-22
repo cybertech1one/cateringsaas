@@ -81,7 +81,7 @@ type StepErrors = Record<string, string>;
 // ---------------------------------------------------------------------------
 
 const TOTAL_STEPS = 6;
-const STORAGE_KEY = "feastqr-driver-registration-draft";
+const STORAGE_KEY = "Diyafa-driver-registration-draft";
 
 const VEHICLE_OPTIONS: {
   value: VehicleType;

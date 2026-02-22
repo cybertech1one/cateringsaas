@@ -22,7 +22,7 @@ export async function generateMetadata({
   if (!city) return {};
 
   const appUrl = getAppUrl();
-  const title = `Deliver in ${city.name} — Join FeastQR | Earn ${city.avgEarnings} MAD/day`;
+  const title = `Deliver in ${city.name} — Join Diyafa | Earn ${city.avgEarnings} MAD/day`;
   const description = `Become a delivery driver in ${city.name}. Earn ${city.avgEarnings} MAD/day with zero platform fees. ${city.driverCount}+ drivers already active. Join Morocco's independent delivery network.`;
 
   return {
@@ -30,15 +30,15 @@ export async function generateMetadata({
     description,
     alternates: { canonical: `${appUrl}/for-drivers/${city.slug}` },
     openGraph: {
-      title: `Deliver in ${city.name} — FeastQR`,
+      title: `Deliver in ${city.name} — Diyafa`,
       description: `Earn ${city.avgEarnings} MAD/day delivering in ${city.name}. Zero fees, flexible hours, direct restaurant pay.`,
       type: "website",
       url: `${appUrl}/for-drivers/${city.slug}`,
-      siteName: "FeastQR",
+      siteName: "Diyafa",
     },
     twitter: {
       card: "summary_large_image",
-      title: `Deliver in ${city.name} — FeastQR`,
+      title: `Deliver in ${city.name} — Diyafa`,
       description: `Earn ${city.avgEarnings} MAD/day delivering in ${city.name}. Zero platform fees.`,
     },
   };
@@ -79,25 +79,25 @@ export default function Page({ params }: { params: { city: string } }) {
       },
       {
         "@type": "WebPage",
-        name: `Deliver in ${city.name} — FeastQR`,
+        name: `Deliver in ${city.name} — Diyafa`,
         description: `Become a delivery driver in ${city.name}. Earn ${city.avgEarnings} MAD/day with zero platform fees.`,
         url: `${appUrl}/for-drivers/${city.slug}`,
         isPartOf: {
           "@type": "WebSite",
-          name: "FeastQR",
+          name: "Diyafa",
           url: appUrl,
         },
       },
       {
         "@type": "JobPosting",
         title: `Delivery Driver in ${city.name}`,
-        description: `Independent delivery driver opportunity in ${city.name}, Morocco. Earn ${city.avgEarnings} MAD per day delivering food for local restaurants through FeastQR. Zero platform fees — keep 100% of delivery earnings. Flexible schedule, direct restaurant relationships.`,
+        description: `Independent delivery driver opportunity in ${city.name}, Morocco. Earn ${city.avgEarnings} MAD per day delivering food for local restaurants through Diyafa. Zero platform fees — keep 100% of delivery earnings. Flexible schedule, direct restaurant relationships.`,
         datePosted: "2026-01-01",
         validThrough: "2026-12-31",
         employmentType: "CONTRACTOR",
         hiringOrganization: {
           "@type": "Organization",
-          name: "FeastQR",
+          name: "Diyafa",
           sameAs: appUrl,
           logo: `${appUrl}/icon-512x512.png`,
         },
@@ -152,10 +152,10 @@ export default function Page({ params }: { params: { city: string } }) {
           },
           {
             "@type": "Question",
-            name: "Does FeastQR take a commission from drivers?",
+            name: "Does Diyafa take a commission from drivers?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "No. FeastQR charges zero commission from drivers. You keep 100% of your delivery fees and tips. Restaurants pay you directly via cash or bank transfer.",
+              text: "No. Diyafa charges zero commission from drivers. You keep 100% of your delivery fees and tips. Restaurants pay you directly via cash or bank transfer.",
             },
           },
         ],

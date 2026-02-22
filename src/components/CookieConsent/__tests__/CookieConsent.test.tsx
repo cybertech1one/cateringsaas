@@ -107,7 +107,7 @@ describe("CookieConsent", () => {
     vi.useFakeTimers();
 
     localStorageMock.setItem(
-      "feastqr_cookie_consent",
+      "Diyafa_cookie_consent",
       JSON.stringify({
         essential: true,
         analytics: true,
@@ -115,7 +115,7 @@ describe("CookieConsent", () => {
         version: 1,
       }),
     );
-    localStorageMock.setItem("feastqr_consent_version", "1");
+    localStorageMock.setItem("Diyafa_consent_version", "1");
 
     render(<CookieConsent />);
 
@@ -132,7 +132,7 @@ describe("CookieConsent", () => {
     vi.useFakeTimers();
 
     localStorageMock.setItem(
-      "feastqr_cookie_consent",
+      "Diyafa_cookie_consent",
       JSON.stringify({
         essential: true,
         analytics: true,
@@ -140,7 +140,7 @@ describe("CookieConsent", () => {
         version: 0,
       }),
     );
-    localStorageMock.setItem("feastqr_consent_version", "0");
+    localStorageMock.setItem("Diyafa_consent_version", "0");
 
     render(<CookieConsent />);
 
@@ -167,7 +167,7 @@ describe("CookieConsent", () => {
 
     const savedConsent = JSON.parse(
       localStorageMock.setItem.mock.calls.find(
-        (call: string[]) => call[0] === "feastqr_cookie_consent",
+        (call: string[]) => call[0] === "Diyafa_cookie_consent",
       )![1],
     );
 
@@ -277,7 +277,7 @@ describe("CookieConsent", () => {
 
     const savedConsent = JSON.parse(
       localStorageMock.setItem.mock.calls.find(
-        (call: string[]) => call[0] === "feastqr_cookie_consent",
+        (call: string[]) => call[0] === "Diyafa_cookie_consent",
       )![1],
     );
 
@@ -335,7 +335,7 @@ describe("CookieConsent", () => {
     vi.useFakeTimers();
 
     localStorageMock.setItem(
-      "feastqr_cookie_consent",
+      "Diyafa_cookie_consent",
       JSON.stringify({
         essential: true,
         analytics: true,
@@ -343,7 +343,7 @@ describe("CookieConsent", () => {
         version: 1,
       }),
     );
-    localStorageMock.setItem("feastqr_consent_version", "1");
+    localStorageMock.setItem("Diyafa_consent_version", "1");
 
     const { container } = render(<CookieConsent />);
 
@@ -386,10 +386,10 @@ describe("useCookieConsent", () => {
     };
 
     localStorageMock.setItem(
-      "feastqr_cookie_consent",
+      "Diyafa_cookie_consent",
       JSON.stringify(consent),
     );
-    localStorageMock.setItem("feastqr_consent_version", "1");
+    localStorageMock.setItem("Diyafa_consent_version", "1");
 
     const { result } = renderHook(() => useCookieConsent());
 
@@ -398,7 +398,7 @@ describe("useCookieConsent", () => {
 
   it("returns null when stored version does not match current", () => {
     localStorageMock.setItem(
-      "feastqr_cookie_consent",
+      "Diyafa_cookie_consent",
       JSON.stringify({
         essential: true,
         analytics: true,
@@ -406,7 +406,7 @@ describe("useCookieConsent", () => {
         version: 0,
       }),
     );
-    localStorageMock.setItem("feastqr_consent_version", "0");
+    localStorageMock.setItem("Diyafa_consent_version", "0");
 
     const { result } = renderHook(() => useCookieConsent());
 
@@ -425,7 +425,7 @@ describe("useCookieConsent", () => {
 
   it("returns null when only consent key stored but no version key", () => {
     localStorageMock.setItem(
-      "feastqr_cookie_consent",
+      "Diyafa_cookie_consent",
       JSON.stringify({
         essential: true,
         analytics: true,

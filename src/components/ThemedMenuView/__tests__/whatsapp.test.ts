@@ -127,9 +127,9 @@ describe("buildOrderMessage", () => {
     expect(message).toContain("Note: No onions please");
   });
 
-  it("always ends with FeastQR branding", () => {
+  it("always ends with Diyafa branding", () => {
     const message = buildOrderMessage(baseArgs);
 
-    expect(message).toContain("Sent via FeastQR");
+    expect(message).toContain("Sent via Diyafa");
   });
 });

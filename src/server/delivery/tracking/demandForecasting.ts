@@ -2,7 +2,7 @@
  * Demand Forecasting & Surge Pricing Module
  *
  * Predicts delivery demand, calculates surge pricing, and computes
- * delivery fees for the FeastQR delivery platform.
+ * delivery fees for the Diyafa delivery platform.
  *
  * Morocco-specific features:
  * - Friday prayer time detection (12:00-14:00)
@@ -12,7 +12,7 @@
  * - Time periods tuned to Moroccan meal patterns
  *
  * All monetary values are in centimes (1 MAD = 100 centimes).
- * This follows the FeastQR convention of storing prices as integers.
+ * This follows the Diyafa convention of storing prices as integers.
  */
 
 import { logger } from "~/server/logger";

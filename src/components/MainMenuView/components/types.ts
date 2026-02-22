@@ -4,7 +4,7 @@ import { type FullMenuOutput } from "~/utils/parseDishes";
 
 export function getSessionId(): string {
   if (typeof window === "undefined") return "";
-  const key = "feastqr_session_id";
+  const key = "Diyafa_session_id";
   let sessionId = localStorage.getItem(key);
 
   if (!sessionId) {

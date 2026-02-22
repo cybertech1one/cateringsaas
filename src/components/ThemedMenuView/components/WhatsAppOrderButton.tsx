@@ -102,7 +102,7 @@ function buildOrderMessage({
   }
 
   lines.push("");
-  lines.push("Sent via FeastQR");
+  lines.push("Sent via Diyafa");
 
   return lines.join("\n");
 }
@@ -339,7 +339,7 @@ export function buildOrderNotificationMessage(
   }
 
   lines.push("");
-  lines.push("Sent via FeastQR");
+  lines.push("Sent via Diyafa");
 
   return lines.join("\n");
 }

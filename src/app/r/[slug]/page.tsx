@@ -32,7 +32,7 @@ export async function generateMetadata({
       title,
       description,
       url,
-      siteName: "FeastQR",
+      siteName: "Diyafa",
       type: "website",
       ...(data.logoImageUrl
         ? { images: [{ url: data.logoImageUrl, alt: data.name }] }
@@ -42,7 +42,7 @@ export async function generateMetadata({
       card: "summary",
       title,
       description,
-      site: "@feastqr",
+      site: "@diyafa_ma",
       ...(data.logoImageUrl ? { images: [data.logoImageUrl] } : {}),
     },
   };

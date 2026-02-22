@@ -12,16 +12,16 @@ vi.mock("react-i18next", () => ({
       const faqMap: Record<string, string> = {
         "landing.faq.title": "Frequently Asked Questions",
         "landing.faq.subtitle":
-          "Everything you need to know about FeastQR",
-        "landing.faq.items.0.question": "What is FeastQR?",
+          "Everything you need to know about Diyafa",
+        "landing.faq.items.0.question": "What is Diyafa?",
         "landing.faq.items.0.answer":
-          "FeastQR is a digital menu platform for restaurants.",
+          "Diyafa is a digital menu platform for restaurants.",
         "landing.faq.items.1.question": "Is it free?",
         "landing.faq.items.1.answer":
           "Yes, we offer a free tier with basic features.",
         "landing.faq.items.2.question": "Do I need coding skills?",
         "landing.faq.items.2.answer":
-          "Not at all! FeastQR is designed for restaurant owners.",
+          "Not at all! Diyafa is designed for restaurant owners.",
         "landing.faq.items.3.question": "How do QR codes work?",
         "landing.faq.items.3.answer":
           "Customers scan the QR code to view your menu.",
@@ -70,7 +70,7 @@ describe("FAQSection", () => {
     const { container } = render(<FAQSection />);
 
     const questions = [
-      "What is FeastQR?",
+      "What is Diyafa?",
       "Is it free?",
       "Do I need coding skills?",
       "How do QR codes work?",
@@ -129,7 +129,7 @@ describe("FAQSection", () => {
     expect(jsonLd["@type"]).toBe("FAQPage");
     expect(jsonLd.mainEntity).toHaveLength(10);
     expect(jsonLd.mainEntity[0]["@type"]).toBe("Question");
-    expect(jsonLd.mainEntity[0].name).toBe("What is FeastQR?");
+    expect(jsonLd.mainEntity[0].name).toBe("What is Diyafa?");
     expect(jsonLd.mainEntity[0].acceptedAnswer["@type"]).toBe("Answer");
   });
 
@@ -142,7 +142,7 @@ describe("FAQSection", () => {
     const jsonLd = JSON.parse(script!.textContent!);
 
     expect(jsonLd.mainEntity[0].acceptedAnswer.text).toBe(
-      "FeastQR is a digital menu platform for restaurants.",
+      "Diyafa is a digital menu platform for restaurants.",
     );
     expect(jsonLd.mainEntity[9].acceptedAnswer.text).toBe(
       "Customers can order directly via WhatsApp.",

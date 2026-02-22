@@ -19,7 +19,7 @@ export async function generateMetadata({
   const restaurantName = data?.name ?? "Restaurant";
 
   return {
-    title: `Rate your experience | ${restaurantName} | FeastQR`,
+    title: `Rate your experience | ${restaurantName} | Diyafa`,
     description: `Share your dining experience at ${restaurantName} and help us improve.`,
     robots: { index: false, follow: false },
   };

@@ -13,5 +13,3 @@ export const DiyafaLogo = () => {
   );
 };
 
-/** @deprecated Use DiyafaLogo instead */
-export const FeastQRLogo = DiyafaLogo;

@@ -2,7 +2,7 @@
  * Settlement Engine — Commission & Driver Payment Calculations
  *
  * COD and digital payment flows, commission tiers, driver pay,
- * ledger entry generation for the FeastQR Delivery Platform.
+ * ledger entry generation for the Diyafa Delivery Platform.
  *
  * Morocco-specific: MAD centimes, COD-first (60-74%), platform fees.
  *

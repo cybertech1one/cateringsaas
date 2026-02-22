@@ -1,7 +1,7 @@
 /**
  * Mosaic Matching — Order-to-Driver Assignment Algorithm
  *
- * Multi-dimensional matching engine for the FeastQR Delivery Platform.
+ * Multi-dimensional matching engine for the Diyafa Delivery Platform.
  * Morocco-specific: 9 city speed profiles, Friday prayer, Ramadan,
  * medina navigation, weather adjustments.
  *

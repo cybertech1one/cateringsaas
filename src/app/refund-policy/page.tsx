@@ -4,7 +4,7 @@ import "./styles.css";
 
 export const metadata: Metadata = {
   title: "Refund Policy",
-  description: "FeastQR refund and return policy.",
+  description: "Diyafa refund and return policy.",
   robots: { index: false },
 };
 
@@ -23,7 +23,7 @@ const page = () => (
             <div align="center" class="MsoNormal" style="text-align: left; line-height: 150%;"><br></div>
             <div align="center" class="MsoNormal" style="text-align: left; line-height: 150%;"><span style="font-size: 15px;"><br><a name="_2cipo4yr3w5d"></a></span></div>
         </div>
-        <div class="MsoNormal" data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; line-height: 115%; font-family: Arial; color: rgb(89, 89, 89);"><bdt class="block-component"></bdt>Thank you for your purchase. We hope you are happy with your purchase. However, if you are not completely satisfied with your purchase for any reason, you may email us at refund@feastqr.com within 30 days and we'll refund you in full, no questions asked.
+        <div class="MsoNormal" data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; line-height: 115%; font-family: Arial; color: rgb(89, 89, 89);"><bdt class="block-component"></bdt>Thank you for your purchase. We hope you are happy with your purchase. However, if you are not completely satisfied with your purchase for any reason, you may email us at refund@diyafa.ma within 30 days and we'll refund you in full, no questions asked.
     </div>
     <div style="line-height: 1.5;"><br></div>
   
@@ -33,7 +33,7 @@ const page = () => (
     </div>
     <div style="line-height: 1.5;"><br></div>
     <div>
-        <div class="MsoNormal" data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; line-height: 115%; font-family: Arial; color: rgb(89, 89, 89);">To get a refund, <bdt class="block-container if" data-type="if" id="51c4b423-789c-79e6-4161-743acb653a2d"><bdt data-type="conditional-block"><bdt class="block-component" data-record-question-key="authorization_option" data-type="statement"></bdt><bdt data-type="body">please email us at <bdt class="block-container question question-in-editor" data-id="0b78538e-7550-6c62-669a-d2eb2ed0eafb" data-type="question">refund@feastqr.com</bdt> 
+        <div class="MsoNormal" data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; line-height: 115%; font-family: Arial; color: rgb(89, 89, 89);">To get a refund, <bdt class="block-container if" data-type="if" id="51c4b423-789c-79e6-4161-743acb653a2d"><bdt data-type="conditional-block"><bdt class="block-component" data-record-question-key="authorization_option" data-type="statement"></bdt><bdt data-type="body">please email us at <bdt class="block-container question question-in-editor" data-id="0b78538e-7550-6c62-669a-d2eb2ed0eafb" data-type="question">refund@diyafa.ma</bdt> 
     </div>
     <div style="line-height: 1.1;"><br></div>
     <div>
@@ -53,7 +53,7 @@ const page = () => (
         <div data-custom-class="body_text" style="line-height: 1.1;"><br></div>
         <div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px;"><bdt class="block-component"></bdt></span></span>
         </div>
-        <div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><bdt class="question">refund@feastqr.com</bdt></span></div>
+        <div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><bdt class="question">refund@diyafa.ma</bdt></span></div>
         <style>
             ul {
                 list-style-type: square;

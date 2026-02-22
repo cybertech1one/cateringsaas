@@ -50,7 +50,7 @@ function FilterIcon({ size = 18 }: { size?: number }) {
 
 // ── Local Storage Helpers ───────────────────────────────────
 
-const FAVORITES_KEY_PREFIX = "feastqr_favorites_";
+const FAVORITES_KEY_PREFIX = "Diyafa_favorites_";
 
 function getStorageKey(menuSlug: string): string {
   return `${FAVORITES_KEY_PREFIX}${menuSlug}`;

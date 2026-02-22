@@ -1,7 +1,7 @@
 import { OrderHistoryPage } from "~/pageComponents/OrderHistory/OrderHistory.page";
 
 export const metadata = {
-  title: "Order History | FeastQR",
+  title: "Order History | Diyafa",
   description: "Look up your past restaurant orders by phone number",
 };
 

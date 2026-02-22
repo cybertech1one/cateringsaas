@@ -431,7 +431,7 @@ export function FloatingShareButton({
   const menuUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/menu/${menuSlug}`
-      : `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.feastqr.com"}/menu/${menuSlug}`;
+      : `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.diyafa.ma"}/menu/${menuSlug}`;
 
   const handleClick = useCallback(async () => {
     // Use native share on mobile if available
@@ -517,7 +517,7 @@ export function DishShareButton({
   const menuUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/menu/${menuSlug}`
-      : `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.feastqr.com"}/menu/${menuSlug}`;
+      : `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.diyafa.ma"}/menu/${menuSlug}`;
 
   const handleClick = useCallback(async () => {
     const shareData = buildShareData(menuName, menuUrl, dishName, `dish-${dishId}`);
@@ -598,7 +598,7 @@ export function InlineShareButtons({
   const menuUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/menu/${menuSlug}`
-      : `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.feastqr.com"}/menu/${menuSlug}`;
+      : `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.diyafa.ma"}/menu/${menuSlug}`;
 
   const data = buildShareData(menuName, menuUrl);
 

@@ -1,5 +1,5 @@
 /**
- * Locale-aware date formatting utilities for the multi-language FeastQR app.
+ * Locale-aware date formatting utilities for the multi-language Diyafa app.
  * Uses Intl.DateTimeFormat for proper localization (en, fr, ar).
  */
 

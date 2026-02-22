@@ -83,7 +83,7 @@ export function dateFilter(
  * per deployment so unique-visitor counts stay accurate.
  */
 export function hashIp(ip: string): string {
-  const salt = process.env.IP_HASH_SALT ?? "feastqr-analytics-salt";
+  const salt = process.env.IP_HASH_SALT ?? "Diyafa-analytics-salt";
 
   return crypto.createHash("sha256").update(`${salt}:${ip}`).digest("hex");
 }

@@ -5,7 +5,7 @@ import { LoadingScreen } from "~/components/Loading";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: "Loyalty | FeastQR",
+  title: "Loyalty | Diyafa",
   description: "Create and manage customer loyalty stamp card programs.",
 };
 

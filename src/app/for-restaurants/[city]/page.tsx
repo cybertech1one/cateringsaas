@@ -22,24 +22,24 @@ export async function generateMetadata({
   if (!city) return {};
 
   const appUrl = getAppUrl();
-  const title = `FeastQR for Restaurants in ${city.name} — Digital Menus & Delivery`;
-  const description = `${city.restaurantCount}+ restaurants in ${city.name} use FeastQR. Digital menus, online ordering, delivery management. Zero commission. Free to start.`;
+  const title = `Diyafa for Restaurants in ${city.name} — Digital Menus & Delivery`;
+  const description = `${city.restaurantCount}+ restaurants in ${city.name} use Diyafa. Digital menus, online ordering, delivery management. Zero commission. Free to start.`;
 
   return {
     title,
     description,
     alternates: { canonical: `${appUrl}/for-restaurants/${city.slug}` },
     openGraph: {
-      title: `FeastQR for Restaurants in ${city.name}`,
-      description: `${city.restaurantCount}+ restaurants in ${city.name} trust FeastQR. Digital menus, AI content, online ordering.`,
+      title: `Diyafa for Restaurants in ${city.name}`,
+      description: `${city.restaurantCount}+ restaurants in ${city.name} trust Diyafa. Digital menus, AI content, online ordering.`,
       type: "website",
       url: `${appUrl}/for-restaurants/${city.slug}`,
-      siteName: "FeastQR",
+      siteName: "Diyafa",
     },
     twitter: {
       card: "summary_large_image",
-      title: `FeastQR for Restaurants in ${city.name}`,
-      description: `${city.restaurantCount}+ restaurants in ${city.name} use FeastQR. Zero commission.`,
+      title: `Diyafa for Restaurants in ${city.name}`,
+      description: `${city.restaurantCount}+ restaurants in ${city.name} use Diyafa. Zero commission.`,
     },
   };
 }
@@ -79,18 +79,18 @@ export default function Page({ params }: { params: { city: string } }) {
       },
       {
         "@type": "WebPage",
-        name: `FeastQR for Restaurants in ${city.name}`,
-        description: `${city.restaurantCount}+ restaurants in ${city.name} use FeastQR for digital menus, online ordering, and delivery management.`,
+        name: `Diyafa for Restaurants in ${city.name}`,
+        description: `${city.restaurantCount}+ restaurants in ${city.name} use Diyafa for digital menus, online ordering, and delivery management.`,
         url: `${appUrl}/for-restaurants/${city.slug}`,
         isPartOf: {
           "@type": "WebSite",
-          name: "FeastQR",
+          name: "Diyafa",
           url: appUrl,
         },
       },
       {
         "@type": "SoftwareApplication",
-        name: "FeastQR",
+        name: "Diyafa",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
         offers: {
@@ -110,8 +110,8 @@ export default function Page({ params }: { params: { city: string } }) {
       },
       {
         "@type": "LocalBusiness",
-        name: `FeastQR - ${city.name}`,
-        description: `FeastQR restaurant technology platform serving ${city.restaurantCount}+ restaurants in ${city.name}, Morocco.`,
+        name: `Diyafa - ${city.name}`,
+        description: `Diyafa restaurant technology platform serving ${city.restaurantCount}+ restaurants in ${city.name}, Morocco.`,
         address: {
           "@type": "PostalAddress",
           addressLocality: city.name,
@@ -132,10 +132,10 @@ export default function Page({ params }: { params: { city: string } }) {
         mainEntity: [
           {
             "@type": "Question",
-            name: `How much does FeastQR cost for restaurants in ${city.name}?`,
+            name: `How much does Diyafa cost for restaurants in ${city.name}?`,
             acceptedAnswer: {
               "@type": "Answer",
-              text: "FeastQR is free to start. The free plan includes QR menus, basic analytics, and up to 3 menu templates. Pro plans unlock advanced features like AI menu builder, 30+ templates, and delivery network access.",
+              text: "Diyafa is free to start. The free plan includes QR menus, basic analytics, and up to 3 menu templates. Pro plans unlock advanced features like AI menu builder, 30+ templates, and delivery network access.",
             },
           },
           {
@@ -143,15 +143,15 @@ export default function Page({ params }: { params: { city: string } }) {
             name: "Can I manage my own delivery drivers?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes! Unlike Glovo or Jumia Food, FeastQR lets you recruit and manage your own delivery drivers directly. No middleman, no commission on deliveries. Your drivers, your relationships.",
+              text: "Yes! Unlike Glovo or Jumia Food, Diyafa lets you recruit and manage your own delivery drivers directly. No middleman, no commission on deliveries. Your drivers, your relationships.",
             },
           },
           {
             "@type": "Question",
-            name: "Does FeastQR support Arabic menus?",
+            name: "Does Diyafa support Arabic menus?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. FeastQR supports English, French, and Arabic with full RTL (right-to-left) support. AI auto-translate can generate translations for all your menu items instantly.",
+              text: "Yes. Diyafa supports English, French, and Arabic with full RTL (right-to-left) support. AI auto-translate can generate translations for all your menu items instantly.",
             },
           },
         ],

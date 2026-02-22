@@ -1,5 +1,5 @@
 -- ============================================================================
--- Comprehensive RLS Policies for FeastQR
+-- Comprehensive RLS Policies for Diyafa
 -- ============================================================================
 -- This migration adds RLS policies to all public tables that are missing them.
 --

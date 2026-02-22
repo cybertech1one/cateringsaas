@@ -64,7 +64,7 @@ const CartContext = createContext<CartContextType | null>(null);
 const STALE_DURATION_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 function getStorageKey(menuSlug: string): string {
-  return `feastqr-cart-${menuSlug}`;
+  return `Diyafa-cart-${menuSlug}`;
 }
 
 function itemKey(dishId: string, variantId?: string): string {

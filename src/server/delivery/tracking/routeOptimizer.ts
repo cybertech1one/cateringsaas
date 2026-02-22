@@ -308,7 +308,7 @@ export function reverseSegment(
  * Time complexity: O(n^2) where n = number of stops
  * Quality: Typically within 20-25% of optimal for small stop counts
  *
- * For FeastQR's typical use case (2-8 stops), this provides a good
+ * For Diyafa's typical use case (2-8 stops), this provides a good
  * starting point that the 2-opt algorithm can then improve.
  *
  * @param start - Driver's starting coordinates

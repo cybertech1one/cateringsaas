@@ -21,7 +21,7 @@ vi.mock("react-i18next", () => ({
         "feedback.thankYouNegative": "Thank you for your feedback. We will do better.",
         "feedback.shareOnGoogle": "Share on Google",
         "feedback.alreadySubmitted": "You have already submitted feedback.",
-        "feedback.poweredBy": "Powered by FeastQR",
+        "feedback.poweredBy": "Powered by Diyafa",
       };
 
       return translations[key] ?? key;

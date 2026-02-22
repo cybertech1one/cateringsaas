@@ -19,7 +19,7 @@ export async function generateMetadata({
 
   const title = `${data.name} - Digital Menu`;
   const description = [data.address, data.city].filter(Boolean).join(", ") ||
-    `View the digital menu for ${data.name} on FeastQR`;
+    `View the digital menu for ${data.name} on Diyafa`;
   const url = `${getAppUrl()}/menu/${slug}`;
 
   return {
@@ -32,7 +32,7 @@ export async function generateMetadata({
       title,
       description,
       url,
-      siteName: "FeastQR",
+      siteName: "Diyafa",
       type: "website",
       ...(data.logoImageUrl ? { images: [{ url: data.logoImageUrl, alt: data.name }] } : {}),
     },
@@ -40,7 +40,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      site: "@feastqr",
+      site: "@diyafa_ma",
       ...(data.logoImageUrl ? { images: [data.logoImageUrl] } : {}),
     },
   };

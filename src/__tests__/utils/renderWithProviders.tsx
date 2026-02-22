@@ -1,6 +1,6 @@
 /**
  * Custom render function that wraps components with all providers needed
- * for testing FeastQR React components.
+ * for testing Diyafa React components.
  *
  * Includes:
  *  - i18next (initialised synchronously with English translations)

@@ -192,7 +192,7 @@ export const MenuPrintCreatorPage = ({
       </div>
       <MenuPdfGenerator
         {...debouncedValues}
-        qrCodeUrl={`${(process.env.NEXT_PUBLIC_APP_URL ?? "https://www.feastqr.com").replace(/^https?:\/\//, "").replace(/\/$/, "")}/menu/${slug}`}
+        qrCodeUrl={`${(process.env.NEXT_PUBLIC_APP_URL ?? "https://www.diyafa.ma").replace(/^https?:\/\//, "").replace(/\/$/, "")}/menu/${slug}`}
         menuLogoImageUrl={data?.logoImageUrl ?? null}
       />
     </div>

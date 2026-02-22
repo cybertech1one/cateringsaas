@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Reset Password",
-  description: "Reset your FeastQR account password.",
+  description: "Reset your Diyafa account password.",
   robots: { index: false },
 };
 

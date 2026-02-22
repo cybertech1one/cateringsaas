@@ -7,7 +7,7 @@ import { cn } from "~/utils/cn";
 import { Icons } from "~/components/Icons";
 import { MobileNav } from "./MobileNav";
 import { type Route } from "next";
-import { FeastQRLogo } from "./FeastQRLogo";
+import { DiyafaLogo } from "./DiyafaLogo";
 
 export type NavItem = {
   title: string | React.ReactNode;
@@ -28,7 +28,7 @@ export function MainNav({ items, children }: MainNavProps) {
   return (
     <nav className="flex gap-6 md:gap-10" aria-label="Main navigation">
       <Link href="/" className="hidden items-center space-x-2 md:flex">
-        <FeastQRLogo />
+        <DiyafaLogo />
       </Link>
       {items?.length ? (
         <div className="hidden gap-6 md:flex">

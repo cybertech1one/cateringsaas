@@ -4,7 +4,7 @@ import { getAppUrl } from "~/utils/getBaseUrl";
 const appUrl = getAppUrl();
 
 export const metadata: Metadata = {
-  title: "For Drivers - FeastQR | Deliver & Earn on Your Terms",
+  title: "For Drivers - Diyafa | Deliver & Earn on Your Terms",
   description:
     "Join Morocco's independent delivery network. Work directly with restaurants, set your own schedule, earn 350-600 MAD/day with zero platform fees.",
   alternates: { canonical: `${appUrl}/for-drivers` },
@@ -12,23 +12,23 @@ export const metadata: Metadata = {
     "delivery driver Morocco",
     "food delivery jobs Casablanca",
     "livreur Maroc",
-    "FeastQR driver",
+    "Diyafa driver",
     "delivery driver Marrakech",
     "gig economy Morocco",
     "سائق توصيل المغرب",
   ],
   openGraph: {
-    title: "For Drivers - FeastQR | Deliver & Earn on Your Terms",
+    title: "For Drivers - Diyafa | Deliver & Earn on Your Terms",
     description:
       "Deliver food and earn on your terms. Zero platform fees. Work directly with restaurants across Morocco.",
     type: "website",
     url: `${appUrl}/for-drivers`,
-    siteName: "FeastQR",
+    siteName: "Diyafa",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Deliver & Earn with FeastQR — Zero Commission",
+    title: "Deliver & Earn with Diyafa — Zero Commission",
     description:
       "Join 500+ drivers earning 350-600 MAD/day across Morocco. No algorithm boss, no platform fees.",
   },
@@ -42,7 +42,7 @@ function DriversJsonLd() {
         "@type": "WebPage",
         "@id": `${appUrl}/for-drivers`,
         url: `${appUrl}/for-drivers`,
-        name: "Become a Delivery Driver — FeastQR Morocco",
+        name: "Become a Delivery Driver — Diyafa Morocco",
         description:
           "Join Morocco's independent food delivery network. Earn 350-600 MAD/day with zero platform commission.",
         isPartOf: { "@id": `${appUrl}/#website` },
@@ -70,13 +70,13 @@ function DriversJsonLd() {
         "@type": "JobPosting",
         title: "Freelance Delivery Driver",
         description:
-          "Deliver food for local restaurants through FeastQR. Choose your hours, choose your restaurants, keep 100% of delivery fees. No commission taken by the platform.",
+          "Deliver food for local restaurants through Diyafa. Choose your hours, choose your restaurants, keep 100% of delivery fees. No commission taken by the platform.",
         datePosted: "2026-01-01",
         validThrough: "2027-01-01",
         employmentType: "CONTRACTOR",
         hiringOrganization: {
           "@type": "Organization",
-          name: "FeastQR",
+          name: "Diyafa",
           sameAs: appUrl,
           logo: `${appUrl}/images/logo.png`,
         },
@@ -110,23 +110,23 @@ function DriversJsonLd() {
         mainEntity: [
           {
             "@type": "Question",
-            name: "How much can I earn as a FeastQR delivery driver?",
+            name: "How much can I earn as a Diyafa delivery driver?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "FeastQR drivers typically earn 250-600 MAD per day, depending on city and hours worked. Casablanca drivers average 350-600 MAD/day, while Marrakech drivers earn 300-500 MAD/day.",
+              text: "Diyafa drivers typically earn 250-600 MAD per day, depending on city and hours worked. Casablanca drivers average 350-600 MAD/day, while Marrakech drivers earn 300-500 MAD/day.",
             },
           },
           {
             "@type": "Question",
-            name: "Does FeastQR take a commission from drivers?",
+            name: "Does Diyafa take a commission from drivers?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "No. FeastQR charges zero commission from drivers. You keep 100% of the delivery fees set by the restaurant. This is our key difference from platforms like Glovo which take 20-30%.",
+              text: "No. Diyafa charges zero commission from drivers. You keep 100% of the delivery fees set by the restaurant. This is our key difference from platforms like Glovo which take 20-30%.",
             },
           },
           {
             "@type": "Question",
-            name: "What do I need to become a FeastQR driver in Morocco?",
+            name: "What do I need to become a Diyafa driver in Morocco?",
             acceptedAnswer: {
               "@type": "Answer",
               text: "You need a valid CIN (Carte d'Identité Nationale), a smartphone with a data plan, and a vehicle (motorcycle, bicycle, car, or you can deliver on foot). Registration takes under 5 minutes.",
@@ -134,18 +134,18 @@ function DriversJsonLd() {
           },
           {
             "@type": "Question",
-            name: "How is FeastQR different from Glovo for drivers?",
+            name: "How is Diyafa different from Glovo for drivers?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Unlike Glovo where an algorithm controls your routes and takes 20-30% commission, FeastQR lets you work directly with restaurants. You choose which restaurants to partner with, set your own schedule, and keep all delivery fees.",
+              text: "Unlike Glovo where an algorithm controls your routes and takes 20-30% commission, Diyafa lets you work directly with restaurants. You choose which restaurants to partner with, set your own schedule, and keep all delivery fees.",
             },
           },
           {
             "@type": "Question",
-            name: "Which cities does FeastQR operate in?",
+            name: "Which cities does Diyafa operate in?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "FeastQR operates in Casablanca, Marrakech, Rabat, Fes, Tangier, Agadir, Meknes, Oujda, and Kenitra, with more cities being added regularly.",
+              text: "Diyafa operates in Casablanca, Marrakech, Rabat, Fes, Tangier, Agadir, Meknes, Oujda, and Kenitra, with more cities being added regularly.",
             },
           },
         ],

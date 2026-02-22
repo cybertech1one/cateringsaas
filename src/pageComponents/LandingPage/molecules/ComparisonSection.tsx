@@ -11,7 +11,7 @@ type CellValue =
 
 interface ComparisonRow {
   label: string;
-  feastqr: CellValue;
+  Diyafa: CellValue;
   glovo: CellValue;
   donema: CellValue;
   paper: CellValue;
@@ -46,7 +46,7 @@ function MobileCard({
           <div
             key={comp.key}
             className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${
-              comp.key === "feastqr"
+              comp.key === "Diyafa"
                 ? "bg-primary/5 border border-primary/20"
                 : "bg-muted/30"
             }`}
@@ -64,7 +64,7 @@ function MobileCard({
               {comp.value.type === "text" && (
                 <span
                   className={`block text-xs font-medium ${
-                    comp.key === "feastqr"
+                    comp.key === "Diyafa"
                       ? "text-primary"
                       : "text-foreground/70"
                   }`}
@@ -87,42 +87,42 @@ export function ComparisonSection() {
   const rows: ComparisonRow[] = [
     {
       label: t("landing.comparison.commission"),
-      feastqr: { type: "text", value: "0%" },
+      Diyafa: { type: "text", value: "0%" },
       glovo: { type: "text", value: t("landing.comparison.upTo30") },
       donema: { type: "text", value: "15-25%" },
       paper: { type: "text", value: "N/A" },
     },
     {
       label: t("landing.comparison.setupTime"),
-      feastqr: { type: "text", value: t("landing.comparison.minutes") },
+      Diyafa: { type: "text", value: t("landing.comparison.minutes") },
       glovo: { type: "text", value: t("landing.comparison.weeks") },
       donema: { type: "text", value: t("landing.comparison.days") },
       paper: { type: "text", value: t("landing.comparison.printShop") },
     },
     {
       label: t("landing.comparison.ownCustomers"),
-      feastqr: { type: "check" },
+      Diyafa: { type: "check" },
       glovo: { type: "cross" },
       donema: { type: "cross" },
       paper: { type: "cross" },
     },
     {
       label: t("landing.comparison.languages"),
-      feastqr: { type: "text", value: t("landing.comparison.enFrAr") },
+      Diyafa: { type: "text", value: t("landing.comparison.enFrAr") },
       glovo: { type: "text", value: t("landing.comparison.limited") },
       donema: { type: "text", value: t("landing.comparison.limited") },
       paper: { type: "text", value: t("landing.comparison.limited") },
     },
     {
       label: t("landing.comparison.qrMenus"),
-      feastqr: { type: "check" },
+      Diyafa: { type: "check" },
       glovo: { type: "cross" },
       donema: { type: "cross" },
       paper: { type: "cross" },
     },
     {
       label: t("landing.comparison.analytics"),
-      feastqr: {
+      Diyafa: {
         type: "text",
         value: t("landing.comparison.fullDashboard"),
       },
@@ -132,21 +132,21 @@ export function ComparisonSection() {
     },
     {
       label: t("landing.comparison.onlineOrdering"),
-      feastqr: { type: "check" },
+      Diyafa: { type: "check" },
       glovo: { type: "check" },
       donema: { type: "check" },
       paper: { type: "cross" },
     },
     {
       label: t("landing.comparison.customBranding"),
-      feastqr: { type: "check" },
+      Diyafa: { type: "check" },
       glovo: { type: "cross" },
       donema: { type: "text", value: t("landing.comparison.limited") },
       paper: { type: "check" },
     },
     {
       label: t("landing.comparison.monthlyCost"),
-      feastqr: {
+      Diyafa: {
         type: "text",
         value: t("landing.comparison.freeToStart"),
       },
@@ -166,7 +166,7 @@ export function ComparisonSection() {
   ];
 
   const competitorKeys = [
-    { key: "feastqr", label: t("landing.comparison.feastqr") },
+    { key: "Diyafa", label: t("landing.comparison.Diyafa") },
     { key: "glovo", label: t("landing.comparison.glovo") },
     { key: "donema", label: t("landing.comparison.donema") },
     { key: "paper", label: t("landing.comparison.paperMenus") },
@@ -200,7 +200,7 @@ export function ComparisonSection() {
                   <th className="px-6 py-5 text-center w-1/5">
                     <div className="inline-flex flex-col items-center gap-1">
                       <span className="text-base font-bold text-gradient">
-                        {t("landing.comparison.feastqr")}
+                        {t("landing.comparison.Diyafa")}
                       </span>
                     </div>
                   </th>
@@ -227,7 +227,7 @@ export function ComparisonSection() {
                       {row.label}
                     </td>
                     <td className="px-6 py-4 text-center bg-primary/[0.02]">
-                      <CellDisplay cell={row.feastqr} />
+                      <CellDisplay cell={row.Diyafa} />
                     </td>
                     <td className="px-6 py-4 text-center">
                       <CellDisplay cell={row.glovo} />

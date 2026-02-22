@@ -179,13 +179,13 @@ describe("OnboardingChecklist", () => {
     });
 
     expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      "feastqr-onboarding-dismissed",
+      "Diyafa-onboarding-dismissed",
       "true",
     );
   });
 
   it("is hidden when dismissed flag exists in localStorage", () => {
-    storageStore["feastqr-onboarding-dismissed"] = "true";
+    storageStore["Diyafa-onboarding-dismissed"] = "true";
 
     const { container } = renderChecklist([]);
 

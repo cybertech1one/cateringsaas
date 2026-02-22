@@ -142,7 +142,7 @@ export function printOrderTicket(order: PrintOrderData) {
   }
 
   <div class="footer">
-    <p>Powered by FeastQR</p>
+    <p>Powered by Diyafa</p>
   </div>
 
   <script>

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Check, X, ChevronRight, PartyPopper } from "lucide-react";
 import { Progress } from "~/components/ui/progress";
 
-const DISMISSED_KEY = "feastqr-onboarding-dismissed";
+const DISMISSED_KEY = "Diyafa-onboarding-dismissed";
 
 interface OnboardingChecklistProps {
   menus: Array<{

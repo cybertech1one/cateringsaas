@@ -1,5 +1,5 @@
 /**
- * Common test helpers for FeastQR.
+ * Common test helpers for Diyafa.
  *
  * Provides utilities for waiting on async renders, mocking fetch,
  * and creating a mock Next.js router object.
@@ -14,7 +14,7 @@ import { vi } from "vitest";
 
 /**
  * Wait until no loading indicators are present in the DOM.
- * Looks for common loading patterns used in the FeastQR codebase:
+ * Looks for common loading patterns used in the Diyafa codebase:
  *  - Elements with role="progressbar"
  *  - Elements with aria-busy="true"
  *  - Text content "Loading..."

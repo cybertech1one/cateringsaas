@@ -1,5 +1,5 @@
 /**
- * Test data factories for FeastQR models.
+ * Test data factories for Diyafa models.
  *
  * Each factory generates realistic restaurant/menu data with sensible defaults.
  * All IDs are deterministic UUIDs seeded by an incrementing counter so tests

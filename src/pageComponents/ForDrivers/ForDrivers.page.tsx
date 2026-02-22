@@ -51,12 +51,12 @@ export const ForDriversPage = async () => {
     { text: t("forDrivers.comparison.traditional5") },
   ];
 
-  const comparisonFeastqr = [
-    { text: t("forDrivers.comparison.feastqr1") },
-    { text: t("forDrivers.comparison.feastqr2") },
-    { text: t("forDrivers.comparison.feastqr3") },
-    { text: t("forDrivers.comparison.feastqr4") },
-    { text: t("forDrivers.comparison.feastqr5") },
+  const comparisonDiyafa = [
+    { text: t("forDrivers.comparison.Diyafa1") },
+    { text: t("forDrivers.comparison.Diyafa2") },
+    { text: t("forDrivers.comparison.Diyafa3") },
+    { text: t("forDrivers.comparison.Diyafa4") },
+    { text: t("forDrivers.comparison.Diyafa5") },
   ];
 
   const howItWorksSteps = [
@@ -451,7 +451,7 @@ export const ForDriversPage = async () => {
                 </div>
               </ScrollReveal>
 
-              {/* FeastQR Network */}
+              {/* Diyafa Network */}
               <ScrollReveal direction="right" delay={200}>
                 <div className="card-3d border-gradient-spin group relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-background p-8 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/[0.06]">
                   <div className="geo-pattern absolute inset-0 opacity-[0.02]" aria-hidden="true" />
@@ -461,11 +461,11 @@ export const ForDriversPage = async () => {
                         <CheckCircle2 className="h-5 w-5 text-emerald-600" />
                       </div>
                       <h3 className="text-lg font-bold text-foreground">
-                        {t("forDrivers.comparison.feastqrTitle")}
+                        {t("forDrivers.comparison.DiyafaTitle")}
                       </h3>
                     </div>
                     <ul className="space-y-4">
-                      {comparisonFeastqr.map((item, idx) => (
+                      {comparisonDiyafa.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-3 transition-all duration-200 hover:translate-x-1">
                           <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600" />
                           <span className="text-sm leading-relaxed text-muted-foreground">
@@ -770,7 +770,7 @@ export const ForDriversPage = async () => {
                   <p className="mt-6 text-sm text-muted-foreground">
                     {t("forDrivers.coverage.moreCities")}{" "}
                     <a
-                      href="https://wa.me/212600000000?text=I%20want%20FeastQR%20in%20my%20city"
+                      href="https://wa.me/212600000000?text=I%20want%20Diyafa%20in%20my%20city"
                       className="font-medium text-ember hover:underline"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -839,7 +839,7 @@ export const ForDriversPage = async () => {
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
                 </Link>
                 <a
-                  href="https://wa.me/212600000000?text=Hi%20FeastQR%2C%20I%20have%20questions%20about%20driving"
+                  href="https://wa.me/212600000000?text=Hi%20Diyafa%2C%20I%20have%20questions%20about%20driving"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 text-base font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white"

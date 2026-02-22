@@ -12,7 +12,7 @@ import crypto from "crypto";
 
 /**
  * Generates a unique referral code: 8 alphanumeric characters, uppercase.
- * Format: FQ-XXXXXXXX (FQ = FeastQR prefix for brand recognition)
+ * Format: FQ-XXXXXXXX (FQ = Diyafa prefix for brand recognition)
  */
 function generateReferralCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // No I,O,0,1 to avoid confusion

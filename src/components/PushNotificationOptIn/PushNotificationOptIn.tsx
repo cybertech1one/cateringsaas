@@ -12,7 +12,7 @@ interface PushNotificationOptInProps {
 
 type SubscriptionState = "idle" | "subscribed" | "denied" | "unsupported";
 
-const STORAGE_KEY_PREFIX = "feastqr-push-subscribed-";
+const STORAGE_KEY_PREFIX = "Diyafa-push-subscribed-";
 
 /**
  * Convert a base64-encoded VAPID public key to a Uint8Array for

@@ -145,7 +145,7 @@ describe("paymentsRouter", () => {
       expect(mockCreateCheckout).toHaveBeenCalledWith(
         expect.objectContaining({
           product_options: expect.objectContaining({
-            name: "FeastQR Menu",
+            name: "Diyafa Menu",
             description: "Display QR menus to your clients.",
           }),
         }),

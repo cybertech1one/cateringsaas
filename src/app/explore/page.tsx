@@ -8,9 +8,9 @@ export const dynamic = "force-dynamic";
 const appUrl = getAppUrl();
 
 export const metadata: Metadata = {
-  title: "Explore Restaurants in Morocco - FeastQR Directory",
+  title: "Explore Restaurants in Morocco - Diyafa Directory",
   description:
-    "Discover 2000+ restaurants across Morocco on FeastQR. Browse by city (Casablanca, Marrakech, Rabat, Fes, Tangier), cuisine type, and ratings. View digital menus, order online, and find the best food near you.",
+    "Discover 2000+ restaurants across Morocco on Diyafa. Browse by city (Casablanca, Marrakech, Rabat, Fes, Tangier), cuisine type, and ratings. View digital menus, order online, and find the best food near you.",
   alternates: {
     canonical: `${appUrl}/explore`,
   },
@@ -24,16 +24,16 @@ export const metadata: Metadata = {
     "restaurants Maroc",
   ],
   openGraph: {
-    title: "Explore 2000+ Restaurants in Morocco - FeastQR",
+    title: "Explore 2000+ Restaurants in Morocco - Diyafa",
     description:
       "Browse restaurants by city, cuisine, and ratings. Casablanca, Marrakech, Rabat, Fes, Tangier & more. View menus and order online.",
     url: `${appUrl}/explore`,
-    siteName: "FeastQR",
+    siteName: "Diyafa",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Explore Restaurants in Morocco - FeastQR",
+    title: "Explore Restaurants in Morocco - Diyafa",
     description:
       "2000+ restaurants across 9 Moroccan cities. Browse menus, view ratings, order online.",
   },
@@ -67,7 +67,7 @@ const jsonLd = {
       url: `${appUrl}/explore`,
       isPartOf: {
         "@type": "WebSite",
-        name: "FeastQR",
+        name: "Diyafa",
         url: appUrl,
       },
       about: {

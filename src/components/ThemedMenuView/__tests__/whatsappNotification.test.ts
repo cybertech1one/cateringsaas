@@ -115,10 +115,10 @@ describe("buildOrderNotificationMessage", () => {
     expect(message).toContain("Creme Brulee (Large)");
   });
 
-  it("includes FeastQR branding", () => {
+  it("includes Diyafa branding", () => {
     const message = buildOrderNotificationMessage(baseOrder);
 
-    expect(message).toContain("FeastQR");
+    expect(message).toContain("Diyafa");
   });
 
   it("handles zero-price items gracefully", () => {

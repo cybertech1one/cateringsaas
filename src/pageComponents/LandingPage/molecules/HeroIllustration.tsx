@@ -7,7 +7,7 @@ export const HeroIllustration = () => {
   return (
     <div className="relative w-full max-w-lg mx-auto">
       <div className="absolute -inset-8 rounded-3xl bg-gradient-to-br from-[#E84D25]/10 via-transparent to-[#D4A017]/10 blur-2xl" aria-hidden="true" />
-      <svg viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative w-full h-auto" role="img" aria-label="FeastQR platform illustration with phone menu, QR code, and Moroccan food">
+      <svg viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative w-full h-auto" role="img" aria-label="Diyafa platform illustration with phone menu, QR code, and Moroccan food">
         <defs>
           <linearGradient id="h-ember" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E84D25" /><stop offset="100%" stopColor="#D4A017" /></linearGradient>
           <linearGradient id="h-phone" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#1A1B2E" /><stop offset="100%" stopColor="#12131F" /></linearGradient>

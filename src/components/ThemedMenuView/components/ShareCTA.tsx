@@ -26,7 +26,7 @@ function CloseSmallIcon() {
 
 // ── CTA Banner ──────────────────────────────────────────────
 
-const DISMISSED_KEY = "feastqr_share_cta_dismissed";
+const DISMISSED_KEY = "Diyafa_share_cta_dismissed";
 
 interface ShareCTABannerProps {
   menuName: string;

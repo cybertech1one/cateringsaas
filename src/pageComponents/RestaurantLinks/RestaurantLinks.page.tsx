@@ -444,16 +444,16 @@ export const RestaurantLinksPage = ({
           </a>
         )}
 
-        {/* Powered by FeastQR */}
+        {/* Powered by Diyafa */}
         <div className="mt-10 flex items-center gap-1.5 text-xs text-muted-foreground/50">
           <span>Powered by</span>
           <a
-            href={process.env.NEXT_PUBLIC_APP_URL ?? "https://www.feastqr.com"}
+            href={process.env.NEXT_PUBLIC_APP_URL ?? "https://www.diyafa.ma"}
             target="_blank"
             rel="noopener noreferrer"
             className="font-semibold text-primary/60 transition-colors hover:text-primary"
           >
-            FeastQR
+            Diyafa
           </a>
         </div>
       </div>

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 
-const CONSENT_KEY = "feastqr_cookie_consent";
-const CONSENT_VERSION_KEY = "feastqr_consent_version";
+const CONSENT_KEY = "Diyafa_cookie_consent";
+const CONSENT_VERSION_KEY = "Diyafa_consent_version";
 
 export const CURRENT_CONSENT_VERSION = 1;
 

@@ -136,7 +136,7 @@ export function OrderReceipt({ restaurantName, order, onClose }: OrderReceiptPro
               {t("payment.status")}: {order.paymentStatus === "paid" ? t("payment.paid") : t("payment.unpaid")}
             </p>
             <p className="mt-3 text-[10px]">
-              Powered by FeastQR
+              Powered by Diyafa
             </p>
           </div>
         </div>

@@ -66,7 +66,7 @@ export const revenueRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       // Verify the user owns menus under this "restaurant" (profile)
-      // In FeastQR, a user's profile id serves as the restaurant id.
+      // In Diyafa, a user's profile id serves as the restaurant id.
       if (input.restaurantId !== ctx.user.id) {
         throw new TRPCError({
           code: "FORBIDDEN",

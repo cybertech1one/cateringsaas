@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "Affiliates",
-  description: "Earn rewards by referring other restaurants to FeastQR.",
+  description: "Earn rewards by referring other restaurants to Diyafa.",
 };
 
 const AffiliatesPage = nextDynamic(

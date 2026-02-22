@@ -5,7 +5,7 @@ import { LoadingScreen } from "~/components/Loading";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: "Catering | FeastQR",
+  title: "Catering | Diyafa",
   description: "Create and manage catering menus, packages, and event inquiries.",
 };
 

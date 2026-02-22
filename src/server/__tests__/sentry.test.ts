@@ -80,7 +80,7 @@ describe("sentry", () => {
       expect(body.timestamp).toBe("2024-06-15T12:00:00.000Z");
       expect(body.platform).toBe("node");
       expect(body.level).toBe("error");
-      expect(body.server_name).toBe("feastqr");
+      expect(body.server_name).toBe("Diyafa");
       expect(body.exception.values[0].type).toBe("TypeError");
       expect(body.exception.values[0].value).toBe(
         "Cannot read property 'x' of undefined",
@@ -163,7 +163,7 @@ describe("sentry", () => {
       expect(body.level).toBe("info");
       expect(body.message).toEqual({ formatted: "Deploy started" });
       expect(body.extra).toEqual({ version: "1.2.3" });
-      expect(body.server_name).toBe("feastqr");
+      expect(body.server_name).toBe("Diyafa");
     });
 
     it("should default to info level", async () => {

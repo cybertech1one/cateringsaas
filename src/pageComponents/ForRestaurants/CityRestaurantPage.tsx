@@ -142,7 +142,7 @@ export const CityRestaurantPage = async ({
                 <Link
                   href="/register"
                   className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-ember px-8 py-4 text-base font-semibold text-white shadow-lg shadow-ember/25 transition-all duration-200 hover:bg-ember-light hover:shadow-xl hover:shadow-ember/30"
-                  aria-label={`Join FeastQR in ${city.name}`}
+                  aria-label={`Join Diyafa in ${city.name}`}
                 >
                   {t("cityPages.joinInCity", { city: city.name })}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

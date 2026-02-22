@@ -1,5 +1,5 @@
 -- ============================================================================
--- Comprehensive Performance Indexes for FeastQR
+-- Comprehensive Performance Indexes for Diyafa
 -- ============================================================================
 -- This migration adds composite indexes, partial indexes, and GIN/trigram
 -- indexes for all commonly queried patterns identified from tRPC routers.

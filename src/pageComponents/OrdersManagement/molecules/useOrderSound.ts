@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const MUTE_STORAGE_KEY = "feastqr-orders-sound-muted";
+const MUTE_STORAGE_KEY = "Diyafa-orders-sound-muted";
 
 function playBeepSound() {
   try {

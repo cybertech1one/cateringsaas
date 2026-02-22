@@ -1,7 +1,7 @@
 import { OrderTrackingPage } from "~/pageComponents/OrderTracking/OrderTracking.page";
 
 export const metadata = {
-  title: "Track Your Order | FeastQR",
+  title: "Track Your Order | Diyafa",
   description: "Track your restaurant order status in real-time",
 };
 

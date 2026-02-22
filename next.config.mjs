@@ -13,7 +13,7 @@ const config = {
         hostname: "flagsapi.com",
       },
       {
-        hostname: "feastqr.com",
+        hostname: "diyafa.ma",
       },
       {
         hostname: "localhost",

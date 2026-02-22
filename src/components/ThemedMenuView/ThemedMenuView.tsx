@@ -192,7 +192,7 @@ function PoweredByFooter() {
       }}
     >
       <a
-        href={process.env.NEXT_PUBLIC_APP_URL ?? "https://www.feastqr.com"}
+        href={process.env.NEXT_PUBLIC_APP_URL ?? "https://www.diyafa.ma"}
         target="_blank"
         rel="noopener noreferrer"
         style={{
@@ -215,7 +215,7 @@ function PoweredByFooter() {
             letterSpacing: "0.3px",
           }}
         >
-          FeastQR
+          Diyafa
         </span>
       </a>
     </div>
@@ -790,7 +790,7 @@ const ThemedMenuViewInner = ({
         <ShareCTABanner menuName={menu.name} menuSlug={menu.slug} />
       )}
 
-      {/* Powered by FeastQR footer */}
+      {/* Powered by Diyafa footer */}
       {!isPreview && <PoweredByFooter />}
 
       {/* Floating Share Button */}

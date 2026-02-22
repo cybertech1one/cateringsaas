@@ -23,14 +23,14 @@ export async function generateMetadata({
       title: `${data.name} Menu`,
       description: `${data.address} | ${data.city}`,
       url: getAppUrl(),
-      siteName: "FeastQR",
+      siteName: "Diyafa",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: `${data.name} Menu`,
       description: `${data.address} | ${data.city}`,
-      site: "@feastqr",
+      site: "@diyafa_ma",
     },
   };
 }

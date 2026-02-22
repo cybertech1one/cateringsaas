@@ -151,7 +151,7 @@ async function sendPushToSubscription(
 
     const jwt = await createVapidJwt(
       audience,
-      "mailto:support@feastqr.com",
+      "mailto:support@diyafa.ma",
       vapid.privateKey,
     );
 
