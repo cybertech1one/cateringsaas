@@ -287,7 +287,7 @@ function DetailsTab({
   );
   const [serviceCleanup, setServiceCleanup] = useState(menu.serviceCleanup);
 
-  const updateMutation = api.catering.updateMenu.useMutation({
+  const updateMutation = api.cateringMenus.update.useMutation({
     onSuccess: () => {
       toast({
         title: t("catering.menuUpdated"),
@@ -306,29 +306,20 @@ function DetailsTab({
 
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
+    // cateringMenus.update takes flat fields with menuId, not nested { id, data }
     updateMutation.mutate({
-      id: menu.id,
-      data: {
-        name: name.trim(),
-        description: description.trim() || undefined,
-        city: city.trim() || undefined,
-        eventType: eventType as "general" | "wedding" | "corporate" | "birthday" | "ramadan_iftar" | "eid" | "funeral" | "graduation" | "engagement",
-        contactPhone: contactPhone.trim() || undefined,
-        contactEmail: contactEmail.trim() || undefined,
-        minGuests: minGuests ? parseInt(minGuests, 10) : undefined,
-        maxGuests: maxGuests ? parseInt(maxGuests, 10) : undefined,
-        basePricePerPerson: basePricePerPerson
-          ? Math.round(parseFloat(basePricePerPerson) * 100)
-          : undefined,
-        leadTimeDays: leadTimeDays ? parseInt(leadTimeDays, 10) : undefined,
-        serviceOptions: {
-          deliveryIncluded: serviceDelivery,
-          setupIncluded: serviceSetup,
-          providesStaff: serviceStaff,
-          providesEquipment: serviceEquipment,
-          cleanupIncluded: serviceCleanup,
-        },
-      },
+      menuId: menu.id,
+      name: name.trim(),
+      description: description.trim() || undefined,
+      minGuests: minGuests ? parseInt(minGuests, 10) : undefined,
+      maxGuests: maxGuests ? parseInt(maxGuests, 10) : undefined,
+      basePricePerPerson: basePricePerPerson
+        ? Math.round(parseFloat(basePricePerPerson) * 100)
+        : undefined,
+      eventType: eventType || undefined,
+      // TODO: city, contactPhone, contactEmail, leadTimeDays, and
+      // serviceOptions are not accepted by cateringMenus.update. These fields
+      // need to be added to the router or handled via a different endpoint.
     });
   }
 
@@ -525,54 +516,37 @@ function PackagesTab({
   const [pkgDescription, setPkgDescription] = useState("");
   const [pkgPrice, setPkgPrice] = useState("");
 
-  const createMutation = api.catering.createPackage.useMutation({
-    onSuccess: () => {
-      toast({ title: t("catering.packageCreated") });
-      setDialogOpen(false);
-      onRefetch();
+  // TODO: Package CRUD endpoints (createPackage, updatePackage, deletePackage,
+  // reorderPackages) do not exist in any router. The cateringMenus router only
+  // handles menu-level and item-level operations. Package endpoints need to be
+  // added to the cateringMenus router before these mutations can work.
+  const createMutation = {
+    mutate: (_input: Record<string, unknown>) => {
+      toast({ title: "TODO: createPackage endpoint not yet implemented", variant: "destructive" as const });
     },
-    onError: (err) => {
-      toast({
-        title: t("toast.error"),
-        description: err.message,
-        variant: "destructive",
-      });
-    },
-  });
+    isLoading: false,
+  };
 
-  const updateMutation = api.catering.updatePackage.useMutation({
-    onSuccess: () => {
-      toast({ title: t("catering.packageUpdated") });
-      setDialogOpen(false);
-      setEditingPkg(null);
-      onRefetch();
+  const updateMutation = {
+    mutate: (_input: Record<string, unknown>) => {
+      toast({ title: "TODO: updatePackage endpoint not yet implemented", variant: "destructive" as const });
     },
-    onError: (err) => {
-      toast({
-        title: t("toast.error"),
-        description: err.message,
-        variant: "destructive",
-      });
-    },
-  });
+    isLoading: false,
+  };
 
-  const deleteMutation = api.catering.deletePackage.useMutation({
-    onSuccess: () => {
-      toast({ title: t("catering.packageDeleted") });
-      onRefetch();
+  const deleteMutation = {
+    mutate: (_input: Record<string, unknown>) => {
+      toast({ title: "TODO: deletePackage endpoint not yet implemented", variant: "destructive" as const });
     },
-    onError: (err) => {
-      toast({
-        title: t("toast.error"),
-        description: err.message,
-        variant: "destructive",
-      });
-    },
-  });
+    isLoading: false,
+  };
 
-  const reorderMutation = api.catering.reorderPackages.useMutation({
-    onSuccess: () => onRefetch(),
-  });
+  const reorderMutation = {
+    mutate: (_input: Record<string, unknown>) => {
+      // TODO: reorderPackages endpoint not yet implemented
+    },
+    isLoading: false,
+  };
 
   function openCreate() {
     setEditingPkg(null);
@@ -841,55 +815,35 @@ function ItemsTab({
   const [itemGlutenFree, setItemGlutenFree] = useState(false);
 
   // ── Category mutations ─────────────────────────────────────
+  // TODO: Category CRUD endpoints (createCategory, updateCategory,
+  // deleteCategory) do not exist in any router. The cateringMenus router
+  // groups items by category field on each item, not via a separate
+  // categories table. These endpoints need to be added.
 
-  const createCatMutation = api.catering.createCategory.useMutation({
-    onSuccess: () => {
-      toast({ title: t("catering.categoryCreated") });
-      setCatDialogOpen(false);
-      onRefetch();
+  const createCatMutation = {
+    mutate: (_input: Record<string, unknown>) => {
+      toast({ title: "TODO: createCategory endpoint not yet implemented", variant: "destructive" as const });
     },
-    onError: (err) => {
-      toast({
-        title: t("toast.error"),
-        description: err.message,
-        variant: "destructive",
-      });
-    },
-  });
+    isLoading: false,
+  };
 
-  const updateCatMutation = api.catering.updateCategory.useMutation({
-    onSuccess: () => {
-      toast({ title: t("catering.categoryUpdated") });
-      setCatDialogOpen(false);
-      setEditingCat(null);
-      onRefetch();
+  const updateCatMutation = {
+    mutate: (_input: Record<string, unknown>) => {
+      toast({ title: "TODO: updateCategory endpoint not yet implemented", variant: "destructive" as const });
     },
-    onError: (err) => {
-      toast({
-        title: t("toast.error"),
-        description: err.message,
-        variant: "destructive",
-      });
-    },
-  });
+    isLoading: false,
+  };
 
-  const deleteCatMutation = api.catering.deleteCategory.useMutation({
-    onSuccess: () => {
-      toast({ title: t("catering.categoryDeleted") });
-      onRefetch();
+  const deleteCatMutation = {
+    mutate: (_input: Record<string, unknown>) => {
+      toast({ title: "TODO: deleteCategory endpoint not yet implemented", variant: "destructive" as const });
     },
-    onError: (err) => {
-      toast({
-        title: t("toast.error"),
-        description: err.message,
-        variant: "destructive",
-      });
-    },
-  });
+    isLoading: false,
+  };
 
   // ── Item mutations ─────────────────────────────────────────
 
-  const createItemMutation = api.catering.createItem.useMutation({
+  const createItemMutation = api.cateringMenus.addItem.useMutation({
     onSuccess: () => {
       toast({ title: t("catering.itemCreated") });
       setItemDialogOpen(false);
@@ -904,7 +858,7 @@ function ItemsTab({
     },
   });
 
-  const updateItemMutation = api.catering.updateItem.useMutation({
+  const updateItemMutation = api.cateringMenus.updateItem.useMutation({
     onSuccess: () => {
       toast({ title: t("catering.itemUpdated") });
       setItemDialogOpen(false);
@@ -920,12 +874,12 @@ function ItemsTab({
     },
   });
 
-  const deleteItemMutation = api.catering.deleteItem.useMutation({
+  const deleteItemMutation = api.cateringMenus.deleteItem.useMutation({
     onSuccess: () => {
       toast({ title: t("catering.itemDeleted") });
       onRefetch();
     },
-    onError: (err) => {
+    onError: (err: { message: string }) => {
       toast({
         title: t("toast.error"),
         description: err.message,
@@ -934,7 +888,9 @@ function ItemsTab({
     },
   });
 
-  const toggleAvailMutation = api.catering.toggleItemAvailability.useMutation({
+  // TODO: toggleItemAvailability does not exist in cateringMenus router.
+  // Use cateringMenus.updateItem to toggle isActive field instead.
+  const toggleAvailMutation = api.cateringMenus.updateItem.useMutation({
     onSuccess: () => onRefetch(),
     onError: (err) => {
       toast({
@@ -1006,27 +962,31 @@ function ItemsTab({
     e.preventDefault();
     const priceInCents = Math.round(parseFloat(itemPrice || "0") * 100);
 
+    // cateringMenus.addItem expects: { menuId, name, category, price, ... }
+    // cateringMenus.updateItem expects: { itemId, name?, price?, ... }
+    // Dietary flags (isHalal, isVegetarian, etc.) map to dietaryInfo array.
+    const dietaryInfo: string[] = [];
+    if (itemHalal) dietaryInfo.push("halal");
+    if (itemVegetarian) dietaryInfo.push("vegetarian");
+    if (itemVegan) dietaryInfo.push("vegan");
+    if (itemGlutenFree) dietaryInfo.push("gluten_free");
+
     if (editingItem) {
       updateItemMutation.mutate({
-        id: editingItem.id,
-        data: {
-          name: itemName.trim(),
-          description: itemDescription.trim() || undefined,
-          pricePerPerson: priceInCents,
-          isHalal: itemHalal,
-          isVegetarian: itemVegetarian,
-          isVegan: itemVegan,
-          isGlutenFree: itemGlutenFree,
-        },
-      });
-    } else {
-      createItemMutation.mutate({
-        cateringCategoryId: itemCatId,
-        cateringMenuId: menu.id,
+        itemId: editingItem.id,
         name: itemName.trim(),
         description: itemDescription.trim() || undefined,
         pricePerPerson: priceInCents,
-        isHalal: itemHalal,
+        // NOTE: isVegetarian/isVegan/isGlutenFree are set at creation time via addItem.
+        // updateItem schema does not currently accept dietary flags.
+      });
+    } else {
+      createItemMutation.mutate({
+        menuId: menu.id,
+        categoryId: itemCatId,
+        name: itemName.trim(),
+        description: itemDescription.trim() || undefined,
+        pricePerPerson: priceInCents,
         isVegetarian: itemVegetarian,
         isVegan: itemVegan,
         isGlutenFree: itemGlutenFree,
@@ -1137,7 +1097,10 @@ function ItemsTab({
                           variant="ghost"
                           size="sm"
                           onClick={() =>
-                            toggleAvailMutation.mutate({ id: item.id })
+                            toggleAvailMutation.mutate({
+                              itemId: item.id,
+                              isAvailable: !item.isAvailable,
+                            })
                           }
                           title={
                             item.isAvailable
@@ -1166,7 +1129,7 @@ function ItemsTab({
                             if (
                               window.confirm(t("catering.deleteItemConfirm"))
                             ) {
-                              deleteItemMutation.mutate({ id: item.id });
+                              deleteItemMutation.mutate({ itemId: item.id });
                             }
                           }}
                         >
@@ -1387,7 +1350,8 @@ function ThemeTab({
   const [font, setFont] = useState(menu.themeFont ?? "sans-serif");
   const [layout, setLayout] = useState(menu.themeLayout ?? "classic");
 
-  const saveMutation = api.catering.saveTheme.useMutation({
+  // Theme is managed at the org level via orgThemes router, not per-menu
+  const saveMutation = api.orgThemes.upsert.useMutation({
     onSuccess: () => {
       toast({ title: t("catering.themeSaved") });
       onRefetch();
@@ -1401,7 +1365,7 @@ function ThemeTab({
     },
   });
 
-  const resetMutation = api.catering.resetTheme.useMutation({
+  const resetMutation = api.orgThemes.reset.useMutation({
     onSuccess: () => {
       toast({ title: t("catering.themeReset") });
       setPrimaryColor("#f97316");
@@ -1422,8 +1386,8 @@ function ThemeTab({
   });
 
   function handleSave() {
+    // orgThemes.upsert operates at the org level (no per-menu theme)
     saveMutation.mutate({
-      cateringMenuId: menu.id,
       primaryColor,
       secondaryColor: primaryColor,
       backgroundColor,
@@ -1432,9 +1396,9 @@ function ThemeTab({
       accentColor,
       headingFont: font,
       bodyFont: font,
-      layoutStyle: layout as "classic" | "modern" | "elegant" | "minimal" | "festive",
+      layoutStyle: layout as "elegant" | "modern" | "traditional" | "minimal" | "bold",
       cardStyle: "elevated" as const,
-      borderRadius: "medium",
+      borderRadius: "medium" as const,
       headerStyle: "banner" as const,
     });
   }
@@ -1588,7 +1552,7 @@ function ThemeTab({
           variant="outline"
           onClick={() => {
             if (window.confirm(t("catering.theme.resetConfirm"))) {
-              resetMutation.mutate({ cateringMenuId: menu.id });
+              resetMutation.mutate({});
             }
           }}
           disabled={resetMutation.isLoading}
@@ -1686,7 +1650,7 @@ export function CateringMenuEditor({ menuId, onBack }: CateringMenuEditorProps) 
     data: menu,
     isLoading,
     refetch,
-  } = api.catering.getMenu.useQuery({ id: menuId });
+  } = api.cateringMenus.getById.useQuery({ menuId });
 
   const handleRefetch = useCallback(() => {
     void refetch();
@@ -1790,7 +1754,7 @@ export function CateringMenuEditor({ menuId, onBack }: CateringMenuEditorProps) 
           )}
           {activeTab === "inquiries" && (
             <EditorInquiriesTab
-              inquiries={(menu as CateringMenuFull).inquiries ?? []}
+              inquiries={(menu as unknown as CateringMenuFull).inquiries ?? []}
               t={
                 t as (
                   key: string,

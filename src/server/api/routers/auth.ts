@@ -48,17 +48,9 @@ export const authRouter = createTRPCRouter({
       }
 
       // Delete all user data in a transaction.
-      // The Profiles model has onDelete: Cascade for menus, restaurants,
-      // referrals, aiUsage, and staffMembers. However, subscriptions,
-      // appAuditLog, and loyaltyStamp.stampedBy do NOT cascade, so we
-      // handle them explicitly before deleting the profile.
+      // Subscriptions and appAuditLog do NOT cascade, so we handle
+      // them explicitly before deleting the profile.
       await ctx.db.$transaction(async (tx) => {
-        // Nullify stampedBy references (onDelete: NoAction)
-        await tx.loyaltyStamp.updateMany({
-          where: { stampedBy: userId },
-          data: { stampedBy: null },
-        });
-
         // Delete subscription (onDelete: NoAction on profiles FK)
         await tx.subscriptions.deleteMany({
           where: { profileId: userId },
@@ -69,8 +61,12 @@ export const authRouter = createTRPCRouter({
           where: { userId },
         });
 
-        // Delete the profile - cascades to menus, restaurants, referrals,
-        // aiUsage, staffMembers, and all their children
+        // Delete org memberships
+        await tx.orgMembers.deleteMany({
+          where: { userId },
+        });
+
+        // Delete the profile
         await tx.profiles.delete({
           where: { id: userId },
         });

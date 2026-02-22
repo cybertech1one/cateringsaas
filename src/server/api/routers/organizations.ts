@@ -10,6 +10,7 @@
  */
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { Prisma } from "@prisma/client";
 import {
   createTRPCRouter,
   publicProcedure,
@@ -30,9 +31,6 @@ const orgTypeEnum = z.enum([
   "hotel",
   "venue",
   "event_planner",
-  "cafe",
-  "bakery",
-  "food_truck",
 ]);
 
 const priceRangeEnum = z.enum(["budget", "mid", "premium", "luxury"]);
@@ -127,7 +125,7 @@ export const organizationsRouter = createTRPCRouter({
           type: true,
           description: true,
           logoUrl: true,
-          coverUrl: true,
+          coverImageUrl: true,
           city: true,
           cuisines: true,
           specialties: true,
@@ -167,7 +165,7 @@ export const organizationsRouter = createTRPCRouter({
           description: true,
           bio: true,
           logoUrl: true,
-          coverUrl: true,
+          coverImageUrl: true,
           city: true,
           address: true,
           phone: true,
@@ -246,7 +244,7 @@ export const organizationsRouter = createTRPCRouter({
         type: true,
         description: true,
         logoUrl: true,
-        coverUrl: true,
+        coverImageUrl: true,
         city: true,
         cuisines: true,
         priceRange: true,
@@ -398,7 +396,7 @@ export const organizationsRouter = createTRPCRouter({
 
       return ctx.db.organizations.update({
         where: { id: ctx.orgId },
-        data: { settings: mergedSettings },
+        data: { settings: mergedSettings as unknown as Prisma.InputJsonValue },
       });
     }),
 

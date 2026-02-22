@@ -20,10 +20,22 @@ const EVENT_TYPES = [
   "other",
 ];
 
+type PortfolioImage = {
+  id: string;
+  imageUrl: string;
+  thumbnailUrl: string | null;
+  caption: string | null;
+  eventType: string | null;
+  eventDate: Date | null;
+  isFeatured: boolean;
+  sortOrder: number;
+  orgId: string;
+};
+
 export default function PortfolioManagement() {
   const { data: images, isLoading } = api.portfolio.list.useQuery({});
 
-  const items = (images ?? []) as Array<Record<string, unknown>>;
+  const items = (images ?? []) as PortfolioImage[];
 
   return (
     <div className="space-y-6">
@@ -64,14 +76,14 @@ export default function PortfolioManagement() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {items.map((img) => (
             <Card
-              key={img.id as string}
+              key={img.id}
               className="group overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
             >
               <div className="relative aspect-[4/3] bg-muted">
                 {img.thumbnailUrl || img.imageUrl ? (
                   <img
-                    src={(img.thumbnailUrl ?? img.imageUrl) as string}
-                    alt={(img.caption as string) || "Portfolio image"}
+                    src={img.thumbnailUrl ?? img.imageUrl}
+                    alt={img.caption || "Portfolio image"}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -79,7 +91,7 @@ export default function PortfolioManagement() {
                     <Image className="h-8 w-8 text-muted-foreground/40" />
                   </div>
                 )}
-                {(img.isFeatured as boolean) && (
+                {img.isFeatured && (
                   <div className="absolute top-2 right-2">
                     <Badge className="bg-amber-500 text-white text-[10px] gap-1">
                       <Star className="h-3 w-3" />
@@ -91,18 +103,18 @@ export default function PortfolioManagement() {
               <CardContent className="p-3">
                 {img.caption && (
                   <p className="text-sm font-medium line-clamp-1">
-                    {img.caption as string}
+                    {img.caption}
                   </p>
                 )}
                 <div className="flex items-center gap-2 mt-1">
                   {img.eventType && (
                     <Badge variant="secondary" className="text-[10px]">
-                      {(img.eventType as string).replace(/_/g, " ")}
+                      {img.eventType.replace(/_/g, " ")}
                     </Badge>
                   )}
                   {img.eventDate && (
                     <span className="text-[10px] text-muted-foreground">
-                      {new Date(img.eventDate as string).toLocaleDateString(
+                      {new Date(img.eventDate).toLocaleDateString(
                         "fr-MA",
                         { month: "short", year: "numeric" }
                       )}

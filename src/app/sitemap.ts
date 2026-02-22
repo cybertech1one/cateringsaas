@@ -74,45 +74,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]);
 
-  // Dynamic published menu pages
-  let menuPages: MetadataRoute.Sitemap = [];
-  let explorePages: MetadataRoute.Sitemap = [];
+  // Dynamic published organization pages
+  let orgPages: MetadataRoute.Sitemap = [];
 
   try {
-    const publishedMenus = await db.menus.findMany({
-      where: { isPublished: true },
+    const publishedOrgs = await db.organizations.findMany({
+      where: { isPublished: true, isActive: true },
       select: { slug: true, updatedAt: true },
     });
 
-    menuPages = publishedMenus.map((menu) => ({
-      url: `${baseUrl}/menu/${menu.slug}`,
-      lastModified: menu.updatedAt,
-      changeFrequency: "daily" as const,
+    orgPages = publishedOrgs.map((org) => ({
+      url: `${baseUrl}/caterer/${org.slug}`,
+      lastModified: org.updatedAt,
+      changeFrequency: "weekly" as const,
       priority: 0.8,
     }));
-
-    // Explore / directory pages
-    const cities = await db.city.findMany({
-      select: { slug: true, createdAt: true },
-    });
-
-    explorePages = [
-      {
-        url: `${baseUrl}/explore`,
-        lastModified: new Date(),
-        changeFrequency: "daily" as const,
-        priority: 0.7,
-      },
-      ...cities.map((city) => ({
-        url: `${baseUrl}/explore/${city.slug}`,
-        lastModified: city.createdAt,
-        changeFrequency: "daily" as const,
-        priority: 0.6,
-      })),
-    ];
   } catch {
     // DB might not be available during build
   }
 
-  return [...staticPages, ...cityPages, ...menuPages, ...explorePages];
+  return [...staticPages, ...cityPages, ...orgPages];
 }

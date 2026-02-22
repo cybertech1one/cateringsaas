@@ -1,8 +1,17 @@
 import { QRCodeSVG } from "qrcode.react";
 import { Icons } from "../Icons";
-import { type PrintCreatorFormValues } from "~/pageComponents/MenuPrintCreator/MenuPrintCreator.schema";
 
-type MenuCardProps = PrintCreatorFormValues & {
+type MenuCardProps = {
+  qrCodeEnabled?: boolean;
+  menuLogoImageUrl?: string | null;
+  instagramHandle?: string;
+  instagramEnabled?: boolean;
+  facebookName?: string;
+  facebookEnabled?: boolean;
+  restaurantNameEnabled?: boolean;
+  restaurantName?: string;
+  wifiPasswordEnabled?: boolean;
+  wifiPassword?: string;
   qrCodeUrl: string;
 };
 

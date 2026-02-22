@@ -283,14 +283,16 @@ export const calendarRouter = createTRPCRouter({
       events.forEach((e) => {
         const key = e.eventDate.toISOString().slice(0, 10);
         if (!busyDates[key]) busyDates[key] = { eventCount: 0, isBlocked: false };
-        busyDates[key].eventCount++;
+        const entry = busyDates[key]!;
+        entry.eventCount++;
       });
 
       blockedDates.forEach((b) => {
         const key = b.date.toISOString().slice(0, 10);
         if (!busyDates[key]) busyDates[key] = { eventCount: 0, isBlocked: false };
-        busyDates[key].isBlocked = true;
-        busyDates[key].reason = b.reason ?? undefined;
+        const entry = busyDates[key]!;
+        entry.isBlocked = true;
+        entry.reason = b.reason ?? undefined;
       });
 
       return busyDates;

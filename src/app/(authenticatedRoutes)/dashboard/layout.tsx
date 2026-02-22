@@ -29,7 +29,7 @@ const eventNavItems: readonly SidebarNavItem[] = [
   {
     title: <TranslatedText id="dashboardSidenav.quotes" />,
     href: "/dashboard/quotes",
-    icon: "fileText",
+    icon: "post",
   },
   {
     title: <TranslatedText id="dashboardSidenav.clients" />,
@@ -58,7 +58,7 @@ const operationsNavItems: readonly SidebarNavItem[] = [
   {
     title: <TranslatedText id="dashboardSidenav.equipment" />,
     href: "/dashboard/equipment",
-    icon: "package",
+    icon: "construction",
   },
   {
     title: <TranslatedText id="dashboardSidenav.kitchen" />,

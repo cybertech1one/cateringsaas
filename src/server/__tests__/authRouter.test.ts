@@ -27,8 +27,8 @@ vi.mock("~/server/db", () => ({
     appAuditLog: {
       deleteMany: vi.fn(),
     },
-    loyaltyStamp: {
-      updateMany: vi.fn(),
+    orgMembers: {
+      deleteMany: vi.fn(),
     },
     $transaction: vi.fn(),
   },
@@ -223,7 +223,7 @@ describe("authRouter", () => {
     });
 
     it("should handle profiles with different roles", async () => {
-      const roles = ["user", "admin", "super_admin", "manager", "staff"] as const;
+      const roles = ["user", "admin", "super_admin"] as const;
 
       for (const role of roles) {
         vi.clearAllMocks();
@@ -450,9 +450,9 @@ describe("authRouter", () => {
       const operationOrder: string[] = [];
 
       const mockTx = {
-        loyaltyStamp: {
-          updateMany: vi.fn(() => {
-            operationOrder.push("loyaltyStamp.updateMany");
+        orgMembers: {
+          deleteMany: vi.fn(() => {
+            operationOrder.push("orgMembers.deleteMany");
 
             return Promise.resolve({ count: 0 });
           }),
@@ -487,11 +487,11 @@ describe("authRouter", () => {
 
       await caller.deleteAccount({ confirmation: "DELETE MY ACCOUNT" });
 
-      // loyaltyStamp nullify should happen before profiles.delete
-      const stampIdx = operationOrder.indexOf("loyaltyStamp.updateMany");
+      // orgMembers delete should happen before profiles.delete
+      const membersIdx = operationOrder.indexOf("orgMembers.deleteMany");
       const profileIdx = operationOrder.indexOf("profiles.delete");
 
-      expect(stampIdx).toBeLessThan(profileIdx);
+      expect(membersIdx).toBeLessThan(profileIdx);
 
       // subscriptions delete should happen before profiles.delete
       const subIdx = operationOrder.indexOf("subscriptions.deleteMany");
@@ -504,11 +504,11 @@ describe("authRouter", () => {
       expect(auditIdx).toBeLessThan(profileIdx);
     });
 
-    it("should nullify stampedBy on loyalty stamps before deleting profile", async () => {
+    it("should delete org memberships before deleting profile", async () => {
       const caller = createMockCaller(userId);
       const mockTx = {
-        loyaltyStamp: {
-          updateMany: vi.fn().mockResolvedValue({ count: 3 } as never),
+        orgMembers: {
+          deleteMany: vi.fn().mockResolvedValue({ count: 3 } as never),
         },
         subscriptions: {
           deleteMany: vi.fn().mockResolvedValue({ count: 0 } as never),
@@ -528,17 +528,16 @@ describe("authRouter", () => {
 
       await caller.deleteAccount({ confirmation: "DELETE MY ACCOUNT" });
 
-      expect(mockTx.loyaltyStamp.updateMany).toHaveBeenCalledWith({
-        where: { stampedBy: userId },
-        data: { stampedBy: null },
+      expect(mockTx.orgMembers.deleteMany).toHaveBeenCalledWith({
+        where: { userId },
       });
     });
 
     it("should delete subscriptions for the user", async () => {
       const caller = createMockCaller(userId);
       const mockTx = {
-        loyaltyStamp: {
-          updateMany: vi.fn().mockResolvedValue({ count: 0 } as never),
+        orgMembers: {
+          deleteMany: vi.fn().mockResolvedValue({ count: 0 } as never),
         },
         subscriptions: {
           deleteMany: vi.fn().mockResolvedValue({ count: 1 } as never),
@@ -566,8 +565,8 @@ describe("authRouter", () => {
     it("should delete audit log entries for the user", async () => {
       const caller = createMockCaller(userId);
       const mockTx = {
-        loyaltyStamp: {
-          updateMany: vi.fn().mockResolvedValue({ count: 0 } as never),
+        orgMembers: {
+          deleteMany: vi.fn().mockResolvedValue({ count: 0 } as never),
         },
         subscriptions: {
           deleteMany: vi.fn().mockResolvedValue({ count: 0 } as never),
@@ -595,8 +594,8 @@ describe("authRouter", () => {
     it("should delete the profile record (cascading menus, restaurants, etc.)", async () => {
       const caller = createMockCaller(userId);
       const mockTx = {
-        loyaltyStamp: {
-          updateMany: vi.fn().mockResolvedValue({ count: 0 } as never),
+        orgMembers: {
+          deleteMany: vi.fn().mockResolvedValue({ count: 0 } as never),
         },
         subscriptions: {
           deleteMany: vi.fn().mockResolvedValue({ count: 0 } as never),

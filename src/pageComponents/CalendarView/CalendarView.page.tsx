@@ -211,11 +211,11 @@ export default function CalendarView() {
                     day: "numeric",
                     month: "short",
                   })}
-                  {b.reason && (
+                  {b.reason ? (
                     <span className="text-muted-foreground">
-                      — {b.reason as string}
+                      — {String(b.reason)}
                     </span>
-                  )}
+                  ) : null}
                 </Badge>
               ))}
             </div>

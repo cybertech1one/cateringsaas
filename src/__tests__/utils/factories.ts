@@ -1,26 +1,26 @@
 /**
  * Test data factories for Diyafa models.
  *
- * Each factory generates realistic restaurant/menu data with sensible defaults.
+ * Each factory generates realistic catering/event data with sensible defaults.
  * All IDs are deterministic UUIDs seeded by an incrementing counter so tests
  * remain predictable when no override is supplied.
  *
- * Prices are stored as integers (cents): 1999 = $19.99 (matches Prisma schema).
+ * Prices are stored as integers (centimes): 1999 = 19.99 MAD (matches Prisma schema).
  */
 
+import { Prisma } from "@prisma/client";
 import type {
-  Menus,
-  Categories,
-  Dishes,
+  CateringMenus,
+  CateringCategories,
+  CateringItems,
   Profiles,
   Reviews,
-  Restaurants,
-  Locations,
-  DishVariants,
-  Orders,
-  OrderItems,
-  MenuThemes,
-  Promotions,
+  Organizations,
+  OrgThemes,
+  Events,
+  Quotes,
+  QuoteItems,
+  CateringPackages,
 } from "@prisma/client";
 
 // ---------------------------------------------------------------------------
@@ -48,19 +48,19 @@ function recentDate(daysAgo = 0): Date {
   return d;
 }
 
-// Pools of realistic restaurant data
-const RESTAURANT_NAMES = [
-  "Shawarma Klub Haus",
-  "Riad Casablanca",
-  "Le Petit Marrakech",
-  "Atlas Grill House",
-  "Dar Tanjia",
-  "Cafe Medina",
-  "La Table du Souk",
-  "Bab Mansour Bistro",
+// Pools of realistic catering data
+const ORG_NAMES = [
+  "Diyafa Royale",
+  "Riad Casablanca Traiteur",
+  "Le Festin du Souk",
+  "Atlas Grill Catering",
+  "Dar Tanjia Events",
+  "Cafe Medina Traiteur",
+  "La Table du Palais",
+  "Bab Mansour Catering",
 ] as const;
 
-const DISH_NAMES = [
+const ITEM_NAMES = [
   "Lamb Tagine with Preserved Lemons",
   "Chicken Bastilla",
   "Harira Soup",
@@ -117,23 +117,86 @@ export function createUser(overrides?: Partial<Profiles>): Profiles {
     aiProvider: "openai",
     aiModel: "gpt-4o-mini",
     role: "user",
-    crmApiKey: null,
-    crmWorkspaceUrl: null,
-    crmAutoSync: false,
-    crmLastSyncedAt: null,
     ...overrides,
   };
 }
 
 // ---------------------------------------------------------------------------
-// Factory: Menu
+// Factory: Organization (replaces Restaurant)
 // ---------------------------------------------------------------------------
 
-export function createMenu(overrides?: Partial<Menus>): Menus {
+export function createRestaurant(overrides?: Partial<Organizations>): Organizations {
+  const id = overrides?.id ?? nextUuid();
+
+  return {
+    id,
+    name: ORG_NAMES[counter % ORG_NAMES.length]!,
+    slug: `org-${id.slice(-6)}`,
+    type: "caterer",
+    description: "Authentic Moroccan catering for weddings and events.",
+    bio: null,
+    tagline: null,
+    city: CITIES[counter % CITIES.length]!,
+    address: STREETS[counter % STREETS.length]!,
+    latitude: null,
+    longitude: null,
+    serviceAreas: [],
+    phone: "+212522123456",
+    email: "contact@example.com",
+    whatsappNumber: null,
+    website: "https://example.com",
+    instagram: null,
+    facebook: null,
+    cuisines: ["Moroccan"],
+    specialties: [],
+    eventTypes: [],
+    serviceStyles: [],
+    languages: ["ar", "fr"],
+    minGuests: 10,
+    maxGuests: 500,
+    priceRange: "mid",
+    yearsInBusiness: null,
+    teamSize: null,
+    priceMin: null,
+    priceMax: null,
+    logoUrl: null,
+    coverImageUrl: null,
+    isVerified: false,
+    verifiedAt: null,
+    registreCommerce: null,
+    identifiantFiscal: null,
+    rating: null,
+    reviewCount: 0,
+    totalEventsCompleted: 0,
+    avgResponseTimeMin: null,
+    bookingRate: null,
+    isActive: true,
+    isPublished: false,
+    isFeatured: false,
+    subscriptionTier: "free",
+    settings: null,
+    defaultPaymentTemplate: "standard",
+    defaultLeadTimeDays: 7,
+    autoReplyEnabled: false,
+    autoReplyMessage: null,
+    currency: "MAD",
+    metaTitle: null,
+    metaDescription: null,
+    createdAt: recentDate(60),
+    updatedAt: recentDate(2),
+    ...overrides,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Factory: CateringMenu (replaces Menu)
+// ---------------------------------------------------------------------------
+
+export function createMenu(overrides?: Partial<CateringMenus>): CateringMenus {
   const id = overrides?.id ?? nextUuid();
   const name =
     overrides?.name ??
-    RESTAURANT_NAMES[counter % RESTAURANT_NAMES.length]!;
+    `${ORG_NAMES[counter % ORG_NAMES.length]!} Menu`;
   const slug =
     overrides?.slug ??
     name
@@ -144,129 +207,136 @@ export function createMenu(overrides?: Partial<Menus>): Menus {
 
   return {
     id,
+    orgId: overrides?.orgId ?? nextUuid(),
     name,
-    userId: overrides?.userId ?? nextUuid(),
     slug,
-    backgroundImageUrl: null,
-    city: CITIES[counter % CITIES.length]!,
-    address: STREETS[counter % STREETS.length]!,
-    isPublished: true,
-    updatedAt: recentDate(0),
-    createdAt: recentDate(30),
-    contactNumber: "+212612345678",
-    facebookUrl: null,
-    googleReviewUrl: null,
-    instagramUrl: null,
-    logoImageUrl: null,
+    description: null,
+    menuType: "per_head",
+    eventType: "general",
+    minGuests: 10,
+    maxGuests: null,
+    basePricePerPerson: 15000,
     currency: "MAD",
-    restaurantId: null,
-    locationId: null,
-    cityId: null,
-    cuisineTypeId: null,
-    priceRange: 2,
-    rating: null,
-    reviewCount: 0,
-    viewCount: 0,
+    leadTimeDays: 3,
+    dietaryTags: [],
+    cuisineType: "Moroccan",
+    photos: [],
+    serviceOptions: { setup: true, cleanup: false, delivery: true, staffService: false, equipmentRental: false },
+    isPublished: true,
+    isActive: true,
     isFeatured: false,
-    phone: null,
-    whatsappNumber: null,
-    whatsappNotifyEnabled: false,
-    website: null,
-    openingHours: null,
-    enabledOrderTypes: ["dine_in"],
-    deliveryFee: 0,
-    deliveryRadiusKm: 5,
-    minOrderAmount: 0,
-    estimatedPrepTime: 15,
-    restaurantLat: null,
-    restaurantLng: null,
+    metaTitle: null,
+    metaDescription: null,
+    createdAt: recentDate(30),
+    updatedAt: recentDate(0),
     ...overrides,
   };
 }
 
 // ---------------------------------------------------------------------------
-// Factory: Category
+// Factory: CateringCategory (replaces Category)
 // ---------------------------------------------------------------------------
 
-export function createCategory(overrides?: Partial<Categories>): Categories {
+export function createCategory(overrides?: Partial<CateringCategories>): CateringCategories {
   const id = overrides?.id ?? nextUuid();
 
   return {
     id,
-    menuId: overrides?.menuId ?? nextUuid(),
-    createdAt: recentDate(20),
-    sortOrder: counter % 10,
-    icon: null,
+    cateringMenuId: overrides?.cateringMenuId ?? nextUuid(),
+    name: CATEGORY_NAMES[counter % CATEGORY_NAMES.length]!,
+    nameAr: null,
+    nameFr: null,
     description: null,
+    sortOrder: counter % 10,
+    isOptional: false,
+    maxSelections: null,
+    createdAt: recentDate(20),
     ...overrides,
   };
 }
 
 /**
  * Convenience: returns a category name from the realistic pool.
- * Useful when you also need to create a CategoriesTranslation row.
  */
 export function getCategoryName(index = 0): string {
   return CATEGORY_NAMES[index % CATEGORY_NAMES.length]!;
 }
 
 // ---------------------------------------------------------------------------
-// Factory: Dish
+// Factory: CateringItem (replaces Dish)
 // ---------------------------------------------------------------------------
 
-export function createDish(overrides?: Partial<Dishes>): Dishes {
+export function createDish(overrides?: Partial<CateringItems>): CateringItems {
   const id = overrides?.id ?? nextUuid();
-  const nameIndex = counter % DISH_NAMES.length;
+  const nameIndex = counter % ITEM_NAMES.length;
 
   return {
     id,
-    price: overrides?.price ?? 3500 + (nameIndex * 500), // 35.00 MAD base
-    pictureUrl: null,
-    createdAt: recentDate(15),
-    menuId: overrides?.menuId ?? nextUuid(),
-    categoryId: overrides?.categoryId ?? null,
-    carbohydrates: 45,
-    fats: 12,
-    protein: 28,
-    weight: 350,
-    calories: 420,
-    isSoldOut: false,
+    cateringCategoryId: overrides?.cateringCategoryId ?? nextUuid(),
+    cateringMenuId: overrides?.cateringMenuId ?? nextUuid(),
+    name: ITEM_NAMES[nameIndex]!,
+    nameAr: null,
+    nameFr: null,
+    description: null,
+    descriptionAr: null,
+    descriptionFr: null,
+    pricePerPerson: overrides?.pricePerPerson ?? 3500 + (nameIndex * 500),
+    pricePerUnit: null,
+    unitLabel: null,
+    minQuantity: 1,
+    servesCount: null,
+    isIncluded: true,
+    isOptional: false,
+    isVegetarian: false,
+    isVegan: false,
+    isHalal: true,
+    isGlutenFree: false,
+    allergens: [],
+    dietaryInfo: null,
+    imageUrl: null,
     sortOrder: counter % 20,
-    prepTimeMinutes: 25,
-    isFeatured: false,
-    stockQuantity: null,
-    lowStockThreshold: 5,
-    trackInventory: false,
-    kitchenStationId: null,
+    isAvailable: true,
+    createdAt: recentDate(15),
     ...overrides,
   };
 }
 
 /**
- * Convenience: returns a dish name from the realistic pool.
+ * Convenience: returns a dish/item name from the realistic pool.
  */
 export function getDishName(index = 0): string {
-  return DISH_NAMES[index % DISH_NAMES.length]!;
+  return ITEM_NAMES[index % ITEM_NAMES.length]!;
 }
 
 // ---------------------------------------------------------------------------
-// Factory: DishVariant
+// Factory: CateringPackage (replaces DishVariant)
 // ---------------------------------------------------------------------------
 
-export function createDishVariant(overrides?: Partial<DishVariants>): DishVariants {
+export function createDishVariant(overrides?: Partial<CateringPackages>): CateringPackages {
   const id = overrides?.id ?? nextUuid();
 
   return {
     id,
-    price: overrides?.price ?? 4500,
-    dishId: overrides?.dishId ?? nextUuid(),
+    cateringMenuId: overrides?.cateringMenuId ?? nextUuid(),
+    name: "Gold Wedding Package",
+    nameAr: null,
+    nameFr: null,
+    description: null,
+    pricePerPerson: overrides?.pricePerPerson ?? 4500,
+    minGuests: 10,
+    maxGuests: null,
+    isFeatured: false,
+    sortOrder: 0,
+    imageUrl: null,
+    includesText: null,
     createdAt: recentDate(10),
+    updatedAt: recentDate(1),
     ...overrides,
   };
 }
 
 // ---------------------------------------------------------------------------
-// Factory: Review
+// Factory: Review (multi-dimensional, org-scoped)
 // ---------------------------------------------------------------------------
 
 export function createReview(overrides?: Partial<Reviews>): Reviews {
@@ -274,15 +344,29 @@ export function createReview(overrides?: Partial<Reviews>): Reviews {
 
   return {
     id,
-    menuId: overrides?.menuId ?? nextUuid(),
-    locationId: null,
-    customerName: "Fatima Zahra",
-    customerEmail: "fatima@example.com",
-    rating: 4,
+    orgId: overrides?.orgId ?? nextUuid(),
+    eventId: null,
+    clientId: null,
+    reviewerName: "Fatima Zahra",
+    reviewerPhone: "+212612345678",
+    eventType: null,
+    guestCount: null,
+    eventDate: null,
+    ratingOverall: 4,
+    ratingFoodQuality: null,
+    ratingPresentation: null,
+    ratingServiceStaff: null,
+    ratingPunctuality: null,
+    ratingValueForMoney: null,
+    ratingCommunication: null,
     comment: "Excellent tagine, the lamb was perfectly tender.",
-    status: "approved",
+    photos: [],
     response: null,
     respondedAt: null,
+    status: "pending",
+    isVerified: false,
+    isPublished: false,
+    isFeatured: false,
     createdAt: recentDate(3),
     updatedAt: recentDate(3),
     ...overrides,
@@ -290,37 +374,154 @@ export function createReview(overrides?: Partial<Reviews>): Reviews {
 }
 
 // ---------------------------------------------------------------------------
-// Factory: Restaurant
+// Factory: Event (replaces Order — full lifecycle)
 // ---------------------------------------------------------------------------
 
-export function createRestaurant(overrides?: Partial<Restaurants>): Restaurants {
+export function createOrder(overrides?: Partial<Events>): Events {
   const id = overrides?.id ?? nextUuid();
 
   return {
     id,
-    userId: overrides?.userId ?? nextUuid(),
-    name: RESTAURANT_NAMES[counter % RESTAURANT_NAMES.length]!,
-    description: "Authentic Moroccan cuisine in the heart of the medina.",
-    logoUrl: null,
-    website: "https://example.com",
-    cuisineType: "Moroccan",
-    isChain: false,
-    createdAt: recentDate(60),
-    updatedAt: recentDate(2),
+    orgId: overrides?.orgId ?? nextUuid(),
+    clientId: null,
+    title: "Wedding Reception",
+    description: null,
+    eventType: "wedding",
+    eventDate: recentDate(-7),
+    eventEndDate: null,
+    startTime: null,
+    endTime: null,
+    isMultiDay: false,
+    venueName: "Riad Palmeraie",
+    venueAddress: STREETS[counter % STREETS.length]!,
+    venueCity: CITIES[counter % CITIES.length]!,
+    venueLat: null,
+    venueLng: null,
+    guestCount: 150,
+    confirmedGuestCount: null,
+    dietaryRequirements: [],
+    customerName: "Ahmed Tazi",
+    customerPhone: "+212612345678",
+    customerEmail: null,
+    serviceStyle: null,
+    budgetMin: null,
+    budgetMax: null,
+    specialRequests: null,
+    source: "direct",
+    status: "inquiry",
+    totalAmount: 0,
+    depositAmount: 0,
+    balanceDue: 0,
+    notes: null,
+    internalNotes: null,
+    lastMessageAt: null,
+    lastActivityAt: recentDate(0),
+    createdAt: recentDate(0),
+    updatedAt: recentDate(0),
     ...overrides,
   };
 }
 
 // ---------------------------------------------------------------------------
-// Factory: Location
+// Factory: QuoteItem (replaces OrderItem)
 // ---------------------------------------------------------------------------
 
-export function createLocation(overrides?: Partial<Locations>): Locations {
+export function createOrderItem(overrides?: Partial<QuoteItems>): QuoteItems {
   const id = overrides?.id ?? nextUuid();
 
   return {
     id,
-    restaurantId: overrides?.restaurantId ?? nextUuid(),
+    quoteId: overrides?.quoteId ?? nextUuid(),
+    sectionName: "Main Course",
+    sectionOrder: 0,
+    itemName: ITEM_NAMES[counter % ITEM_NAMES.length]!,
+    itemDescription: null,
+    quantity: 2,
+    unitType: "per_person",
+    unitPrice: 3500,
+    subtotal: 7000,
+    itemOrder: 0,
+    cateringItemId: null,
+    ...overrides,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Factory: OrgTheme (replaces MenuTheme)
+// ---------------------------------------------------------------------------
+
+export function createMenuTheme(overrides?: Partial<OrgThemes>): OrgThemes {
+  const id = overrides?.id ?? nextUuid();
+
+  return {
+    id,
+    orgId: overrides?.orgId ?? nextUuid(),
+    primaryColor: "#B8860B",
+    secondaryColor: "#8B6914",
+    backgroundColor: "#FFFDF7",
+    surfaceColor: "#FFFFFF",
+    textColor: "#1A1A1A",
+    accentColor: "#C2703E",
+    headingFont: "Cormorant",
+    bodyFont: "EB Garamond",
+    layoutStyle: "elegant",
+    cardStyle: "elevated",
+    borderRadius: "medium",
+    headerStyle: "banner",
+    customCss: "",
+    createdAt: recentDate(10),
+    updatedAt: recentDate(1),
+    ...overrides,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Factory: Quote (replaces Promotion — versioned proposals)
+// ---------------------------------------------------------------------------
+
+export function createPromotion(overrides?: Partial<Quotes>): Quotes {
+  const id = overrides?.id ?? nextUuid();
+
+  return {
+    id,
+    eventId: overrides?.eventId ?? nextUuid(),
+    orgId: overrides?.orgId ?? nextUuid(),
+    versionNumber: 1,
+    status: "draft",
+    subtotal: 75000,
+    seasonalAdjustment: 0,
+    volumeDiscount: 0,
+    additionalCharges: 0,
+    tvaRate: new Prisma.Decimal(0),
+    tvaAmount: 0,
+    totalAmount: 75000,
+    pricePerPerson: 5000,
+    validUntil: null,
+    cancellationPolicy: null,
+    termsAndConditions: null,
+    notes: null,
+    pdfUrl: null,
+    createdAt: recentDate(7),
+    sentAt: null,
+    viewedAt: null,
+    respondedAt: null,
+    expiredAt: null,
+    ...overrides,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Factory: Location (stub — no direct equivalent in new schema)
+// Kept for backward-compatibility with tests that import createLocation.
+// Returns a plain object matching the shape tests expect.
+// ---------------------------------------------------------------------------
+
+export function createLocation(overrides?: Record<string, unknown>): Record<string, unknown> {
+  const id = (overrides?.id as string) ?? nextUuid();
+
+  return {
+    id,
+    orgId: nextUuid(),
     name: "Main Branch",
     address: STREETS[counter % STREETS.length]!,
     city: CITIES[counter % CITIES.length]!,
@@ -334,133 +535,6 @@ export function createLocation(overrides?: Partial<Locations>): Locations {
     timezone: "Africa/Casablanca",
     isActive: true,
     createdAt: recentDate(45),
-    updatedAt: recentDate(1),
-    ...overrides,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Factory: Order
-// ---------------------------------------------------------------------------
-
-export function createOrder(overrides?: Partial<Orders>): Orders {
-  const id = overrides?.id ?? nextUuid();
-
-  return {
-    id,
-    menuId: overrides?.menuId ?? nextUuid(),
-    orderNumber: counter + 1000,
-    status: "pending",
-    totalAmount: 8500, // 85.00 MAD
-    currency: "MAD",
-    customerName: "Ahmed Tazi",
-    customerPhone: "+212612345678",
-    customerNotes: null,
-    tableNumber: "12",
-    orderType: "dine_in",
-    deliveryAddress: null,
-    deliveryFee: 0,
-    paymentMethod: "cash",
-    paymentStatus: "unpaid",
-    paidAt: null,
-    paymentNote: null,
-    locationId: null,
-    tableZoneId: null,
-    createdAt: recentDate(0),
-    updatedAt: recentDate(0),
-    confirmedAt: null,
-    preparingAt: null,
-    readyAt: null,
-    completedAt: null,
-    ...overrides,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Factory: OrderItem
-// ---------------------------------------------------------------------------
-
-export function createOrderItem(overrides?: Partial<OrderItems>): OrderItems {
-  const id = overrides?.id ?? nextUuid();
-
-  return {
-    id,
-    orderId: overrides?.orderId ?? nextUuid(),
-    dishId: overrides?.dishId ?? null,
-    dishVariantId: null,
-    dishName: DISH_NAMES[counter % DISH_NAMES.length]!,
-    quantity: 2,
-    unitPrice: 3500,
-    totalPrice: 7000,
-    notes: null,
-    createdAt: recentDate(0),
-    ...overrides,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Factory: MenuTheme
-// ---------------------------------------------------------------------------
-
-export function createMenuTheme(overrides?: Partial<MenuThemes>): MenuThemes {
-  const id = overrides?.id ?? nextUuid();
-
-  return {
-    id,
-    menuId: overrides?.menuId ?? nextUuid(),
-    primaryColor: "#D4A574",
-    secondaryColor: "#8B6914",
-    backgroundColor: "#FFFBF5",
-    surfaceColor: "#FFFFFF",
-    textColor: "#1A1A1A",
-    accentColor: "#C75B39",
-    headingFont: "Playfair Display",
-    bodyFont: "Source Sans 3",
-    fontSize: "medium",
-    layoutStyle: "classic",
-    cardStyle: "flat",
-    borderRadius: "medium",
-    spacing: "comfortable",
-    showImages: true,
-    imageStyle: "rounded",
-    showPrices: true,
-    showNutrition: true,
-    showCategoryNav: true,
-    showCategoryDividers: true,
-    headerStyle: "banner",
-    customCss: "",
-    createdAt: recentDate(10),
-    updatedAt: recentDate(1),
-    ...overrides,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Factory: Promotion
-// ---------------------------------------------------------------------------
-
-export function createPromotion(overrides?: Partial<Promotions>): Promotions {
-  const id = overrides?.id ?? nextUuid();
-
-  return {
-    id,
-    restaurantId: overrides?.restaurantId ?? nextUuid(),
-    title: "Lunch Special: Tagine + Mint Tea",
-    description: "Enjoy a full tagine with complimentary Moroccan mint tea.",
-    promotionType: "daily_special",
-    discountPercent: 15,
-    discountAmount: null,
-    startDate: recentDate(7),
-    endDate: null,
-    isActive: true,
-    applicableDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-    startTime: null,
-    endTime: null,
-    menuId: null,
-    dishId: null,
-    categoryId: null,
-    imageUrl: null,
-    createdAt: recentDate(7),
     updatedAt: recentDate(1),
     ...overrides,
   };

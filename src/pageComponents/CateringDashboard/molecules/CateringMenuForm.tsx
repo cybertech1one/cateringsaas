@@ -150,7 +150,7 @@ export function CateringMenuForm({
 
   // ── Mutations ──────────────────────────────────────────────
 
-  const createMutation = api.catering.createMenu.useMutation({
+  const createMutation = api.cateringMenus.create.useMutation({
     onSuccess: () => {
       toast({
         title: t("catering.menuCreated"),
@@ -167,7 +167,7 @@ export function CateringMenuForm({
     },
   });
 
-  const updateMutation = api.catering.updateMenu.useMutation({
+  const updateMutation = api.cateringMenus.update.useMutation({
     onSuccess: () => {
       toast({
         title: t("catering.menuUpdated"),
@@ -200,32 +200,36 @@ export function CateringMenuForm({
       return;
     }
 
-    const data = {
-      name: name.trim(),
-      description: description.trim() || undefined,
-      city: city.trim() || undefined,
-      eventType: eventType as "general" | "wedding" | "corporate" | "birthday" | "ramadan_iftar" | "eid" | "funeral" | "graduation" | "engagement",
-      contactPhone: contactPhone.trim() || undefined,
-      contactEmail: contactEmail.trim() || undefined,
-      minGuests: minGuests ? parseInt(minGuests, 10) : 10,
-      maxGuests: maxGuests ? parseInt(maxGuests, 10) : 500,
-      basePricePerPerson: basePricePerPerson
-        ? Math.round(parseFloat(basePricePerPerson) * 100)
-        : 0,
-      leadTimeDays: leadTimeDays ? parseInt(leadTimeDays, 10) : 3,
-      serviceOptions: {
-        deliveryIncluded: serviceDelivery,
-        setupIncluded: serviceSetup,
-        providesStaff: serviceStaff,
-        providesEquipment: serviceEquipment,
-        cleanupIncluded: serviceCleanup,
-      },
-    };
-
+    // cateringMenus.create expects: { name, type, description?, minGuests?,
+    // maxGuests?, basePricePerHead?, tier?, cuisineType?, ... }
+    // cateringMenus.update expects: { menuId, name?, description?, ... }
+    // TODO: city, eventType, contactPhone, contactEmail, leadTimeDays, and
+    // serviceOptions are not accepted by cateringMenus create/update. These
+    // fields need to be added to the router schema.
     if (isEditing && menu) {
-      updateMutation.mutate({ id: menu.id, data });
+      updateMutation.mutate({
+        menuId: menu.id,
+        name: name.trim(),
+        description: description.trim() || undefined,
+        eventType: eventType || undefined,
+        minGuests: minGuests ? parseInt(minGuests, 10) : undefined,
+        maxGuests: maxGuests ? parseInt(maxGuests, 10) : undefined,
+        basePricePerPerson: basePricePerPerson
+          ? Math.round(parseFloat(basePricePerPerson) * 100)
+          : undefined,
+      });
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate({
+        name: name.trim(),
+        menuType: "per_head" as const,
+        description: description.trim() || undefined,
+        eventType: eventType || "general",
+        minGuests: minGuests ? parseInt(minGuests, 10) : 10,
+        maxGuests: maxGuests ? parseInt(maxGuests, 10) : 500,
+        basePricePerPerson: basePricePerPerson
+          ? Math.round(parseFloat(basePricePerPerson) * 100)
+          : 0,
+      });
     }
   }
 

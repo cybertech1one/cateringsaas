@@ -138,7 +138,7 @@ export const messagesRouter = createTRPCRouter({
       const message = await ctx.db.messages.create({
         data: {
           conversationId: input.conversationId,
-          senderId: ctx.session.user.id,
+          senderId: ctx.user.id,
           senderType: "org_member",
           messageType: input.messageType,
           content: input.content,

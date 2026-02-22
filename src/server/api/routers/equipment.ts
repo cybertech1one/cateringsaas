@@ -30,7 +30,7 @@ const equipmentCategoryEnum = z.enum([
   "other",
 ]);
 
-const conditionEnum = z.enum(["new", "good", "fair", "damaged", "retired"]);
+const conditionEnum = z.enum(["new_condition", "good", "fair", "needs_repair", "retired"]);
 
 const allocationStatusEnum = z.enum([
   "reserved",
@@ -38,7 +38,6 @@ const allocationStatusEnum = z.enum([
   "in_use",
   "returned",
   "damaged",
-  "lost",
 ]);
 
 export const equipmentRouter = createTRPCRouter({
@@ -156,11 +155,9 @@ export const equipmentRouter = createTRPCRouter({
         data: {
           eventId: input.eventId,
           equipmentId: input.equipmentId,
-          orgId: ctx.orgId,
           quantityAllocated: input.quantityAllocated,
           pickupDate: input.pickupDate,
           returnDate: input.returnDate,
-          notes: input.notes,
           status: "reserved",
         },
       });
@@ -179,7 +176,10 @@ export const equipmentRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const allocation = await ctx.db.equipmentAllocations.findFirst({
-        where: { id: input.allocationId, orgId: ctx.orgId },
+        where: {
+          id: input.allocationId,
+          equipment: { orgId: ctx.orgId },
+        },
       });
 
       if (!allocation) throw new TRPCError({ code: "NOT_FOUND" });
@@ -202,7 +202,7 @@ export const equipmentRouter = createTRPCRouter({
           quantityReturned: input.quantityReturned,
           status,
           returnedAt: new Date(),
-          notes: input.notes,
+          damageNotes: input.notes,
         },
       });
     }),
@@ -217,7 +217,10 @@ export const equipmentRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       return ctx.db.equipmentAllocations.findMany({
-        where: { eventId: input.eventId, orgId: ctx.orgId },
+        where: {
+          eventId: input.eventId,
+          equipment: { orgId: ctx.orgId },
+        },
         include: {
           equipment: {
             select: { id: true, name: true, category: true },

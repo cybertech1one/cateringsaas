@@ -48,8 +48,8 @@ export function MenuOperations({ menuId, slug }: MenuOperationProps) {
   const [showDeleteAlert, setShowDeleteAlert] = React.useState<boolean>(false);
   const [showQRDialog, setShowQRDialog] = React.useState<boolean>(false);
   const [showExportDialog, setShowExportDialog] = React.useState<boolean>(false);
-  const { mutateAsync, isLoading } = api.menus.deleteMenu.useMutation();
-  const duplicateMenu = api.menus.duplicateMenu.useMutation();
+  const { mutateAsync, isLoading } = api.cateringMenus.delete.useMutation();
+  const duplicateMenu = api.cateringMenus.duplicate.useMutation();
   const { toast } = useToast();
   const { t } = useTranslation();
   const router = useRouter();
@@ -63,7 +63,7 @@ export function MenuOperations({ menuId, slug }: MenuOperationProps) {
         title: t("menuOperations.menuDeleted"),
         description: t("menuOperations.menuDeletedDescription"),
       });
-      void utils.menus.getMenus.invalidate();
+      void utils.cateringMenus.list.invalidate();
     } catch {
       toast({
         title: t("toast.error"),
@@ -75,14 +75,14 @@ export function MenuOperations({ menuId, slug }: MenuOperationProps) {
 
   const handleDuplicate = async () => {
     try {
-      const result = await duplicateMenu.mutateAsync({ menuId });
+      const result = await duplicateMenu.mutateAsync({ menuId, newName: `Copy of menu` });
 
       toast({
         title: t("menuManagement.duplicated"),
         description: t("menuManagement.duplicateDescription"),
       });
-      void utils.menus.getMenus.invalidate();
-      router.push(`/menu/manage/${result.slug}/restaurant`);
+      void utils.cateringMenus.list.invalidate();
+      router.push(`/dashboard/catering`);
     } catch {
       toast({
         title: t("menuManagement.duplicateFailed"),

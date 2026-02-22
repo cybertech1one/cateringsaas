@@ -33,12 +33,8 @@ export function ExportMenuDialog({
   const [format, setFormat] = React.useState<ExportFormat>("csv");
   const [isExporting, setIsExporting] = React.useState(false);
 
-  const csvQuery = api.menus.exportMenuCSV.useQuery(
-    { menuId },
-    { enabled: false },
-  );
-
-  const jsonQuery = api.menus.exportMenuJSON.useQuery(
+  // Fetch menu data via cateringMenus.getById for export
+  const menuQuery = api.cateringMenus.getById.useQuery(
     { menuId },
     { enabled: false },
   );
@@ -62,31 +58,39 @@ export function ExportMenuDialog({
     setIsExporting(true);
 
     try {
+      const result = await menuQuery.refetch();
+      if (!result.data) return;
+
+      const menuData = result.data;
       const slugPart = menuName
         ? menuName.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 30)
-        : "menu";
+        : (menuData.slug ?? "menu");
       const timestamp = new Date().toISOString().slice(0, 10);
 
       if (format === "csv") {
-        const result = await csvQuery.refetch();
-
-        if (result.data) {
-          triggerDownload(
-            result.data,
-            `${slugPart}-${timestamp}.csv`,
-            "text/csv;charset=utf-8",
-          );
+        // Build CSV from menu categories and items
+        const rows = ["Name,Category,Price,Description"];
+        const categories = (menuData as unknown as { categories?: Array<{ name: string; cateringItems?: Array<{ name: string; pricePerPerson?: number; description?: string | null }> }> }).categories ?? [];
+        for (const cat of categories) {
+          for (const item of cat.cateringItems ?? []) {
+            rows.push(
+              [item.name, cat.name, item.pricePerPerson ?? 0, item.description ?? ""]
+                .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+                .join(","),
+            );
+          }
         }
+        triggerDownload(
+          rows.join("\n"),
+          `${slugPart}-${timestamp}.csv`,
+          "text/csv;charset=utf-8",
+        );
       } else {
-        const result = await jsonQuery.refetch();
-
-        if (result.data) {
-          triggerDownload(
-            JSON.stringify(result.data, null, 2),
-            `${slugPart}-${timestamp}.json`,
-            "application/json;charset=utf-8",
-          );
-        }
+        triggerDownload(
+          JSON.stringify(menuData, null, 2),
+          `${slugPart}-${timestamp}.json`,
+          "application/json;charset=utf-8",
+        );
       }
     } finally {
       setIsExporting(false);

@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CommandPalette } from "~/components/CommandPalette/CommandPalette";
 
 type KeyboardShortcutsProviderProps = {
   children: React.ReactNode;
@@ -11,7 +10,6 @@ type KeyboardShortcutsProviderProps = {
 export function KeyboardShortcutsProvider({
   children,
 }: KeyboardShortcutsProviderProps) {
-  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const router = useRouter();
 
   const handleKeyDown = useCallback(
@@ -23,23 +21,13 @@ export function KeyboardShortcutsProvider({
         target.tagName === "SELECT" ||
         target.isContentEditable;
 
-      // Ctrl+K / Cmd+K: Open command palette (always, even in inputs)
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        setCommandPaletteOpen((prev) => !prev);
-
-        return;
-      }
-
-      // Skip other shortcuts if an input is focused
+      // Skip shortcuts if an input is focused
       if (isInputFocused) return;
 
-      // Ctrl+N / Cmd+N: Navigate to Create Menu
+      // Ctrl+N / Cmd+N: Navigate to Dashboard
       if ((e.metaKey || e.ctrlKey) && e.key === "n") {
         e.preventDefault();
-        router.push("/menu/create");
-
-        return;
+        router.push("/dashboard");
       }
     },
     [router],
@@ -53,13 +41,5 @@ export function KeyboardShortcutsProvider({
     };
   }, [handleKeyDown]);
 
-  return (
-    <>
-      {children}
-      <CommandPalette
-        open={commandPaletteOpen}
-        onOpenChange={setCommandPaletteOpen}
-      />
-    </>
-  );
+  return <>{children}</>;
 }

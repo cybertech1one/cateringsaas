@@ -17,19 +17,29 @@ import {
   MessageSquare,
 } from "lucide-react";
 
-function ClientCard({ client }: { client: Record<string, unknown> }) {
+type ClientProfile = {
+  id: string;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  whatsapp: string | null;
+  city: string | null;
+  tags: string[];
+  notes: string | null;
+  totalEventsBooked: number;
+  preferredLanguage: string | null;
+};
+
+function ClientCard({ client }: { client: ClientProfile }) {
   return (
     <Card className="transition-shadow hover:shadow-md cursor-pointer">
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="font-semibold">{client.name as string}</h3>
-            {client.company && (
-              <p className="text-xs text-muted-foreground">{client.company as string}</p>
-            )}
+            <h3 className="font-semibold">{client.name}</h3>
           </div>
           <div className="flex gap-1">
-            {(client.tags as string[])?.map((tag) => (
+            {client.tags?.map((tag: string) => (
               <Badge key={tag} variant="secondary" className="text-[10px]">
                 {tag}
               </Badge>
@@ -41,24 +51,24 @@ function ClientCard({ client }: { client: Record<string, unknown> }) {
           {client.phone && (
             <div className="flex items-center gap-1">
               <Phone className="h-3 w-3" />
-              {client.phone as string}
+              {client.phone}
             </div>
           )}
           {client.email && (
             <div className="flex items-center gap-1">
               <Mail className="h-3 w-3" />
-              {client.email as string}
+              {client.email}
             </div>
           )}
           {client.city && (
             <div className="flex items-center gap-1">
               <MapPin className="h-3 w-3" />
-              {client.city as string}
+              {client.city}
             </div>
           )}
           <div className="flex items-center gap-1">
             <Users className="h-3 w-3" />
-            {client.eventCount as number ?? 0} events
+            {client.totalEventsBooked ?? 0} events
           </div>
         </div>
       </CardContent>
@@ -76,7 +86,7 @@ export default function ClientsManagement() {
 
   const { data: segments } = api.clients.getSegments.useQuery({});
 
-  const clients = (clientsData?.clients ?? []) as Array<Record<string, unknown>>;
+  const clients = (clientsData?.clients ?? []) as ClientProfile[];
 
   return (
     <div className="space-y-6">
@@ -161,7 +171,7 @@ export default function ClientsManagement() {
           </div>
         ) : (
           clients.map((client) => (
-            <ClientCard key={client.id as string} client={client} />
+            <ClientCard key={client.id} client={client} />
           ))
         )}
       </div>

@@ -54,14 +54,16 @@ async function isSubscribed(
  * Check whether the user is allowed to create one more of the given resource.
  *
  * @param db       - Prisma client instance
- * @param userId   - The authenticated user's UUID
+ * @param userId   - The authenticated user's UUID (used for subscription lookup)
  * @param resource - The resource type being created
+ * @param orgId    - The organization ID (used to count menus)
  * @param menuId   - Required when resource is "dish" or "category"
  */
 export async function checkTierLimit(
   db: PrismaClient,
   userId: string,
   resource: TierResource,
+  orgId?: string,
   menuId?: string,
 ): Promise<TierCheckResult> {
   // Development and test bypass: always allow
@@ -80,12 +82,18 @@ export async function checkTierLimit(
 
   switch (resource) {
     case "menu": {
-      const currentMenus = await db.menus.count({
-        where: { userId },
+      if (!orgId) {
+        logger.warn("checkTierLimit called for menu without orgId", undefined, "tierCheck");
+
+        return { allowed: false, current: 0, limit: limits.maxMenus, tier: "free" };
+      }
+
+      const currentMenus = await db.cateringMenus.count({
+        where: { orgId },
       });
 
       logger.info(
-        `Tier check: user ${userId} has ${currentMenus}/${limits.maxMenus} menus`,
+        `Tier check: org ${orgId} has ${currentMenus}/${limits.maxMenus} menus`,
         "tierCheck",
       );
 
@@ -104,18 +112,18 @@ export async function checkTierLimit(
         return { allowed: false, current: 0, limit: limits.maxDishesPerMenu, tier: "free" };
       }
 
-      const currentDishes = await db.dishes.count({
-        where: { menuId },
+      const currentItems = await db.cateringItems.count({
+        where: { cateringMenuId: menuId },
       });
 
       logger.info(
-        `Tier check: menu ${menuId} has ${currentDishes}/${limits.maxDishesPerMenu} dishes`,
+        `Tier check: menu ${menuId} has ${currentItems}/${limits.maxDishesPerMenu} items`,
         "tierCheck",
       );
 
       return {
-        allowed: currentDishes < limits.maxDishesPerMenu,
-        current: currentDishes,
+        allowed: currentItems < limits.maxDishesPerMenu,
+        current: currentItems,
         limit: limits.maxDishesPerMenu,
         tier: "free",
       };
@@ -128,8 +136,8 @@ export async function checkTierLimit(
         return { allowed: false, current: 0, limit: limits.maxCategories, tier: "free" };
       }
 
-      const currentCategories = await db.categories.count({
-        where: { menuId },
+      const currentCategories = await db.cateringCategories.count({
+        where: { cateringMenuId: menuId },
       });
 
       logger.info(

@@ -77,14 +77,14 @@ function useQuickLinks() {
 }
 
 export function DashboardPage() {
-  const { data: menus, isLoading: menusLoading } = api.menus.getMenus.useQuery();
-  const { data: restaurants, isLoading: restaurantsLoading } = api.restaurants.getRestaurants.useQuery();
-  const { data: tierUsage, isLoading: tierLoading } = api.payments.getTierUsage.useQuery();
+  const { data: menus, isLoading: menusLoading } = api.cateringMenus.list.useQuery({});
+  const { data: org, isLoading: orgLoading } = api.organizations.getMine.useQuery();
+  const { data: revenueData, isLoading: revenueLoading } = api.finances.getRevenueOverview.useQuery({});
   const { t: _t } = useTranslation();
   const t = _t as (key: string, opts?: Record<string, unknown>) => string;
   const quickLinks = useQuickLinks();
 
-  const isLoading = menusLoading || restaurantsLoading || tierLoading;
+  const isLoading = menusLoading || orgLoading || revenueLoading;
 
   if (isLoading) {
     return (
@@ -131,13 +131,9 @@ export function DashboardPage() {
   }
 
   const menuCount = menus?.length ?? 0;
-  const publishedCount = menus?.filter((m) => m.isPublished).length ?? 0;
-  const locationCount =
-    restaurants?.reduce(
-      (acc, r) => acc + (r._count?.locations ?? 0),
-      0,
-    ) ?? 0;
-  const restaurantCount = restaurants?.length ?? 0;
+  const publishedCount = menus?.filter((m: { isPublished: boolean }) => m.isPublished).length ?? 0;
+  const activeMenuCount = menus?.filter((m: { isActive: boolean }) => m.isActive).length ?? 0;
+  const orgName = org?.name ?? "";
   const hasMenus = menuCount > 0;
 
   return (
@@ -179,16 +175,7 @@ export function DashboardPage() {
 
         {/* Onboarding Checklist */}
         {menus && (
-          <OnboardingChecklist menus={menus} />
-        )}
-
-        {/* Tier Upgrade Prompt */}
-        {tierUsage && tierUsage.tier === "free" && (
-          <UpgradePrompt
-            resource={t("tier.menuLimit")}
-            current={tierUsage.usage.menus}
-            limit={tierUsage.limits.maxMenus}
-          />
+          <OnboardingChecklist menus={menus as never} />
         )}
 
         {/* Quick Stats */}
@@ -211,16 +198,16 @@ export function DashboardPage() {
           />
           <StatCard
             icon={MapPin}
-            label={t("dashboard.stats.locations")}
-            value={locationCount}
+            label={t("dashboard.stats.activeMenus")}
+            value={activeMenuCount}
             trend={t("dashboard.statsTrend.tracked")}
             gradient="from-blue-500/15 to-blue-500/5"
             iconColor="text-blue-600"
           />
           <StatCard
             icon={Building2}
-            label={t("dashboard.stats.restaurants")}
-            value={restaurantCount}
+            label={t("dashboard.stats.organization")}
+            value={orgName ? 1 : 0}
             trend={t("dashboard.statsTrend.managed")}
             gradient="from-amber-500/15 to-amber-500/5"
             iconColor="text-amber-500"
@@ -319,11 +306,11 @@ export function DashboardPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {menus
                 ?.sort(
-                  (a, b) =>
-                    b.createdAt.getTime() - a.createdAt.getTime(),
+                  (a: { createdAt: Date }, b: { createdAt: Date }) =>
+                    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
                 )
-                .map((menu) => (
-                  <MenuItem key={menu.id} menu={menu} />
+                .map((menu: { id: string; [key: string]: unknown }) => (
+                  <MenuItem key={menu.id} menu={menu as never} />
                 ))}
             </div>
           ) : (

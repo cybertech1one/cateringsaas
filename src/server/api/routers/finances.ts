@@ -2,11 +2,10 @@
  * Diyafa — Finances Router
  *
  * Financial management for catering businesses:
- * - Milestone payments (deposit → progress → final)
+ * - Payment schedules & milestones (deposit → progress → final)
  * - COD tracking (critical for Morocco: 74% cash)
  * - Invoice generation (TVA 20% compliant)
  * - Revenue reporting & analytics
- * - Bank transfer confirmation workflow
  */
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
@@ -14,216 +13,168 @@ import {
   createTRPCRouter,
   orgProcedure,
   orgManagerProcedure,
-  orgAdminProcedure,
 } from "~/server/api/trpc";
-
-// ──────────────────────────────────────────────
-// Schemas
-// ──────────────────────────────────────────────
-
-const milestoneTypeEnum = z.enum(["deposit", "progress", "final", "full"]);
-const paymentMethodEnum = z.enum(["cod", "bank_transfer", "cmi", "check", "mobile_wallet"]);
-const milestoneStatusEnum = z.enum(["pending", "paid", "overdue", "cancelled"]);
-const invoiceStatusEnum = z.enum(["draft", "sent", "paid", "overdue", "cancelled"]);
 
 // ──────────────────────────────────────────────
 // Router
 // ──────────────────────────────────────────────
 
 export const financesRouter = createTRPCRouter({
-  // ─── Payment Milestones ─────────────────────
+  // ─── Payment Schedules & Milestones ──────────
 
-  /** Create payment milestone for an event */
-  createMilestone: orgManagerProcedure
-    .input(
-      z.object({
-        orgId: z.string().uuid().optional(),
-        eventId: z.string().uuid(),
-        milestoneType: milestoneTypeEnum,
-        amount: z.number().positive(),
-        percentage: z.number().min(0).max(100).optional(),
-        dueDate: z.date(),
-        paymentMethod: paymentMethodEnum.optional(),
-        notes: z.string().optional(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const event = await ctx.db.events.findFirst({
-        where: { id: input.eventId, orgId: ctx.orgId },
-      });
-
-      if (!event) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
-      }
-
-      return ctx.db.paymentMilestones.create({
-        data: {
-          eventId: input.eventId,
-          orgId: ctx.orgId,
-          milestoneType: input.milestoneType,
-          amount: input.amount,
-          percentage: input.percentage,
-          dueDate: input.dueDate,
-          paymentMethod: input.paymentMethod,
-          notes: input.notes,
-          status: "pending",
-        },
-      });
-    }),
-
-  /** Create standard payment schedule (30/50/20) */
-  createStandardSchedule: orgManagerProcedure
+  /** Create standard payment schedule (30/50/20) for an event */
+  createSchedule: orgManagerProcedure
     .input(
       z.object({
         orgId: z.string().uuid().optional(),
         eventId: z.string().uuid(),
         totalAmount: z.number().positive(),
         eventDate: z.date(),
-        schedule: z.enum(["30_50_20", "50_50", "100_upfront"]).default("30_50_20"),
+        template: z.enum(["30_50_20", "50_50", "100_upfront"]).default("30_50_20"),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const event = await ctx.db.events.findFirst({
         where: { id: input.eventId, orgId: ctx.orgId },
       });
+      if (!event) throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
 
-      if (!event) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
+      // Create the schedule
+      const schedule = await ctx.db.paymentSchedules.create({
+        data: {
+          eventId: input.eventId,
+          orgId: ctx.orgId,
+          templateName: input.template,
+          totalAmount: input.totalAmount,
+        },
+      });
 
-      const milestones: Array<{
-        milestoneType: string;
-        amount: number;
-        percentage: number;
-        dueDate: Date;
-      }> = [];
-
+      // Build milestones
       const now = new Date();
       const eventDate = input.eventDate;
       const midDate = new Date((now.getTime() + eventDate.getTime()) / 2);
+      const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
 
-      switch (input.schedule) {
+      type MilestoneData = {
+        scheduleId: string;
+        label: string;
+        milestoneType: "deposit" | "progress" | "final" | "full";
+        percentage: number;
+        amount: number;
+        dueDate: Date;
+        status: "pending";
+      };
+
+      const milestones: MilestoneData[] = [];
+
+      switch (input.template) {
         case "30_50_20":
           milestones.push(
-            { milestoneType: "deposit", amount: input.totalAmount * 0.3, percentage: 30, dueDate: new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000) },
-            { milestoneType: "progress", amount: input.totalAmount * 0.5, percentage: 50, dueDate: midDate },
-            { milestoneType: "final", amount: input.totalAmount * 0.2, percentage: 20, dueDate: eventDate }
+            { scheduleId: schedule.id, label: "Deposit (30%)", milestoneType: "deposit", percentage: 30, amount: Math.round(input.totalAmount * 0.3), dueDate: threeDaysLater, status: "pending" },
+            { scheduleId: schedule.id, label: "Progress (50%)", milestoneType: "progress", percentage: 50, amount: Math.round(input.totalAmount * 0.5), dueDate: midDate, status: "pending" },
+            { scheduleId: schedule.id, label: "Final (20%)", milestoneType: "final", percentage: 20, amount: Math.round(input.totalAmount * 0.2), dueDate: eventDate, status: "pending" },
           );
           break;
         case "50_50":
           milestones.push(
-            { milestoneType: "deposit", amount: input.totalAmount * 0.5, percentage: 50, dueDate: new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000) },
-            { milestoneType: "final", amount: input.totalAmount * 0.5, percentage: 50, dueDate: eventDate }
+            { scheduleId: schedule.id, label: "Deposit (50%)", milestoneType: "deposit", percentage: 50, amount: Math.round(input.totalAmount * 0.5), dueDate: threeDaysLater, status: "pending" },
+            { scheduleId: schedule.id, label: "Final (50%)", milestoneType: "final", percentage: 50, amount: Math.round(input.totalAmount * 0.5), dueDate: eventDate, status: "pending" },
           );
           break;
         case "100_upfront":
           milestones.push(
-            { milestoneType: "full", amount: input.totalAmount, percentage: 100, dueDate: new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000) }
+            { scheduleId: schedule.id, label: "Full Payment", milestoneType: "full", percentage: 100, amount: input.totalAmount, dueDate: threeDaysLater, status: "pending" },
           );
           break;
       }
 
-      const created = await Promise.all(
-        milestones.map((m) =>
-          ctx.db.paymentMilestones.create({
-            data: {
-              eventId: input.eventId,
-              orgId: ctx.orgId,
-              ...m,
-              status: "pending",
-            },
-          })
-        )
-      );
+      await ctx.db.paymentMilestones.createMany({ data: milestones });
 
-      return created;
+      return ctx.db.paymentSchedules.findUnique({
+        where: { id: schedule.id },
+        include: { milestones: { orderBy: { dueDate: "asc" } } },
+      });
     }),
 
   /** Get milestones for an event */
   getMilestonesByEvent: orgProcedure
-    .input(
-      z.object({
-        orgId: z.string().uuid().optional(),
-        eventId: z.string().uuid(),
-      })
-    )
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      eventId: z.string().uuid(),
+    }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.paymentMilestones.findMany({
+      const schedules = await ctx.db.paymentSchedules.findMany({
         where: { eventId: input.eventId, orgId: ctx.orgId },
-        orderBy: { dueDate: "asc" },
+        include: { milestones: { orderBy: { dueDate: "asc" } } },
+        orderBy: { createdAt: "desc" },
       });
+      return schedules;
     }),
 
-  /** Mark a milestone as paid (COD/transfer confirmation) */
+  /** Mark a milestone as paid */
   markAsPaid: orgManagerProcedure
-    .input(
-      z.object({
-        orgId: z.string().uuid().optional(),
-        milestoneId: z.string().uuid(),
-        paymentMethod: paymentMethodEnum,
-        referenceNumber: z.string().optional(),
-        notes: z.string().optional(),
-      })
-    )
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      milestoneId: z.string().uuid(),
+      paymentMethod: z.enum(["cod", "bank_transfer", "cmi", "check", "mobile_money", "cash"]),
+      paymentReference: z.string().optional(),
+      notes: z.string().optional(),
+    }))
     .mutation(async ({ ctx, input }) => {
-      const milestone = await ctx.db.paymentMilestones.findFirst({
-        where: { id: input.milestoneId, orgId: ctx.orgId },
-        include: { event: { select: { id: true, depositAmount: true, totalAmount: true } } },
+      const milestone = await ctx.db.paymentMilestones.findUnique({
+        where: { id: input.milestoneId },
+        include: { schedule: { select: { orgId: true, eventId: true, totalAmount: true } } },
       });
 
-      if (!milestone) {
+      if (!milestone || milestone.schedule.orgId !== ctx.orgId) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
-
       if (milestone.status === "paid") {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Already paid" });
       }
 
-      // Mark milestone as paid
       const updated = await ctx.db.paymentMilestones.update({
         where: { id: input.milestoneId },
         data: {
           status: "paid",
           paymentMethod: input.paymentMethod,
-          referenceNumber: input.referenceNumber,
+          paymentReference: input.paymentReference,
           notes: input.notes,
           paidAt: new Date(),
           confirmedBy: ctx.user.id,
         },
       });
 
-      // Update event deposit amount
+      // Recalculate event totals
       const allPaid = await ctx.db.paymentMilestones.aggregate({
         where: {
-          eventId: milestone.eventId,
-          orgId: ctx.orgId,
+          schedule: { eventId: milestone.schedule.eventId, orgId: ctx.orgId },
           status: "paid",
         },
         _sum: { amount: true },
       });
 
-      const totalPaid = Number(allPaid._sum.amount ?? 0);
-      const totalAmount = Number(milestone.event.totalAmount);
+      const totalPaid = Number(allPaid._sum?.amount ?? 0);
+      const totalAmount = milestone.schedule.totalAmount;
 
       await ctx.db.events.update({
-        where: { id: milestone.eventId },
+        where: { id: milestone.schedule.eventId },
         data: {
           depositAmount: totalPaid,
           balanceDue: totalAmount - totalPaid,
         },
       });
 
-      // If deposit milestone was paid, advance event status
+      // If deposit milestone, advance event to deposit_paid → confirmed
       if (milestone.milestoneType === "deposit") {
         const event = await ctx.db.events.findUnique({
-          where: { id: milestone.eventId },
+          where: { id: milestone.schedule.eventId },
           select: { status: true },
         });
-
-        if (event?.status === "deposit_pending") {
+        if (event && String(event.status) === "accepted") {
           await ctx.db.events.update({
-            where: { id: milestone.eventId },
-            data: { status: "deposit_received" },
+            where: { id: milestone.schedule.eventId },
+            data: { status: "deposit_paid" },
           });
         }
       }
@@ -235,39 +186,31 @@ export const financesRouter = createTRPCRouter({
 
   /** Create invoice for an event */
   createInvoice: orgManagerProcedure
-    .input(
-      z.object({
-        orgId: z.string().uuid().optional(),
-        eventId: z.string().uuid(),
-        items: z.array(z.object({
-          description: z.string(),
-          quantity: z.number().positive(),
-          unitPrice: z.number().nonnegative(),
-          total: z.number().nonnegative(),
-        })),
-        notes: z.string().optional(),
-        dueDate: z.date(),
-        taxRate: z.number().min(0).max(100).default(20),
-      })
-    )
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      eventId: z.string().uuid(),
+      items: z.array(z.object({
+        description: z.string(),
+        quantity: z.number().positive(),
+        unitPrice: z.number().nonnegative(),
+        total: z.number().nonnegative(),
+      })),
+      notes: z.string().optional(),
+      dueDate: z.date(),
+      taxRate: z.number().min(0).max(100).default(20),
+    }))
     .mutation(async ({ ctx, input }) => {
       const event = await ctx.db.events.findFirst({
         where: { id: input.eventId, orgId: ctx.orgId },
       });
+      if (!event) throw new TRPCError({ code: "NOT_FOUND" });
 
-      if (!event) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-
-      // Auto-generate invoice number: DYF-2026-0001
       const year = new Date().getFullYear();
-      const count = await ctx.db.invoices.count({
-        where: { orgId: ctx.orgId },
-      });
+      const count = await ctx.db.invoices.count({ where: { orgId: ctx.orgId } });
       const invoiceNumber = `DYF-${year}-${String(count + 1).padStart(4, "0")}`;
 
       const subtotal = input.items.reduce((sum, item) => sum + item.total, 0);
-      const taxAmount = subtotal * (input.taxRate / 100);
+      const taxAmount = Math.round(subtotal * (input.taxRate / 100));
       const total = subtotal + taxAmount;
 
       return ctx.db.invoices.create({
@@ -275,36 +218,41 @@ export const financesRouter = createTRPCRouter({
           eventId: input.eventId,
           orgId: ctx.orgId,
           invoiceNumber,
-          items: input.items,
+          clientName: event.customerName,
+          clientPhone: event.customerPhone,
+          clientEmail: event.customerEmail,
           subtotal,
-          taxAmount,
-          total,
+          tvaAmount: taxAmount,
+          totalAmount: total,
+          amountDue: total,
           notes: input.notes,
           dueDate: input.dueDate,
           issuedAt: new Date(),
           status: "draft",
+          lineItems: {
+            create: input.items.map((item, idx) => ({
+              description: item.description,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              total: item.total,
+              sortOrder: idx,
+            })),
+          },
         },
+        include: { lineItems: true },
       });
     }),
 
   /** List invoices */
   listInvoices: orgProcedure
-    .input(
-      z.object({
-        orgId: z.string().uuid().optional(),
-        status: z.array(invoiceStatusEnum).optional(),
-        cursor: z.string().optional(),
-        limit: z.number().int().min(1).max(50).default(20),
-      })
-    )
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      limit: z.number().int().min(1).max(50).default(20),
+      cursor: z.string().optional(),
+    }))
     .query(async ({ ctx, input }) => {
-      const where: Record<string, unknown> = { orgId: ctx.orgId };
-      if (input.status && input.status.length > 0) {
-        where.status = { in: input.status };
-      }
-
       const invoices = await ctx.db.invoices.findMany({
-        where,
+        where: { orgId: ctx.orgId },
         orderBy: { issuedAt: "desc" },
         take: input.limit + 1,
         ...(input.cursor ? { cursor: { id: input.cursor }, skip: 1 } : {}),
@@ -313,7 +261,7 @@ export const financesRouter = createTRPCRouter({
             select: {
               id: true,
               title: true,
-              clientName: true,
+              customerName: true,
               eventDate: true,
             },
           },
@@ -322,37 +270,29 @@ export const financesRouter = createTRPCRouter({
 
       let nextCursor: string | undefined;
       if (invoices.length > input.limit) {
-        const nextItem = invoices.pop();
-        nextCursor = nextItem?.id;
+        const last = invoices.pop();
+        nextCursor = last?.id;
       }
 
       return { invoices, nextCursor };
     }),
 
-  /** Send invoice (email + WhatsApp) */
+  /** Send invoice */
   sendInvoice: orgManagerProcedure
-    .input(
-      z.object({
-        orgId: z.string().uuid().optional(),
-        invoiceId: z.string().uuid(),
-        sendVia: z.enum(["whatsapp", "email", "both"]).default("both"),
-      })
-    )
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      invoiceId: z.string().uuid(),
+    }))
     .mutation(async ({ ctx, input }) => {
       const invoice = await ctx.db.invoices.findFirst({
         where: { id: input.invoiceId, orgId: ctx.orgId },
       });
-
-      if (!invoice) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
+      if (!invoice) throw new TRPCError({ code: "NOT_FOUND" });
 
       await ctx.db.invoices.update({
         where: { id: input.invoiceId },
         data: { status: "sent" },
       });
-
-      // TODO: Send via WhatsApp/email
 
       return { success: true };
     }),
@@ -368,54 +308,57 @@ export const financesRouter = createTRPCRouter({
       const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       const thisYear = new Date(now.getFullYear(), 0, 1);
 
-      const [thisMonthRevenue, lastMonthRevenue, yearRevenue, pendingPayments, overduePayments] =
+      const milestoneWhere = (extra: Record<string, unknown>) => ({
+        schedule: { orgId: ctx.orgId },
+        ...extra,
+      });
+
+      const [thisMonthRev, lastMonthRev, yearRev, pending, overdue] =
         await Promise.all([
           ctx.db.paymentMilestones.aggregate({
-            where: { orgId: ctx.orgId, status: "paid", paidAt: { gte: thisMonth } },
+            where: milestoneWhere({ status: "paid", paidAt: { gte: thisMonth } }),
             _sum: { amount: true },
           }),
           ctx.db.paymentMilestones.aggregate({
-            where: { orgId: ctx.orgId, status: "paid", paidAt: { gte: lastMonth, lt: thisMonth } },
+            where: milestoneWhere({ status: "paid", paidAt: { gte: lastMonth, lt: thisMonth } }),
             _sum: { amount: true },
           }),
           ctx.db.paymentMilestones.aggregate({
-            where: { orgId: ctx.orgId, status: "paid", paidAt: { gte: thisYear } },
+            where: milestoneWhere({ status: "paid", paidAt: { gte: thisYear } }),
             _sum: { amount: true },
           }),
           ctx.db.paymentMilestones.aggregate({
-            where: { orgId: ctx.orgId, status: "pending" },
+            where: milestoneWhere({ status: "pending" }),
             _sum: { amount: true },
           }),
           ctx.db.paymentMilestones.aggregate({
-            where: { orgId: ctx.orgId, status: "overdue" },
+            where: milestoneWhere({ status: "overdue" }),
             _sum: { amount: true },
           }),
         ]);
 
-      const thisMonthTotal = Number(thisMonthRevenue._sum.amount ?? 0);
-      const lastMonthTotal = Number(lastMonthRevenue._sum.amount ?? 0);
+      const thisMonthTotal = Number(thisMonthRev._sum?.amount ?? 0);
+      const lastMonthTotal = Number(lastMonthRev._sum?.amount ?? 0);
       const growthRate = lastMonthTotal > 0
         ? ((thisMonthTotal - lastMonthTotal) / lastMonthTotal) * 100
         : 0;
 
       return {
-        thisMonthRevenue: thisMonthTotal,
+        totalRevenue: Number(yearRev._sum?.amount ?? 0),
+        monthRevenue: thisMonthTotal,
         lastMonthRevenue: lastMonthTotal,
-        yearRevenue: Number(yearRevenue._sum.amount ?? 0),
-        pendingPayments: Number(pendingPayments._sum.amount ?? 0),
-        overduePayments: Number(overduePayments._sum.amount ?? 0),
+        pendingAmount: Number(pending._sum?.amount ?? 0),
+        overdueAmount: Number(overdue._sum?.amount ?? 0),
         monthOverMonthGrowth: Math.round(growthRate * 10) / 10,
       };
     }),
 
   /** Monthly revenue chart data */
   getMonthlyRevenue: orgProcedure
-    .input(
-      z.object({
-        orgId: z.string().uuid().optional(),
-        months: z.number().int().min(1).max(24).default(12),
-      })
-    )
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      months: z.number().int().min(1).max(24).default(12),
+    }))
     .query(async ({ ctx, input }) => {
       const results: Array<{ month: string; revenue: number; eventCount: number }> = [];
 
@@ -423,13 +366,16 @@ export const financesRouter = createTRPCRouter({
         const start = new Date();
         start.setMonth(start.getMonth() - i, 1);
         start.setHours(0, 0, 0, 0);
-
         const end = new Date(start);
         end.setMonth(end.getMonth() + 1);
 
         const [revenue, eventCount] = await Promise.all([
           ctx.db.paymentMilestones.aggregate({
-            where: { orgId: ctx.orgId, status: "paid", paidAt: { gte: start, lt: end } },
+            where: {
+              schedule: { orgId: ctx.orgId },
+              status: "paid",
+              paidAt: { gte: start, lt: end },
+            },
             _sum: { amount: true },
           }),
           ctx.db.events.count({
@@ -438,8 +384,8 @@ export const financesRouter = createTRPCRouter({
         ]);
 
         results.push({
-          month: start.toISOString().slice(0, 7), // "2026-02"
-          revenue: Number(revenue._sum.amount ?? 0),
+          month: start.toISOString().slice(0, 7),
+          revenue: Number(revenue._sum?.amount ?? 0),
           eventCount,
         });
       }

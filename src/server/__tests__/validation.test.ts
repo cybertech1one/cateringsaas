@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { promotionFormSchema } from "~/pageComponents/Promotions/types";
+import type { ZodIssue } from "zod";
 
 /**
  * Integration tests for Zod validation schemas.
@@ -149,7 +150,7 @@ describe("promotionFormSchema", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         const titleIssue = result.error.issues.find(
-          (i) => i.path[0] === "title",
+          (i: ZodIssue) => i.path[0] === "title",
         );
 
         expect(titleIssue).toBeDefined();
@@ -217,7 +218,7 @@ describe("promotionFormSchema", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        const msg = result.error.issues.map((i) => i.message).join(" ");
+        const msg = result.error.issues.map((i: ZodIssue) => i.message).join(" ");
 
         expect(msg).toContain("not both");
       }
@@ -298,7 +299,7 @@ describe("promotionFormSchema", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        const msg = result.error.issues.map((i) => i.message).join(" ");
+        const msg = result.error.issues.map((i: ZodIssue) => i.message).join(" ");
 
         expect(msg).toContain("End date must be after start date");
       }

@@ -94,10 +94,10 @@ export const orgAnalyticsRouter = createTRPCRouter({
           where: { ...where, status: { notIn: ["inquiry"] } },
         }),
         ctx.db.events.count({
-          where: { ...where, status: { notIn: ["inquiry", "quote_sent", "quote_revised"] } },
+          where: { ...where, status: { notIn: ["inquiry", "reviewed", "quoted"] } },
         }),
         ctx.db.events.count({
-          where: { ...where, status: { in: ["confirmed", "in_preparation", "in_execution", "completed", "settlement_pending", "settled"] } },
+          where: { ...where, status: { in: ["confirmed", "prep", "setup", "execution", "completed", "settled"] } },
         }),
         ctx.db.events.count({
           where: { ...where, status: { in: ["completed", "settled"] } },
@@ -250,11 +250,11 @@ export const orgAnalyticsRouter = createTRPCRouter({
         where: { orgId: ctx.orgId, status: "draft" },
       });
 
-      // Overdue payments
-      const overduePayments = await ctx.db.paymentSchedules.count({
+      // Overdue payments (milestones within org's schedules)
+      const overduePayments = await ctx.db.paymentMilestones.count({
         where: {
-          orgId: ctx.orgId,
-          status: "pending",
+          schedule: { orgId: ctx.orgId },
+          status: "overdue",
           dueDate: { lt: now },
         },
       });
@@ -298,7 +298,7 @@ export const orgAnalyticsRouter = createTRPCRouter({
           },
         }),
         ctx.db.clientProfiles.count({
-          where: { orgId: ctx.orgId },
+          where: { events: { some: { orgId: ctx.orgId } } },
         }),
         ctx.db.reviews.aggregate({
           where: { orgId: ctx.orgId, isPublished: true },

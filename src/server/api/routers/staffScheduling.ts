@@ -36,7 +36,6 @@ const assignmentStatusEnum = z.enum([
   "checked_in",
   "checked_out",
   "no_show",
-  "cancelled",
 ]);
 
 export const staffSchedulingRouter = createTRPCRouter({
@@ -67,9 +66,8 @@ export const staffSchedulingRouter = createTRPCRouter({
       // Check for conflicts on same date
       const conflict = await ctx.db.staffAssignments.findFirst({
         where: {
-          staffMemberId: input.staffMemberId,
-          orgId: ctx.orgId,
-          status: { notIn: ["cancelled", "no_show"] },
+          staffId: input.staffMemberId,
+          status: { notIn: ["no_show"] },
           event: { eventDate: event.eventDate },
           NOT: { eventId: input.eventId },
         },
@@ -79,14 +77,19 @@ export const staffSchedulingRouter = createTRPCRouter({
       if (conflict) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: `Staff member already assigned to "${conflict.event.title}" on this date`,
+          message: `Staff member already assigned to "${conflict.event?.title}" on this date`,
         });
       }
 
       return ctx.db.staffAssignments.create({
         data: {
-          ...data,
-          orgId: ctx.orgId,
+          eventId: input.eventId,
+          staffId: input.staffMemberId,
+          roleAtEvent: input.roleAtEvent,
+          shiftStart: input.startTime ? new Date(`1970-01-01T${input.startTime}`) : undefined,
+          shiftEnd: input.endTime ? new Date(`1970-01-01T${input.endTime}`) : undefined,
+          payRate: input.payRate,
+          notes: input.notes,
           status: "assigned",
         },
       });
@@ -102,9 +105,12 @@ export const staffSchedulingRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       return ctx.db.staffAssignments.findMany({
-        where: { eventId: input.eventId, orgId: ctx.orgId },
+        where: {
+          eventId: input.eventId,
+          event: { orgId: ctx.orgId },
+        },
         include: {
-          staffMember: {
+          staff: {
             select: { id: true, role: true },
           },
         },
@@ -124,8 +130,8 @@ export const staffSchedulingRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const where: Record<string, unknown> = {
-        staffMemberId: input.staffMemberId,
-        orgId: ctx.orgId,
+        staffId: input.staffMemberId,
+        event: { orgId: ctx.orgId },
       };
 
       if (input.dateFrom || input.dateTo) {
@@ -173,11 +179,16 @@ export const staffSchedulingRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { orgId: _orgId, assignmentId, ...data } = input;
-
       return ctx.db.staffAssignments.update({
-        where: { id: assignmentId },
-        data,
+        where: { id: input.assignmentId },
+        data: {
+          roleAtEvent: input.roleAtEvent,
+          status: input.status,
+          shiftStart: input.startTime ? new Date(`1970-01-01T${input.startTime}`) : undefined,
+          shiftEnd: input.endTime ? new Date(`1970-01-01T${input.endTime}`) : undefined,
+          payRate: input.payRate,
+          notes: input.notes,
+        },
       });
     }),
 
@@ -194,7 +205,6 @@ export const staffSchedulingRouter = createTRPCRouter({
         where: { id: input.assignmentId },
         data: {
           status: "checked_in",
-          checkedInAt: new Date(),
         },
       });
     }),
@@ -212,7 +222,6 @@ export const staffSchedulingRouter = createTRPCRouter({
         where: { id: input.assignmentId },
         data: {
           status: "checked_out",
-          checkedOutAt: new Date(),
         },
       });
     }),
@@ -226,9 +235,8 @@ export const staffSchedulingRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.staffAssignments.update({
+      return ctx.db.staffAssignments.delete({
         where: { id: input.assignmentId },
-        data: { status: "cancelled" },
       });
     }),
 
@@ -248,14 +256,13 @@ export const staffSchedulingRouter = createTRPCRouter({
 
       const busyStaff = await ctx.db.staffAssignments.findMany({
         where: {
-          orgId: ctx.orgId,
-          status: { notIn: ["cancelled", "no_show"] },
-          event: { eventDate: input.date },
+          event: { orgId: ctx.orgId, eventDate: input.date },
+          status: { notIn: ["no_show"] },
         },
-        select: { staffMemberId: true },
+        select: { orgMemberId: true },
       });
 
-      const busyIds = new Set(busyStaff.map((s) => s.staffMemberId));
+      const busyIds = new Set(busyStaff.map((s) => s.orgMemberId).filter(Boolean));
 
       return allStaff.map((s) => ({
         ...s,

@@ -73,7 +73,7 @@ export const marketplaceRouter = createTRPCRouter({
           type: true,
           description: true,
           logoUrl: true,
-          coverUrl: true,
+          coverImageUrl: true,
           city: true,
           cuisines: true,
           specialties: true,
@@ -201,7 +201,7 @@ export const marketplaceRouter = createTRPCRouter({
           type: true,
           description: true,
           logoUrl: true,
-          coverUrl: true,
+          coverImageUrl: true,
           city: true,
           cuisines: true,
           priceRange: true,
@@ -221,7 +221,7 @@ export const marketplaceRouter = createTRPCRouter({
         where: { isActive: true },
       }),
       ctx.db.events.count({ where: { status: { notIn: ["cancelled", "inquiry"] } } }),
-      ctx.db.eventReviews.count({ where: { isPublished: true } }),
+      ctx.db.reviews.count({ where: { isPublished: true } }),
     ]);
 
     return {

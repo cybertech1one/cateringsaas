@@ -8,6 +8,10 @@
  * - Notes and communication log
  * - WhatsApp integration for follow-ups
  * - CSV export for marketing
+ *
+ * NOTE: ClientProfiles are not directly org-scoped. They are linked
+ * to orgs through Events (Events.clientId -> ClientProfiles.id).
+ * Org-scoped queries filter clients who have events for the org.
  */
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
@@ -19,7 +23,7 @@ import {
 } from "~/server/api/trpc";
 
 export const clientsRouter = createTRPCRouter({
-  /** List all clients with search and filters */
+  /** List all clients with search and filters (scoped via events) */
   list: orgProcedure
     .input(
       z.object({
@@ -27,20 +31,26 @@ export const clientsRouter = createTRPCRouter({
         search: z.string().optional(),
         tags: z.array(z.string()).optional(),
         city: z.string().optional(),
-        sortBy: z.enum(["name", "events", "lastEvent", "created"]).default("name"),
+        sortBy: z.enum(["name", "events", "created"]).default("name"),
         cursor: z.string().optional(),
         limit: z.number().int().min(1).max(50).default(20),
       })
     )
     .query(async ({ ctx, input }) => {
-      const where: Record<string, unknown> = { orgId: ctx.orgId };
+      // Scope to clients who have events for this org
+      const where: Record<string, unknown> = {
+        events: {
+          some: {
+            orgId: ctx.orgId,
+          },
+        },
+      };
 
       if (input.search) {
         where.OR = [
           { name: { contains: input.search, mode: "insensitive" } },
           { phone: { contains: input.search } },
           { email: { contains: input.search, mode: "insensitive" } },
-          { company: { contains: input.search, mode: "insensitive" } },
         ];
       }
       if (input.tags && input.tags.length > 0) {
@@ -53,8 +63,7 @@ export const clientsRouter = createTRPCRouter({
       const orderBy: Record<string, string> = {};
       switch (input.sortBy) {
         case "name": orderBy.name = "asc"; break;
-        case "events": orderBy.eventCount = "desc"; break;
-        case "lastEvent": orderBy.lastEventDate = "desc"; break;
+        case "events": orderBy.totalEventsBooked = "desc"; break;
         case "created": orderBy.createdAt = "desc"; break;
       }
 
@@ -83,22 +92,23 @@ export const clientsRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
+      // Verify client has events for this org
       const client = await ctx.db.clientProfiles.findFirst({
-        where: { id: input.clientId, orgId: ctx.orgId },
+        where: {
+          id: input.clientId,
+          events: { some: { orgId: ctx.orgId } },
+        },
       });
 
       if (!client) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
 
-      // Get event history
+      // Get event history for this org
       const events = await ctx.db.events.findMany({
         where: {
           orgId: ctx.orgId,
-          OR: [
-            { clientPhone: client.phone },
-            { clientEmail: client.email },
-          ],
+          clientId: client.id,
         },
         orderBy: { eventDate: "desc" },
         select: {
@@ -115,7 +125,7 @@ export const clientsRouter = createTRPCRouter({
       return { ...client, events };
     }),
 
-  /** Create client profile */
+  /** Create client profile and link to org via a placeholder event or direct creation */
   create: orgManagerProcedure
     .input(
       z.object({
@@ -124,13 +134,10 @@ export const clientsRouter = createTRPCRouter({
         phone: z.string().optional(),
         email: z.string().email().optional(),
         whatsapp: z.string().optional(),
-        company: z.string().optional(),
         city: z.string().optional(),
-        address: z.string().optional(),
         preferredLanguage: z.enum(["en", "fr", "ar"]).optional(),
         tags: z.array(z.string()).optional(),
         notes: z.string().optional(),
-        source: z.enum(["walk_in", "whatsapp", "website", "referral", "social_media", "other"]).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -139,8 +146,7 @@ export const clientsRouter = createTRPCRouter({
       return ctx.db.clientProfiles.create({
         data: {
           ...data,
-          orgId: ctx.orgId,
-          eventCount: 0,
+          totalEventsBooked: 0,
         },
       });
     }),
@@ -155,9 +161,7 @@ export const clientsRouter = createTRPCRouter({
         phone: z.string().optional(),
         email: z.string().email().optional(),
         whatsapp: z.string().optional(),
-        company: z.string().optional(),
         city: z.string().optional(),
-        address: z.string().optional(),
         preferredLanguage: z.enum(["en", "fr", "ar"]).optional(),
         tags: z.array(z.string()).optional(),
         notes: z.string().optional(),
@@ -166,8 +170,12 @@ export const clientsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { orgId: _orgId, clientId, ...data } = input;
 
+      // Verify client has events for this org
       const client = await ctx.db.clientProfiles.findFirst({
-        where: { id: clientId, orgId: ctx.orgId },
+        where: {
+          id: clientId,
+          events: { some: { orgId: ctx.orgId } },
+        },
       });
 
       if (!client) {
@@ -191,7 +199,10 @@ export const clientsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const client = await ctx.db.clientProfiles.findFirst({
-        where: { id: input.clientId, orgId: ctx.orgId },
+        where: {
+          id: input.clientId,
+          events: { some: { orgId: ctx.orgId } },
+        },
         select: { notes: true },
       });
 
@@ -220,6 +231,19 @@ export const clientsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify access through events
+      const client = await ctx.db.clientProfiles.findFirst({
+        where: {
+          id: input.clientId,
+          events: { some: { orgId: ctx.orgId } },
+        },
+        select: { id: true },
+      });
+
+      if (!client) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
       return ctx.db.clientProfiles.update({
         where: { id: input.clientId },
         data: { tags: input.tags },
@@ -231,13 +255,15 @@ export const clientsRouter = createTRPCRouter({
     .input(z.object({ orgId: z.string().uuid().optional() }))
     .query(async ({ ctx }) => {
       const clients = await ctx.db.clientProfiles.findMany({
-        where: { orgId: ctx.orgId },
+        where: {
+          events: { some: { orgId: ctx.orgId } },
+        },
         select: { tags: true },
       });
 
       const allTags = new Set<string>();
       clients.forEach((c) => {
-        (c.tags as string[])?.forEach((t) => allTags.add(t));
+        c.tags?.forEach((t) => allTags.add(t));
       });
 
       return Array.from(allTags).sort();
@@ -247,19 +273,21 @@ export const clientsRouter = createTRPCRouter({
   getSegments: orgProcedure
     .input(z.object({ orgId: z.string().uuid().optional() }))
     .query(async ({ ctx }) => {
+      const orgEventFilter = { events: { some: { orgId: ctx.orgId } } };
+
       const [total, vip, corporate, repeat, newClients] = await Promise.all([
-        ctx.db.clientProfiles.count({ where: { orgId: ctx.orgId } }),
+        ctx.db.clientProfiles.count({ where: orgEventFilter }),
         ctx.db.clientProfiles.count({
-          where: { orgId: ctx.orgId, tags: { has: "vip" } },
+          where: { ...orgEventFilter, tags: { has: "vip" } },
         }),
         ctx.db.clientProfiles.count({
-          where: { orgId: ctx.orgId, tags: { has: "corporate" } },
+          where: { ...orgEventFilter, tags: { has: "corporate" } },
         }),
         ctx.db.clientProfiles.count({
-          where: { orgId: ctx.orgId, eventCount: { gte: 2 } },
+          where: { ...orgEventFilter, totalEventsBooked: { gte: 2 } },
         }),
         ctx.db.clientProfiles.count({
-          where: { orgId: ctx.orgId, eventCount: { lte: 1 } },
+          where: { ...orgEventFilter, totalEventsBooked: { lte: 1 } },
         }),
       ]);
 
@@ -271,20 +299,21 @@ export const clientsRouter = createTRPCRouter({
     .input(z.object({ orgId: z.string().uuid().optional() }))
     .query(async ({ ctx }) => {
       const clients = await ctx.db.clientProfiles.findMany({
-        where: { orgId: ctx.orgId },
+        where: {
+          events: { some: { orgId: ctx.orgId } },
+        },
         orderBy: { name: "asc" },
       });
 
-      const headers = ["Name", "Phone", "Email", "WhatsApp", "Company", "City", "Tags", "Events", "Notes"];
+      const headers = ["Name", "Phone", "Email", "WhatsApp", "City", "Tags", "Events", "Notes"];
       const rows = clients.map((c) => [
         c.name,
         c.phone ?? "",
         c.email ?? "",
         c.whatsapp ?? "",
-        c.company ?? "",
         c.city ?? "",
-        (c.tags as string[])?.join("; ") ?? "",
-        String(c.eventCount ?? 0),
+        c.tags?.join("; ") ?? "",
+        String(c.totalEventsBooked ?? 0),
         (c.notes ?? "").replace(/\n/g, " "),
       ]);
 

@@ -2,12 +2,11 @@
  * Diyafa — Events Router
  *
  * The heart of the catering platform. Events represent bookings
- * that progress through a 12-state lifecycle:
+ * that progress through a 13-state lifecycle:
  *
- * INQUIRY → QUOTE_SENT → QUOTE_REVISED → QUOTE_ACCEPTED →
- * DEPOSIT_PENDING → DEPOSIT_RECEIVED → CONFIRMED →
- * IN_PREPARATION → IN_EXECUTION → COMPLETED →
- * SETTLEMENT_PENDING → SETTLED
+ * INQUIRY → REVIEWED → QUOTED → ACCEPTED → DEPOSIT_PAID →
+ * CONFIRMED → PREP → SETUP → EXECUTION → COMPLETED → SETTLED
+ * (with DECLINED and CANCELLED as terminal states)
  *
  * Catering is NOT ordering — events are booked weeks/months ahead,
  * involve negotiations, custom menus, and milestone payments.
@@ -29,16 +28,16 @@ import {
 
 const EVENT_STATUSES = [
   "inquiry",
-  "quote_sent",
-  "quote_revised",
-  "quote_accepted",
-  "deposit_pending",
-  "deposit_received",
+  "reviewed",
+  "quoted",
+  "accepted",
+  "declined",
+  "deposit_paid",
   "confirmed",
-  "in_preparation",
-  "in_execution",
+  "prep",
+  "setup",
+  "execution",
   "completed",
-  "settlement_pending",
   "settled",
   "cancelled",
 ] as const;
@@ -47,17 +46,17 @@ type EventStatus = (typeof EVENT_STATUSES)[number];
 
 /** Valid state transitions */
 const VALID_TRANSITIONS: Record<EventStatus, EventStatus[]> = {
-  inquiry: ["quote_sent", "cancelled"],
-  quote_sent: ["quote_revised", "quote_accepted", "cancelled"],
-  quote_revised: ["quote_sent", "quote_accepted", "cancelled"],
-  quote_accepted: ["deposit_pending", "cancelled"],
-  deposit_pending: ["deposit_received", "cancelled"],
-  deposit_received: ["confirmed"],
-  confirmed: ["in_preparation", "cancelled"],
-  in_preparation: ["in_execution", "cancelled"],
-  in_execution: ["completed"],
-  completed: ["settlement_pending"],
-  settlement_pending: ["settled"],
+  inquiry: ["reviewed", "cancelled"],
+  reviewed: ["quoted", "declined", "cancelled"],
+  quoted: ["accepted", "declined", "cancelled"],
+  accepted: ["deposit_paid", "cancelled"],
+  declined: [],
+  deposit_paid: ["confirmed", "cancelled"],
+  confirmed: ["prep", "cancelled"],
+  prep: ["setup", "cancelled"],
+  setup: ["execution", "cancelled"],
+  execution: ["completed"],
+  completed: ["settled"],
   settled: [],
   cancelled: [],
 };
@@ -83,8 +82,7 @@ const eventTypeEnum = z.enum([
   "engagement",
   "henna",
   "graduation",
-  "national_holiday",
-  "baby_shower",
+  "diffa",
   "other",
 ]);
 
@@ -131,7 +129,7 @@ export const eventsRouter = createTRPCRouter({
         where.OR = [
           { title: { contains: input.search, mode: "insensitive" } },
           { venueName: { contains: input.search, mode: "insensitive" } },
-          { clientName: { contains: input.search, mode: "insensitive" } },
+          { customerName: { contains: input.search, mode: "insensitive" } },
         ];
       }
 
@@ -161,8 +159,8 @@ export const eventsRouter = createTRPCRouter({
           totalAmount: true,
           depositAmount: true,
           balanceDue: true,
-          clientName: true,
-          clientPhone: true,
+          customerName: true,
+          customerPhone: true,
           createdAt: true,
         },
       });
@@ -191,18 +189,22 @@ export const eventsRouter = createTRPCRouter({
           quotes: {
             orderBy: { versionNumber: "desc" },
           },
-          paymentMilestones: {
-            orderBy: { dueDate: "asc" },
+          paymentSchedules: {
+            include: {
+              milestones: {
+                orderBy: { dueDate: "asc" },
+              },
+            },
           },
           staffAssignments: {
             include: {
-              staffMember: {
+              staff: {
                 select: { id: true, role: true },
               },
             },
           },
-          timeline: {
-            orderBy: { scheduledTime: "asc" },
+          prepTasks: {
+            orderBy: { sortOrder: "asc" },
           },
         },
       });
@@ -227,26 +229,27 @@ export const eventsRouter = createTRPCRouter({
         endTime: z.string().optional(),
         venueName: z.string().optional(),
         venueAddress: z.string().optional(),
-        venueLatitude: z.number().optional(),
-        venueLongitude: z.number().optional(),
+        venueCity: z.string().optional(),
+        venueLat: z.number().optional(),
+        venueLng: z.number().optional(),
         guestCount: z.number().int().positive(),
         dietaryRequirements: z.array(z.string()).optional(),
-        clientName: z.string().min(2).max(100),
-        clientPhone: z.string().optional(),
-        clientEmail: z.string().email().optional(),
-        clientWhatsapp: z.string().optional(),
+        customerName: z.string().min(2).max(100),
+        customerPhone: z.string().min(8).max(30),
+        customerEmail: z.string().email().optional(),
+        specialRequests: z.string().optional(),
         notes: z.string().optional(),
         internalNotes: z.string().optional(),
-        specialRequests: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { orgId: _orgId, ...data } = input;
+      const { orgId: _orgId, dietaryRequirements, ...data } = input;
 
       return ctx.db.events.create({
         data: {
           ...data,
           orgId: ctx.orgId,
+          dietaryRequirements: dietaryRequirements ?? [],
           status: "inquiry",
           totalAmount: 0,
           depositAmount: 0,
@@ -269,24 +272,24 @@ export const eventsRouter = createTRPCRouter({
         endTime: z.string().optional(),
         venueName: z.string().optional(),
         venueAddress: z.string().optional(),
-        venueLatitude: z.number().optional(),
-        venueLongitude: z.number().optional(),
+        venueCity: z.string().optional(),
+        venueLat: z.number().optional(),
+        venueLng: z.number().optional(),
         guestCount: z.number().int().positive().optional(),
         confirmedGuestCount: z.number().int().positive().optional(),
         dietaryRequirements: z.array(z.string()).optional(),
-        clientName: z.string().optional(),
-        clientPhone: z.string().optional(),
-        clientEmail: z.string().email().optional(),
-        clientWhatsapp: z.string().optional(),
+        customerName: z.string().optional(),
+        customerPhone: z.string().optional(),
+        customerEmail: z.string().email().optional(),
+        specialRequests: z.string().optional(),
         notes: z.string().optional(),
         internalNotes: z.string().optional(),
-        specialRequests: z.string().optional(),
         totalAmount: z.number().nonnegative().optional(),
         depositAmount: z.number().nonnegative().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { orgId: _orgId, eventId, ...data } = input;
+      const { orgId: _orgId, eventId, dietaryRequirements, ...data } = input;
 
       const event = await ctx.db.events.findFirst({
         where: { id: eventId, orgId: ctx.orgId },
@@ -304,6 +307,7 @@ export const eventsRouter = createTRPCRouter({
         where: { id: eventId },
         data: {
           ...data,
+          ...(dietaryRequirements !== undefined ? { dietaryRequirements } : {}),
           balanceDue: Number(totalAmount) - Number(depositAmount),
         },
       });
@@ -348,11 +352,20 @@ export const eventsRouter = createTRPCRouter({
 
       const updateData: Record<string, unknown> = {
         status: newStatus,
+        lastActivityAt: new Date(),
       };
 
-      if (newStatus === "cancelled") {
-        updateData.cancellationReason = input.reason;
-        updateData.cancelledAt = new Date();
+      // Store cancellation reason in notes if provided
+      if (newStatus === "cancelled" && input.reason) {
+        const event2 = await ctx.db.events.findFirst({
+          where: { id: input.eventId },
+          select: { internalNotes: true },
+        });
+        const timestamp = new Date().toISOString().slice(0, 16);
+        const cancellationNote = `[${timestamp}] CANCELLED: ${input.reason}`;
+        updateData.internalNotes = event2?.internalNotes
+          ? `${event2.internalNotes}\n\n${cancellationNote}`
+          : cancellationNote;
       }
 
       return ctx.db.events.update({
@@ -395,7 +408,7 @@ export const eventsRouter = createTRPCRouter({
           guestCount: true,
           status: true,
           totalAmount: true,
-          clientName: true,
+          customerName: true,
         },
         orderBy: { eventDate: "asc" },
       });
@@ -423,8 +436,8 @@ export const eventsRouter = createTRPCRouter({
           venueName: true,
           guestCount: true,
           status: true,
-          clientName: true,
-          clientPhone: true,
+          customerName: true,
+          customerPhone: true,
         },
         orderBy: { eventDate: "asc" },
         take: 10,
@@ -482,9 +495,10 @@ export const eventsRouter = createTRPCRouter({
               status: {
                 in: [
                   "confirmed",
-                  "in_preparation",
-                  "in_execution",
-                  "deposit_received",
+                  "prep",
+                  "setup",
+                  "execution",
+                  "deposit_paid",
                 ],
               },
             },
@@ -518,15 +532,14 @@ export const eventsRouter = createTRPCRouter({
         eventType: eventTypeEnum,
         eventDate: z.date(),
         guestCount: z.number().int().positive(),
-        clientName: z.string().min(2).max(100),
-        clientPhone: z.string().min(8).max(20),
-        clientEmail: z.string().email().optional(),
-        clientWhatsapp: z.string().optional(),
+        customerName: z.string().min(2).max(100),
+        customerPhone: z.string().min(8).max(30),
+        customerEmail: z.string().email().optional(),
         venueName: z.string().optional(),
         venueCity: z.string().optional(),
         dietaryRequirements: z.array(z.string()).optional(),
+        specialRequests: z.string().max(2000).optional(),
         notes: z.string().max(2000).optional(),
-        preferredLanguage: z.enum(["en", "fr", "ar"]).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -543,7 +556,7 @@ export const eventsRouter = createTRPCRouter({
         });
       }
 
-      const title = `${input.eventType.replace(/_/g, " ")} - ${input.clientName}`;
+      const title = `${input.eventType.replace(/_/g, " ")} - ${input.customerName}`;
 
       const event = await ctx.db.events.create({
         data: {
@@ -552,13 +565,14 @@ export const eventsRouter = createTRPCRouter({
           eventType: input.eventType,
           eventDate: input.eventDate,
           guestCount: input.guestCount,
-          clientName: input.clientName,
-          clientPhone: input.clientPhone,
-          clientEmail: input.clientEmail,
-          clientWhatsapp: input.clientWhatsapp,
+          customerName: input.customerName,
+          customerPhone: input.customerPhone,
+          customerEmail: input.customerEmail,
           venueName: input.venueName,
+          venueCity: input.venueCity,
+          specialRequests: input.specialRequests,
           notes: input.notes,
-          dietaryRequirements: input.dietaryRequirements,
+          dietaryRequirements: input.dietaryRequirements ?? [],
           status: "inquiry",
           totalAmount: 0,
           depositAmount: 0,
@@ -587,7 +601,7 @@ export const eventsRouter = createTRPCRouter({
       const event = await ctx.db.events.findFirst({
         where: {
           id: input.eventId,
-          clientPhone: input.phone,
+          customerPhone: input.phone,
         },
         select: {
           id: true,

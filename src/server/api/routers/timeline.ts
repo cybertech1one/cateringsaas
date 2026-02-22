@@ -10,6 +10,7 @@
  */
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { Prisma } from "@prisma/client";
 import {
   createTRPCRouter,
   orgProcedure,
@@ -233,10 +234,10 @@ export const timelineRouter = createTRPCRouter({
         ],
       };
 
-      const templateTasks = templates[input.template] ?? templates.basic;
+      const templateTasks = templates[input.template] ?? templates.basic!;
 
       await ctx.db.prepTasks.createMany({
-        data: templateTasks.map((task, index) => ({
+        data: templateTasks!.map((task, index) => ({
           eventId: input.eventId,
           name: task.name,
           category: task.category,
@@ -246,7 +247,7 @@ export const timelineRouter = createTRPCRouter({
         })),
       });
 
-      return { count: templateTasks.length };
+      return { count: templateTasks!.length };
     }),
 
   /** Reorder tasks */
@@ -317,7 +318,16 @@ export const timelineRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { orgId: _orgId, eventId, ...data } = input;
+      const { orgId: _orgId, eventId, foodManifest, equipmentManifest, loadingChecklist, setupChecklist, teardownChecklist, ...rest } = input;
+
+      const data = {
+        ...rest,
+        ...(foodManifest !== undefined ? { foodManifest: foodManifest as unknown as Prisma.InputJsonValue } : {}),
+        ...(equipmentManifest !== undefined ? { equipmentManifest: equipmentManifest as unknown as Prisma.InputJsonValue } : {}),
+        ...(loadingChecklist !== undefined ? { loadingChecklist: loadingChecklist as unknown as Prisma.InputJsonValue } : {}),
+        ...(setupChecklist !== undefined ? { setupChecklist: setupChecklist as unknown as Prisma.InputJsonValue } : {}),
+        ...(teardownChecklist !== undefined ? { teardownChecklist: teardownChecklist as unknown as Prisma.InputJsonValue } : {}),
+      };
 
       return ctx.db.deliveryPlans.upsert({
         where: { eventId },
@@ -351,8 +361,9 @@ export const timelineRouter = createTRPCRouter({
         if (!byCategory[t.category]) {
           byCategory[t.category] = { total: 0, completed: 0 };
         }
-        byCategory[t.category].total++;
-        if (t.status === "completed") byCategory[t.category].completed++;
+        const cat = byCategory[t.category]!;
+        cat.total++;
+        if (t.status === "completed") cat.completed++;
       });
 
       return {

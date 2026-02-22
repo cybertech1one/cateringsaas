@@ -10,7 +10,6 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { headers } from "next/headers";
 import { getServerUser } from "~/utils/auth";
 import { AuthProvider } from "~/providers/AuthProvider/AuthProvider";
-import { ServiceWorkerRegistration } from "~/components/PWA/ServiceWorkerRegistration";
 import { CookieConsent } from "~/components/CookieConsent/CookieConsent";
 import { type Metadata } from "next";
 import { getAppUrl } from "~/utils/getBaseUrl";
@@ -117,7 +116,6 @@ async function RootLayout({ children }: { children: React.ReactNode }) {
               </Providers>
             </AuthProvider>
           </TRPCReactProvider>
-          <ServiceWorkerRegistration />
         </body>
       </html>
     </>

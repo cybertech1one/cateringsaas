@@ -86,11 +86,11 @@ export default function EquipmentManagement() {
                   </div>
                   <div className="text-xs text-muted-foreground">
                     Condition: {item.condition as string}
-                    {item.costPerUnit && (
+                    {item.costPerUnit ? (
                       <span className="ml-2">
                         Value: {formatCurrency(item.costPerUnit as number)}/unit
                       </span>
-                    )}
+                    ) : null}
                   </div>
                 </CardContent>
               </Card>

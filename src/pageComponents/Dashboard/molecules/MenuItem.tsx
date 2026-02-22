@@ -1,14 +1,14 @@
 import { memo } from "react";
 import { MenuOperations } from "./MenuOperations";
 import Link from "next/link";
-import { type Menus } from "@prisma/client";
+import { type CateringMenus } from "@prisma/client";
 import Image from "next/image";
 import { MapPin, ExternalLink, Pencil, Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { shimmerToBase64 } from "~/utils/shimmer";
 
 interface MenuItemProps {
-  menu: Menus;
+  menu: CateringMenus & { logoImageUrl?: string | null; address?: string | null; city?: string | null };
 }
 
 function formatRelativeDate(date: Date): string {

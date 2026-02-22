@@ -60,9 +60,27 @@ function formatCurrency(centimes: number) {
   return `${(centimes / 100).toLocaleString("fr-MA")} MAD`;
 }
 
-function EventCard({ event }: { event: Record<string, unknown> }) {
-  const statusClass = STATUS_COLORS[event.status as string] ?? "bg-gray-100 text-gray-800";
-  const icon = EVENT_TYPE_ICONS[event.eventType as string] ?? "📅";
+type EventSummary = {
+  id: string;
+  title: string;
+  eventType: string;
+  eventDate: Date | string;
+  startTime: string | null;
+  endTime: string | null;
+  venueName: string | null;
+  guestCount: number;
+  status: string;
+  totalAmount: number;
+  depositAmount: number;
+  balanceDue: number;
+  customerName: string;
+  customerPhone: string | null;
+  createdAt: Date;
+};
+
+function EventCard({ event }: { event: EventSummary }) {
+  const statusClass = STATUS_COLORS[event.status] ?? "bg-gray-100 text-gray-800";
+  const icon = EVENT_TYPE_ICONS[event.eventType] ?? "📅";
 
   return (
     <Card className="transition-shadow hover:shadow-md cursor-pointer">
@@ -72,16 +90,16 @@ function EventCard({ event }: { event: Record<string, unknown> }) {
             <span className="text-xl">{icon}</span>
             <div>
               <h3 className="font-semibold text-sm line-clamp-1">
-                {event.title as string}
+                {event.title}
               </h3>
               <Badge variant="secondary" className={`text-[10px] ${statusClass}`}>
-                {(event.status as string).replace(/_/g, " ")}
+                {event.status.replace(/_/g, " ")}
               </Badge>
             </div>
           </div>
-          {(event.totalAmount as number) > 0 && (
+          {event.totalAmount > 0 && (
             <span className="text-sm font-semibold text-emerald-700">
-              {formatCurrency(event.totalAmount as number)}
+              {formatCurrency(event.totalAmount)}
             </span>
           )}
         </div>
@@ -89,20 +107,20 @@ function EventCard({ event }: { event: Record<string, unknown> }) {
         <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground mt-3">
           <div className="flex items-center gap-1">
             <CalendarDays className="h-3 w-3" />
-            {formatDate(event.eventDate as string)}
+            {formatDate(event.eventDate)}
           </div>
           <div className="flex items-center gap-1">
             <Users className="h-3 w-3" />
-            {event.guestCount as number} guests
+            {event.guestCount} guests
           </div>
           <div className="flex items-center gap-1">
             <Phone className="h-3 w-3" />
-            {event.customerName as string}
+            {event.customerName}
           </div>
           {event.venueName && (
             <div className="flex items-center gap-1">
               <MapPin className="h-3 w-3" />
-              {event.venueName as string}
+              {event.venueName}
             </div>
           )}
         </div>
@@ -117,21 +135,23 @@ export default function EventsManagement() {
 
   const { data, isLoading } = api.events.list.useQuery({
     search: search || undefined,
-    status: statusFilter !== "all" ? statusFilter : undefined,
+    status: statusFilter !== "all"
+      ? [statusFilter as "inquiry" | "reviewed" | "quoted" | "accepted" | "declined" | "deposit_paid" | "confirmed" | "prep" | "setup" | "execution" | "completed" | "settled" | "cancelled"]
+      : undefined,
     limit: 50,
   });
 
-  const events = (data?.events ?? []) as Array<Record<string, unknown>>;
+  const events = (data?.events ?? []) as EventSummary[];
 
   // Group events by status category
   const pipeline = events.filter((e) =>
-    ["inquiry", "quote_sent", "quote_revised", "quote_accepted"].includes(e.status as string)
+    ["inquiry", "reviewed", "quoted", "accepted"].includes(e.status)
   );
   const active = events.filter((e) =>
-    ["deposit_pending", "deposit_received", "confirmed", "in_preparation", "in_execution"].includes(e.status as string)
+    ["declined", "deposit_paid", "confirmed", "prep", "setup", "execution"].includes(e.status)
   );
   const completed = events.filter((e) =>
-    ["completed", "settlement_pending", "settled"].includes(e.status as string)
+    ["completed", "settled"].includes(e.status)
   );
 
   return (
@@ -182,7 +202,7 @@ export default function EventsManagement() {
               </div>
               <div className="space-y-3">
                 {pipeline.map((event) => (
-                  <EventCard key={event.id as string} event={event} />
+                  <EventCard key={event.id} event={event} />
                 ))}
                 {pipeline.length === 0 && (
                   <p className="text-sm text-muted-foreground text-center py-8">
@@ -200,7 +220,7 @@ export default function EventsManagement() {
               </div>
               <div className="space-y-3">
                 {active.map((event) => (
-                  <EventCard key={event.id as string} event={event} />
+                  <EventCard key={event.id} event={event} />
                 ))}
                 {active.length === 0 && (
                   <p className="text-sm text-muted-foreground text-center py-8">
@@ -218,7 +238,7 @@ export default function EventsManagement() {
               </div>
               <div className="space-y-3">
                 {completed.slice(0, 5).map((event) => (
-                  <EventCard key={event.id as string} event={event} />
+                  <EventCard key={event.id} event={event} />
                 ))}
                 {completed.length === 0 && (
                   <p className="text-sm text-muted-foreground text-center py-8">
@@ -244,7 +264,7 @@ export default function EventsManagement() {
               </div>
             ) : (
               events.map((event) => (
-                <EventCard key={event.id as string} event={event} />
+                <EventCard key={event.id} event={event} />
               ))
             )}
           </div>

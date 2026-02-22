@@ -1,26 +1,17 @@
+/**
+ * Promotions types and utility functions.
+ *
+ * Defines the Promotion model shape, form validation schema,
+ * and helper functions for formatting and status derivation.
+ */
+
 import { z } from "zod";
 
-// ── Shared types for the Promotions feature ──────────────────
+// ---------------------------------------------------------------------------
+// Promotion type
+// ---------------------------------------------------------------------------
 
-export type PromotionType =
-  | "daily_special"
-  | "happy_hour"
-  | "discount"
-  | "combo"
-  | "seasonal";
-
-export type DayOfWeek =
-  | "monday"
-  | "tuesday"
-  | "wednesday"
-  | "thursday"
-  | "friday"
-  | "saturday"
-  | "sunday";
-
-export type FilterStatus = "all" | "active" | "scheduled" | "expired";
-
-export type Promotion = {
+export interface Promotion {
   id: string;
   restaurantId: string;
   title: string;
@@ -40,101 +31,35 @@ export type Promotion = {
   imageUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
-};
-
-export type Menu = {
-  id: string;
-  name: string;
-};
-
-// ── Constants ──────────────────────────────────────────────────
-
-export const DAYS_OF_WEEK: { value: DayOfWeek; i18nKey: string }[] = [
-  { value: "monday", i18nKey: "promotions.dayMon" },
-  { value: "tuesday", i18nKey: "promotions.dayTue" },
-  { value: "wednesday", i18nKey: "promotions.dayWed" },
-  { value: "thursday", i18nKey: "promotions.dayThu" },
-  { value: "friday", i18nKey: "promotions.dayFri" },
-  { value: "saturday", i18nKey: "promotions.daySat" },
-  { value: "sunday", i18nKey: "promotions.daySun" },
-];
-
-export const PROMOTION_TYPES: { value: PromotionType; i18nKey: string }[] = [
-  { value: "daily_special", i18nKey: "promotions.dailySpecial" },
-  { value: "happy_hour", i18nKey: "promotions.happyHour" },
-  { value: "discount", i18nKey: "promotions.discount" },
-  { value: "combo", i18nKey: "promotions.combo" },
-  { value: "seasonal", i18nKey: "promotions.seasonal" },
-];
-
-export const PROMOTION_TYPE_STYLES: Record<
-  PromotionType,
-  { bg: string; text: string; i18nKey: string }
-> = {
-  daily_special: {
-    bg: "bg-orange-100 dark:bg-orange-900/30",
-    text: "text-orange-700 dark:text-orange-400",
-    i18nKey: "promotions.dailySpecial",
-  },
-  happy_hour: {
-    bg: "bg-purple-100 dark:bg-purple-900/30",
-    text: "text-purple-700 dark:text-purple-400",
-    i18nKey: "promotions.happyHour",
-  },
-  discount: {
-    bg: "bg-green-100 dark:bg-green-900/30",
-    text: "text-green-700 dark:text-green-400",
-    i18nKey: "promotions.discount",
-  },
-  combo: {
-    bg: "bg-blue-100 dark:bg-blue-900/30",
-    text: "text-blue-700 dark:text-blue-400",
-    i18nKey: "promotions.combo",
-  },
-  seasonal: {
-    bg: "bg-amber-100 dark:bg-amber-900/30",
-    text: "text-amber-700 dark:text-amber-400",
-    i18nKey: "promotions.seasonal",
-  },
-};
-
-// ── Helpers ────────────────────────────────────────────────────
-
-export function getPromotionStatus(
-  promo: Promotion,
-): "active" | "scheduled" | "expired" {
-  const now = new Date();
-
-  if (!promo.isActive) return "expired";
-  if (new Date(promo.startDate) > now) return "scheduled";
-  if (promo.endDate && new Date(promo.endDate) < now) return "expired";
-
-  return "active";
 }
 
-export function formatDate(date: Date | string): string {
-  return new Date(date).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
+// ---------------------------------------------------------------------------
+// Form validation schema
+// ---------------------------------------------------------------------------
 
-export function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
+const dayEnum = z.enum([
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+]);
 
-export function toDateInputValue(date: Date | string): string {
-  const d = new Date(date);
+const optionalNumber = z.preprocess(
+  (val) => (val === "" || val === undefined ? undefined : Number(val)),
+  z.number().int().min(0).max(100).optional(),
+);
 
-  return d.toISOString().split("T")[0] ?? "";
-}
-
-// ── Validation Schema ────────────────────────────────────────
+const optionalAmount = z.preprocess(
+  (val) => (val === "" || val === undefined ? undefined : Number(val)),
+  z.number().int().min(0).optional(),
+);
 
 export const promotionFormSchema = z
   .object({
-    title: z.string().min(1, "Title is required").max(200),
+    title: z.string().min(1).max(200),
     description: z.string().max(1000).optional(),
     promotionType: z.enum([
       "daily_special",
@@ -143,71 +68,89 @@ export const promotionFormSchema = z
       "combo",
       "seasonal",
     ]),
-    discountPercent: z.coerce
-      .number()
-      .int()
-      .min(0)
-      .max(100)
-      .optional()
-      .or(z.literal("")),
-    discountAmount: z.coerce
-      .number()
-      .int()
-      .min(0)
-      .optional()
-      .or(z.literal("")),
     startDate: z.string().min(1, "Start date is required"),
     endDate: z.string().optional(),
-    applicableDays: z.array(
-      z.enum([
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday",
-      ]),
-    ),
+    isActive: z.boolean(),
+    applicableDays: z.array(dayEnum),
     startTime: z.string().optional(),
     endTime: z.string().optional(),
+    discountPercent: optionalNumber,
+    discountAmount: optionalAmount,
     menuId: z.string().optional(),
-    isActive: z.boolean(),
+    dishId: z.string().optional(),
+    categoryId: z.string().optional(),
   })
-  .refine(
-    (data) => {
-      // At least one of discountPercent or discountAmount should be provided,
-      // but not both. If neither is provided, that is also fine.
-      const hasPercent =
-        data.discountPercent !== undefined &&
-        data.discountPercent !== "" &&
-        data.discountPercent > 0;
-      const hasAmount =
-        data.discountAmount !== undefined &&
-        data.discountAmount !== "" &&
-        data.discountAmount > 0;
-
-      if (hasPercent && hasAmount) return false;
-
-      return true;
-    },
-    {
-      message: "Provide either a discount percentage or a fixed amount, not both",
-      path: ["discountPercent"],
-    },
-  )
   .refine(
     (data) => {
       if (data.endDate && data.startDate) {
         return new Date(data.endDate) > new Date(data.startDate);
       }
-
       return true;
     },
     {
       message: "End date must be after start date",
       path: ["endDate"],
     },
+  )
+  .refine(
+    (data) => {
+      const hasPercent =
+        data.discountPercent !== undefined && data.discountPercent > 0;
+      const hasAmount =
+        data.discountAmount !== undefined && data.discountAmount > 0;
+      if (hasPercent && hasAmount) return false;
+      return true;
+    },
+    {
+      message:
+        "Provide either a discount percentage or a discount amount, not both",
+      path: ["discountPercent"],
+    },
   );
 
 export type PromotionFormValues = z.input<typeof promotionFormSchema>;
+
+// ---------------------------------------------------------------------------
+// Utility functions
+// ---------------------------------------------------------------------------
+
+/** Capitalize the first letter of a string */
+export function capitalize(str: string): string {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/** Format a date as a short human-readable string (e.g., "Jun 15, 2025") */
+export function formatDate(date: Date | string): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+/** Convert a date to YYYY-MM-DD format suitable for <input type="date"> */
+export function toDateInputValue(date: Date | string): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toISOString().slice(0, 10);
+}
+
+/** Derive a promotion's display status from its fields */
+export function getPromotionStatus(
+  promo: Pick<Promotion, "isActive" | "startDate" | "endDate">,
+): "active" | "expired" | "scheduled" {
+  if (!promo.isActive) return "expired";
+
+  const now = new Date();
+  const start = new Date(promo.startDate);
+
+  if (start > now) return "scheduled";
+
+  if (promo.endDate) {
+    const end = new Date(promo.endDate);
+    if (end < now) return "expired";
+  }
+
+  return "active";
+}
