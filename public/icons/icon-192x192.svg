@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" fill="none">
+  <rect width="192" height="192" rx="36" fill="#c2410c"/>
+  <rect x="8" y="8" width="176" height="176" rx="30" fill="#ea580c"/>
+  <!-- Simplified Fork -->
+  <g transform="translate(30, 30)">
+    <rect x="18" y="70" width="12" height="72" rx="6" fill="white"/>
+    <rect x="6" y="24" width="5" height="46" rx="2.5" fill="white"/>
+    <rect x="21" y="24" width="5" height="46" rx="2.5" fill="white"/>
+    <rect x="36" y="24" width="5" height="46" rx="2.5" fill="white"/>
+    <path d="M4 24 C4 12, 42 12, 42 24" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- Simplified QR -->
+  <g transform="translate(100, 50)">
+    <rect x="0" y="0" width="22" height="22" rx="3" fill="white"/>
+    <rect x="4" y="4" width="14" height="14" rx="2" fill="#ea580c"/>
+    <rect x="7" y="7" width="8" height="8" rx="1" fill="white"/>
+    <rect x="30" y="0" width="22" height="22" rx="3" fill="white"/>
+    <rect x="34" y="4" width="14" height="14" rx="2" fill="#ea580c"/>
+    <rect x="37" y="7" width="8" height="8" rx="1" fill="white"/>
+    <rect x="0" y="30" width="22" height="22" rx="3" fill="white"/>
+    <rect x="4" y="34" width="14" height="14" rx="2" fill="#ea580c"/>
+    <rect x="7" y="37" width="8" height="8" rx="1" fill="white"/>
+    <rect x="26" y="26" width="8" height="8" rx="2" fill="white"/>
+    <rect x="38" y="26" width="8" height="8" rx="2" fill="white"/>
+    <rect x="26" y="38" width="8" height="8" rx="2" fill="white"/>
+    <rect x="38" y="38" width="8" height="8" rx="2" fill="white"/>
+  </g>
+  <!-- Text -->
+  <text x="96" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="26" fill="white" opacity="0.9">FeastQR</text>
+</svg>

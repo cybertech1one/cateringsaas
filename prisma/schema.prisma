@@ -1,0 +1,1878 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["auth", "public"]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model AuditLogEntries {
+  instanceId String?   @map("instance_id") @db.Uuid
+  id         String    @id @db.Uuid
+  payload    Json?     @db.Json
+  createdAt  DateTime? @map("created_at") @db.Timestamptz(6)
+  ipAddress  String    @default("") @map("ip_address") @db.VarChar(64)
+
+  @@index([instanceId], map: "audit_logs_instance_id_idx")
+  @@map("audit_log_entries")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model FlowState {
+  id                   String               @id @db.Uuid
+  userId               String?              @map("user_id") @db.Uuid
+  authCode             String?              @map("auth_code")
+  codeChallengeMethod  CodeChallengeMethod? @map("code_challenge_method")
+  codeChallenge        String?              @map("code_challenge")
+  providerType         String               @map("provider_type")
+  providerAccessToken  String?              @map("provider_access_token")
+  providerRefreshToken String?              @map("provider_refresh_token")
+  createdAt            DateTime?            @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime?            @map("updated_at") @db.Timestamptz(6)
+  authenticationMethod String               @map("authentication_method")
+  authCodeIssuedAt     DateTime?            @map("auth_code_issued_at") @db.Timestamptz(6)
+  inviteToken          String?              @map("invite_token")
+  referrer             String?
+  oauthClientStateId   String?              @map("oauth_client_state_id") @db.Uuid
+  linkingTargetId      String?              @map("linking_target_id") @db.Uuid
+  emailOptional        Boolean              @default(false) @map("email_optional")
+  samlRelayStates      SamlRelayStates[]
+
+  @@index([authCode], map: "idx_auth_code")
+  @@index([userId, authenticationMethod], map: "idx_user_id_auth_method")
+  @@index([createdAt(sort: Desc)])
+  @@map("flow_state")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Identities {
+  providerId   String    @map("provider_id")
+  userId       String    @map("user_id") @db.Uuid
+  identityData Json      @map("identity_data")
+  provider     String
+  lastSignInAt DateTime? @map("last_sign_in_at") @db.Timestamptz(6)
+  createdAt    DateTime? @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime? @map("updated_at") @db.Timestamptz(6)
+  email        String?   @default(dbgenerated("lower((identity_data ->> 'email'::text))"))
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  users        Users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([providerId, provider], map: "identities_provider_id_provider_unique")
+  @@index([email])
+  @@index([userId])
+  @@map("identities")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Instances {
+  id            String    @id @db.Uuid
+  uuid          String?   @db.Uuid
+  rawBaseConfig String?   @map("raw_base_config")
+  createdAt     DateTime? @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime? @map("updated_at") @db.Timestamptz(6)
+
+  @@map("instances")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model MfaAmrClaims {
+  sessionId            String   @map("session_id") @db.Uuid
+  createdAt            DateTime @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @map("updated_at") @db.Timestamptz(6)
+  authenticationMethod String   @map("authentication_method")
+  id                   String   @id(map: "amr_id_pk") @db.Uuid
+  sessions             Sessions @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([sessionId, authenticationMethod], map: "mfa_amr_claims_session_id_authentication_method_pkey")
+  @@map("mfa_amr_claims")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model MfaChallenges {
+  id                  String     @id @db.Uuid
+  factorId            String     @map("factor_id") @db.Uuid
+  createdAt           DateTime   @map("created_at") @db.Timestamptz(6)
+  verifiedAt          DateTime?  @map("verified_at") @db.Timestamptz(6)
+  ipAddress           String     @map("ip_address") @db.Inet
+  otpCode             String?    @map("otp_code")
+  webAuthnSessionData Json?      @map("web_authn_session_data")
+  mfaFactors          MfaFactors @relation(fields: [factorId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "mfa_challenges_auth_factor_id_fkey")
+
+  @@index([createdAt(sort: Desc)], map: "mfa_challenge_created_at_idx")
+  @@map("mfa_challenges")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model MfaFactors {
+  id                        String          @id @db.Uuid
+  userId                    String          @map("user_id") @db.Uuid
+  friendlyName              String?         @map("friendly_name")
+  factorType                FactorType      @map("factor_type")
+  status                    FactorStatus    @map("status")
+  createdAt                 DateTime        @map("created_at") @db.Timestamptz(6)
+  updatedAt                 DateTime        @map("updated_at") @db.Timestamptz(6)
+  secret                    String?
+  phone                     String?
+  lastChallengedAt          DateTime?       @unique @map("last_challenged_at") @db.Timestamptz(6)
+  webAuthnCredential        Json?           @map("web_authn_credential")
+  webAuthnAaguid            String?         @map("web_authn_aaguid") @db.Uuid
+  lastWebauthnChallengeData Json?           @map("last_webauthn_challenge_data")
+  mfaChallenges             MfaChallenges[]
+  users                     Users           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId, phone], map: "unique_phone_factor_per_user")
+  @@index([userId, createdAt], map: "factor_id_created_at_idx")
+  @@index([userId])
+  @@map("mfa_factors")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model RefreshTokens {
+  instanceId String?   @map("instance_id") @db.Uuid
+  id         BigInt    @id @default(autoincrement())
+  token      String?   @unique(map: "refresh_tokens_token_unique") @db.VarChar(255)
+  userId     String?   @map("user_id") @db.VarChar(255)
+  revoked    Boolean?
+  createdAt  DateTime? @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz(6)
+  parent     String?   @db.VarChar(255)
+  sessionId  String?   @map("session_id") @db.Uuid
+  sessions   Sessions? @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([instanceId])
+  @@index([instanceId, userId])
+  @@index([parent])
+  @@index([sessionId, revoked])
+  @@index([updatedAt(sort: Desc)])
+  @@map("refresh_tokens")
+  @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SamlProviders {
+  id               String       @id @db.Uuid
+  ssoProviderId    String       @map("sso_provider_id") @db.Uuid
+  entityId         String       @unique @map("entity_id")
+  metadataXml      String       @map("metadata_xml")
+  metadataUrl      String?      @map("metadata_url")
+  attributeMapping Json?        @map("attribute_mapping")
+  createdAt        DateTime?    @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime?    @map("updated_at") @db.Timestamptz(6)
+  nameIdFormat     String?      @map("name_id_format")
+  ssoProviders     SsoProviders @relation(fields: [ssoProviderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([ssoProviderId])
+  @@map("saml_providers")
+  @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SamlRelayStates {
+  id            String       @id @db.Uuid
+  ssoProviderId String       @map("sso_provider_id") @db.Uuid
+  requestId     String       @map("request_id")
+  forEmail      String?      @map("for_email")
+  redirectTo    String?      @map("redirect_to")
+  createdAt     DateTime?    @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime?    @map("updated_at") @db.Timestamptz(6)
+  flowStateId   String?      @map("flow_state_id") @db.Uuid
+  flowState     FlowState?   @relation(fields: [flowStateId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  ssoProviders  SsoProviders @relation(fields: [ssoProviderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([forEmail])
+  @@index([ssoProviderId])
+  @@index([createdAt(sort: Desc)])
+  @@map("saml_relay_states")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SchemaMigrations {
+  version String @id @db.VarChar(255)
+
+  @@map("schema_migrations")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Sessions {
+  id                  String          @id @db.Uuid
+  userId              String          @map("user_id") @db.Uuid
+  createdAt           DateTime?       @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime?       @map("updated_at") @db.Timestamptz(6)
+  factorId            String?         @map("factor_id") @db.Uuid
+  aal                 AalLevel?       @map("aal")
+  notAfter            DateTime?       @map("not_after") @db.Timestamptz(6)
+  refreshedAt         DateTime?       @map("refreshed_at") @db.Timestamp(6)
+  userAgent           String?         @map("user_agent")
+  ip                  String?         @db.Inet
+  tag                 String?
+  oauthClientId       String?         @map("oauth_client_id") @db.Uuid
+  refreshTokenHmacKey String?         @map("refresh_token_hmac_key")
+  refreshTokenCounter BigInt?         @map("refresh_token_counter")
+  scopes              String?
+  mfaAmrClaims        MfaAmrClaims[]
+  refreshTokens       RefreshTokens[]
+  oauthClients        OauthClients?   @relation(fields: [oauthClientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users               Users           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId])
+  @@index([userId, createdAt], map: "user_id_created_at_idx")
+  @@index([notAfter(sort: Desc)])
+  @@index([oauthClientId])
+  @@map("sessions")
+  @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model SsoDomains {
+  id            String       @id @db.Uuid
+  ssoProviderId String       @map("sso_provider_id") @db.Uuid
+  domain        String
+  createdAt     DateTime?    @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime?    @map("updated_at") @db.Timestamptz(6)
+  ssoProviders  SsoProviders @relation(fields: [ssoProviderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([ssoProviderId])
+  @@map("sso_domains")
+  @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model SsoProviders {
+  id              String            @id @db.Uuid
+  resourceId      String?           @map("resource_id")
+  createdAt       DateTime?         @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime?         @map("updated_at") @db.Timestamptz(6)
+  disabled        Boolean?
+  samlProviders   SamlProviders[]
+  samlRelayStates SamlRelayStates[]
+  ssoDomains      SsoDomains[]
+
+  @@index([resourceId], map: "sso_providers_resource_id_pattern_idx")
+  @@map("sso_providers")
+  @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model Users {
+  instanceId               String?               @map("instance_id") @db.Uuid
+  id                       String                @id @db.Uuid
+  aud                      String?               @db.VarChar(255)
+  role                     String?               @db.VarChar(255)
+  email                    String?               @db.VarChar(255)
+  encryptedPassword        String?               @map("encrypted_password") @db.VarChar(255)
+  emailConfirmedAt         DateTime?             @map("email_confirmed_at") @db.Timestamptz(6)
+  invitedAt                DateTime?             @map("invited_at") @db.Timestamptz(6)
+  confirmationToken        String?               @map("confirmation_token") @db.VarChar(255)
+  confirmationSentAt       DateTime?             @map("confirmation_sent_at") @db.Timestamptz(6)
+  recoveryToken            String?               @map("recovery_token") @db.VarChar(255)
+  recoverySentAt           DateTime?             @map("recovery_sent_at") @db.Timestamptz(6)
+  emailChangeTokenNew      String?               @map("email_change_token_new") @db.VarChar(255)
+  emailChange              String?               @map("email_change") @db.VarChar(255)
+  emailChangeSentAt        DateTime?             @map("email_change_sent_at") @db.Timestamptz(6)
+  lastSignInAt             DateTime?             @map("last_sign_in_at") @db.Timestamptz(6)
+  rawAppMetaData           Json?                 @map("raw_app_meta_data")
+  rawUserMetaData          Json?                 @map("raw_user_meta_data")
+  isSuperAdmin             Boolean?              @map("is_super_admin")
+  createdAt                DateTime?             @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime?             @map("updated_at") @db.Timestamptz(6)
+  phone                    String?               @unique
+  phoneConfirmedAt         DateTime?             @map("phone_confirmed_at") @db.Timestamptz(6)
+  phoneChange              String?               @default("") @map("phone_change")
+  phoneChangeToken         String?               @default("") @map("phone_change_token") @db.VarChar(255)
+  phoneChangeSentAt        DateTime?             @map("phone_change_sent_at") @db.Timestamptz(6)
+  confirmedAt              DateTime?             @default(dbgenerated("LEAST(email_confirmed_at, phone_confirmed_at)")) @map("confirmed_at") @db.Timestamptz(6)
+  emailChangeTokenCurrent  String?               @default("") @map("email_change_token_current") @db.VarChar(255)
+  emailChangeConfirmStatus Int?                  @default(0) @map("email_change_confirm_status") @db.SmallInt
+  bannedUntil              DateTime?             @map("banned_until") @db.Timestamptz(6)
+  reauthenticationToken    String?               @default("") @map("reauthentication_token") @db.VarChar(255)
+  reauthenticationSentAt   DateTime?             @map("reauthentication_sent_at") @db.Timestamptz(6)
+  isSsoUser                Boolean               @default(false) @map("is_sso_user")
+  deletedAt                DateTime?             @map("deleted_at") @db.Timestamptz(6)
+  isAnonymous              Boolean               @default(false) @map("is_anonymous")
+  identities               Identities[]
+  mfaFactors               MfaFactors[]
+  oauthAuthorizations      OauthAuthorizations[]
+  oauthConsents            OauthConsents[]
+  oneTimeTokens            OneTimeTokens[]
+  sessions                 Sessions[]
+  cateringMenus            CateringMenus[]
+  drivers                  Drivers[]
+  profiles                 Profiles?
+
+  @@index([instanceId])
+  @@index([isAnonymous])
+  @@map("users")
+  @@schema("auth")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Categories {
+  id                    String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId                String                  @map("menu_id") @db.Uuid
+  createdAt             DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  sortOrder             Int?                    @default(0) @map("sort_order")
+  icon                  String?
+  description           String?
+  menus                 Menus                   @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  categoriesTranslation CategoriesTranslation[]
+  dishes                Dishes[]
+  menuSchedules         MenuSchedules[]
+  promotions            Promotions[]
+
+  @@index([menuId, sortOrder], map: "idx_categories_menu_sort")
+  @@index([menuId], map: "idx_categories_menu_id")
+  @@map("categories")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model CategoriesTranslation {
+  categoryId String     @map("category_id") @db.Uuid
+  name       String
+  languageId String     @map("language_id") @db.Uuid
+  categories Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  languages  Languages  @relation(fields: [languageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([categoryId, languageId])
+  @@index([categoryId, languageId], map: "idx_categories_translation_cat_lang")
+  @@index([categoryId], map: "idx_categories_translation_category_id")
+  @@map("categories_translation")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Dishes {
+  id                String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  price             Int
+  pictureUrl        String?             @map("picture_url")
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  menuId            String              @map("menu_id") @db.Uuid
+  categoryId        String?             @map("category_id") @db.Uuid
+  carbohydrates     Int?
+  fats              Int?
+  protein           Int?
+  weight            Int?
+  calories          Int?
+  isSoldOut         Boolean?            @default(false) @map("is_sold_out")
+  sortOrder         Int?                @default(0) @map("sort_order")
+  prepTimeMinutes   Int?                @map("prep_time_minutes")
+  isFeatured        Boolean?            @default(false) @map("is_featured")
+  kitchenStationId  String?             @map("kitchen_station_id") @db.Uuid
+  stockQuantity     Int?                @map("stock_quantity")
+  lowStockThreshold Int?                @default(5) @map("low_stock_threshold")
+  trackInventory    Boolean?            @default(false) @map("track_inventory")
+  customerFavorites CustomerFavorites[]
+  dishAllergens     DishAllergens[]
+  dishVariants      DishVariants[]
+  categories        Categories?         @relation(fields: [categoryId], references: [id], onUpdate: NoAction)
+  kitchenStation    KitchenStations?    @relation(fields: [kitchenStationId], references: [id], onUpdate: NoAction)
+  menus             Menus               @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  dishesTag         DishesTag[]
+  dishesTranslation DishesTranslation[]
+  orderItems        OrderItems[]
+  promotions        Promotions[]
+
+  @@index([menuId, categoryId, sortOrder], map: "idx_dishes_menu_category_sort")
+  @@index([categoryId], map: "idx_dishes_category_id")
+  @@index([menuId], map: "idx_dishes_menu_id")
+  @@index([kitchenStationId], map: "idx_dishes_kitchen_station")
+  @@map("dishes")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model KitchenStations {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  menuId    String   @map("menu_id") @db.Uuid
+  name      String
+  color     String   @default("#3B82F6")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  dishes    Dishes[]
+  menus     Menus    @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([menuId], map: "idx_kitchen_stations_menu")
+  @@map("kitchen_stations")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model DishesTag {
+  dishId  String? @map("dish_id") @db.Uuid
+  tagName TagType @id @map("tag_name")
+  dishes  Dishes? @relation(fields: [dishId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("dishes_tag")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model DishesTranslation {
+  dishId      String    @map("dish_id") @db.Uuid
+  languageId  String    @map("language_id") @db.Uuid
+  name        String
+  description String?
+  dishes      Dishes    @relation(fields: [dishId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  languages   Languages @relation(fields: [languageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([dishId, languageId])
+  @@index([dishId], map: "idx_dishes_translation_dish_id")
+  @@index([dishId, languageId], map: "idx_dishes_translation_dish_lang")
+  @@map("dishes_translation")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Languages {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                  String                  @unique
+  isoCode               String                  @map("iso_code")
+  flagUrl               String                  @default("''") @map("flag_url")
+  categoriesTranslation CategoriesTranslation[]
+  dishesTranslation     DishesTranslation[]
+  menuLanguages         MenuLanguages[]
+  variantTranslations   VariantTranslations[]
+
+  @@map("languages")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model MenuLanguages {
+  menuId     String    @map("menu_id") @db.Uuid
+  languageId String    @map("language_id") @db.Uuid
+  isDefault  Boolean   @default(false) @map("is_default")
+  languages  Languages @relation(fields: [languageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  menus      Menus     @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([menuId, languageId])
+  @@index([languageId], map: "idx_menu_languages_language_id")
+  @@map("menu_languages")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Menus {
+  id                    String              @id(map: "menu_pkey") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                  String
+  userId                String              @map("user_id") @db.Uuid
+  slug                  String              @unique(map: "menu_slug_key")
+  backgroundImageUrl    String?             @map("background_image_url")
+  city                  String
+  address               String
+  isPublished           Boolean             @default(false) @map("is_published")
+  updatedAt             DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  contactNumber         String?             @map("contact_number")
+  facebookUrl           String?             @map("facebook_url")
+  googleReviewUrl       String?             @map("google_review_url")
+  instagramUrl          String?             @map("instagram_url")
+  logoImageUrl          String?             @map("logo_image_url")
+  currency              String              @default("MAD")
+  restaurantId          String?             @map("restaurant_id") @db.Uuid
+  locationId            String?             @map("location_id") @db.Uuid
+  cityId                String?             @map("city_id") @db.Uuid
+  cuisineTypeId         String?             @map("cuisine_type_id") @db.Uuid
+  priceRange            Int?                @default(2) @map("price_range")
+  rating                Decimal?            @default(0) @db.Decimal(2, 1)
+  reviewCount           Int?                @default(0) @map("review_count")
+  viewCount             Int?                @default(0) @map("view_count")
+  isFeatured            Boolean?            @default(false) @map("is_featured")
+  phone                 String?
+  website               String?
+  openingHours          Json?               @map("opening_hours")
+  whatsappNumber        String?             @map("whatsapp_number")
+  enabledOrderTypes     String[]            @default(["dine_in"]) @map("enabled_order_types")
+  deliveryFee           Int?                @default(0) @map("delivery_fee")
+  deliveryRadiusKm      Int?                @default(5) @map("delivery_radius_km")
+  minOrderAmount        Int?                @default(0) @map("min_order_amount")
+  estimatedPrepTime     Int?                @default(15) @map("estimated_prep_time")
+  restaurantLat         Float?              @map("restaurant_lat")
+  restaurantLng         Float?              @map("restaurant_lng")
+  whatsappNotifyEnabled Boolean             @default(false) @map("whatsapp_notify_enabled")
+  analyticsEvents       AnalyticsEvents[]
+  categories            Categories[]
+  cateringMenus         CateringMenus[]
+  customerFavorites     CustomerFavorites[]
+  deliveryRequests      DeliveryRequests[]
+  dishes                Dishes[]
+  kitchenStations       KitchenStations[]
+  loyaltyPrograms       LoyaltyProgram[]
+  menuLanguages         MenuLanguages[]
+  menuSchedules         MenuSchedules[]
+  menuThemes            MenuThemes?
+  directoryCity         City?               @relation(fields: [cityId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cuisineType           CuisineType?        @relation(fields: [cuisineTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  location              Locations?          @relation(fields: [locationId], references: [id], onUpdate: NoAction)
+  restaurant            Restaurants?        @relation(fields: [restaurantId], references: [id], onUpdate: NoAction)
+  profiles              Profiles            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  orders                Orders[]
+  promotions            Promotions[]
+  restaurantDrivers     RestaurantDrivers[]
+  reviews               Reviews[]
+  staffMembers          StaffMembers[]
+
+  @@index([slug], map: "idx_menus_slug")
+  @@index([restaurantId], map: "idx_menus_restaurant_id")
+  @@index([locationId], map: "idx_menus_location_id")
+  @@index([cityId], map: "idx_menus_city_id")
+  @@index([cuisineTypeId], map: "idx_menus_cuisine_type_id")
+  @@index([userId, isPublished], map: "idx_menus_user_id_is_published")
+  @@index([address(ops: raw("gin_trgm_ops"))], map: "idx_menus_address_trgm", type: Gin)
+  @@index([city(ops: raw("gin_trgm_ops"))], map: "idx_menus_city_trgm", type: Gin)
+  @@index([name(ops: raw("gin_trgm_ops"))], map: "idx_menus_name_trgm", type: Gin)
+  @@index([rating(sort: Desc)], map: "idx_menus_rating")
+  @@index([slug, userId], map: "idx_menus_slug_user_id")
+  @@index([userId], map: "idx_menus_user_id")
+  @@index([viewCount(sort: Desc)], map: "idx_menus_view_count")
+  @@map("menus")
+  @@schema("public")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Profiles {
+  id              String         @id @db.Uuid
+  updatedAt       DateTime?      @map("updated_at") @db.Timestamptz(6)
+  username        String?        @unique
+  fullName        String?        @map("full_name")
+  email           String         @unique
+  aiProvider      String?        @default("openai") @map("ai_provider")
+  aiModel         String?        @default("gpt-4o-mini") @map("ai_model")
+  role            UserRole       @default(user)
+  crmApiKey       String?        @map("crm_api_key")
+  crmWorkspaceUrl String?        @map("crm_workspace_url")
+  crmAutoSync     Boolean        @default(false) @map("crm_auto_sync")
+  crmLastSyncedAt DateTime?      @map("crm_last_synced_at") @db.Timestamptz(6)
+  aiUsage         AiUsage[]
+  appAuditLog     AppAuditLog[]
+  loyaltyStamps   LoyaltyStamp[]
+  menus           Menus[]
+  users           Users          @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  referrals       Referrals[]
+  restaurants     Restaurants[]
+  invitedStaff    StaffMembers[] @relation("InvitedBy")
+  staffMembers    StaffMembers[] @relation("StaffUser")
+  subscriptions   Subscriptions?
+
+  @@index([role], map: "idx_profiles_role")
+  @@map("profiles")
+  @@schema("public")
+}
+
+model AiUsage {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  provider   String
+  model      String
+  feature    String
+  tokensUsed Int      @default(0) @map("tokens_used")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  profiles   Profiles @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId, createdAt(sort: Desc)], map: "idx_ai_usage_user_created")
+  @@index([createdAt], map: "idx_ai_usage_created_at")
+  @@index([userId], map: "idx_ai_usage_user_id")
+  @@map("ai_usage")
+  @@schema("public")
+}
+
+model Subscriptions {
+  profileId        String    @id @map("profile_id") @db.Uuid
+  updatePaymentUrl String    @map("update_payment_url")
+  renewsAt         DateTime  @map("renews_at") @db.Timestamptz(6)
+  endsAt           DateTime? @map("ends_at") @db.Timestamptz(6)
+  status           String
+  createdAt        DateTime? @map("created_at") @db.Timestamptz(6)
+  lemonSqueezyId   String    @map("lemon_squeezy_id")
+  jsonData         Json      @map("json_data")
+  profiles         Profiles  @relation(fields: [profileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([status], map: "idx_subscriptions_status")
+  @@map("subscriptions")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model DishVariants {
+  id                  String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  price               Int?
+  dishId              String                @map("dish_id") @db.Uuid
+  createdAt           DateTime?             @default(now()) @map("created_at") @db.Timestamptz(6)
+  dishes              Dishes                @relation(fields: [dishId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  orderItems          OrderItems[]
+  variantTranslations VariantTranslations[]
+
+  @@index([dishId], map: "idx_dish_variants_dish_id")
+  @@map("dish_variants")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model VariantTranslations {
+  languageId    String       @map("language_id") @db.Uuid
+  dishVariantId String       @map("dish_variant_id") @db.Uuid
+  name          String
+  description   String?
+  dishVariants  DishVariants @relation(fields: [dishVariantId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  languages     Languages    @relation(fields: [languageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([languageId, dishVariantId])
+  @@index([dishVariantId], map: "idx_variant_translations_dish_variant_id")
+  @@index([dishVariantId, languageId], map: "idx_variant_translations_variant_lang")
+  @@map("variant_translations")
+  @@schema("public")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model OauthAuthorizations {
+  id                  String                   @id @db.Uuid
+  authorizationId     String                   @unique @map("authorization_id")
+  clientId            String                   @map("client_id") @db.Uuid
+  userId              String?                  @map("user_id") @db.Uuid
+  redirectUri         String                   @map("redirect_uri")
+  scope               String
+  state               String?
+  resource            String?
+  codeChallenge       String?                  @map("code_challenge")
+  codeChallengeMethod CodeChallengeMethod?     @map("code_challenge_method")
+  responseType        OauthResponseType        @default(code) @map("response_type")
+  status              OauthAuthorizationStatus @default(pending) @map("status")
+  authorizationCode   String?                  @unique @map("authorization_code")
+  createdAt           DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  expiresAt           DateTime                 @default(dbgenerated("(now() + '00:03:00'::interval)")) @map("expires_at") @db.Timestamptz(6)
+  approvedAt          DateTime?                @map("approved_at") @db.Timestamptz(6)
+  nonce               String?
+  oauthClients        OauthClients             @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users               Users?                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("oauth_authorizations")
+  @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model OauthClientStates {
+  id           String   @id @db.Uuid
+  providerType String   @map("provider_type")
+  codeVerifier String?  @map("code_verifier")
+  createdAt    DateTime @map("created_at") @db.Timestamptz(6)
+
+  @@index([createdAt], map: "idx_oauth_client_states_created_at")
+  @@map("oauth_client_states")
+  @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model OauthClients {
+  id                      String                @id @db.Uuid
+  clientSecretHash        String?               @map("client_secret_hash")
+  registrationType        OauthRegistrationType @map("registration_type")
+  redirectUris            String                @map("redirect_uris")
+  grantTypes              String                @map("grant_types")
+  clientName              String?               @map("client_name")
+  clientUri               String?               @map("client_uri")
+  logoUri                 String?               @map("logo_uri")
+  createdAt               DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt               DateTime              @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt               DateTime?             @map("deleted_at") @db.Timestamptz(6)
+  clientType              OauthClientType       @default(confidential) @map("client_type")
+  tokenEndpointAuthMethod String                @map("token_endpoint_auth_method")
+  oauthAuthorizations     OauthAuthorizations[]
+  oauthConsents           OauthConsents[]
+  sessions                Sessions[]
+
+  @@index([deletedAt])
+  @@map("oauth_clients")
+  @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model OauthConsents {
+  id           String       @id @db.Uuid
+  userId       String       @map("user_id") @db.Uuid
+  clientId     String       @map("client_id") @db.Uuid
+  scopes       String
+  grantedAt    DateTime     @default(now()) @map("granted_at") @db.Timestamptz(6)
+  revokedAt    DateTime?    @map("revoked_at") @db.Timestamptz(6)
+  oauthClients OauthClients @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users        Users        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId, clientId], map: "oauth_consents_user_client_unique")
+  @@index([userId, grantedAt(sort: Desc)], map: "oauth_consents_user_order_idx")
+  @@map("oauth_consents")
+  @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model OneTimeTokens {
+  id        String           @id @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  tokenType OneTimeTokenType @map("token_type")
+  tokenHash String           @map("token_hash")
+  relatesTo String           @map("relates_to")
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime         @default(now()) @map("updated_at") @db.Timestamp(6)
+  users     Users            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId, tokenType])
+  @@index([relatesTo], map: "one_time_tokens_relates_to_hash_idx", type: Hash)
+  @@index([tokenHash], map: "one_time_tokens_token_hash_hash_idx", type: Hash)
+  @@map("one_time_tokens")
+  @@schema("auth")
+}
+
+model StaffMembers {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId     String    @map("menu_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  role       UserRole  @default(staff)
+  invitedBy  String?   @map("invited_by") @db.Uuid
+  invitedAt  DateTime  @default(now()) @map("invited_at") @db.Timestamptz(6)
+  acceptedAt DateTime? @map("accepted_at") @db.Timestamptz(6)
+  isActive   Boolean   @default(true) @map("is_active")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  inviter    Profiles? @relation("InvitedBy", fields: [invitedBy], references: [id], onUpdate: NoAction)
+  menus      Menus     @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user       Profiles  @relation("StaffUser", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([menuId, userId])
+  @@index([menuId], map: "idx_staff_members_menu_id")
+  @@index([userId], map: "idx_staff_members_user_id")
+  @@map("staff_members")
+  @@schema("public")
+}
+
+/// This model contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model MenuThemes {
+  id                   String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId               String   @unique @map("menu_id") @db.Uuid
+  primaryColor         String   @default("#D4A574") @map("primary_color")
+  secondaryColor       String   @default("#8B6914") @map("secondary_color")
+  backgroundColor      String   @default("#FFFBF5") @map("background_color")
+  surfaceColor         String   @default("#FFFFFF") @map("surface_color")
+  textColor            String   @default("#1A1A1A") @map("text_color")
+  accentColor          String   @default("#C75B39") @map("accent_color")
+  headingFont          String   @default("Playfair Display") @map("heading_font")
+  bodyFont             String   @default("Source Sans 3") @map("body_font")
+  fontSize             String   @default("medium") @map("font_size")
+  layoutStyle          String   @default("classic") @map("layout_style")
+  cardStyle            String   @default("flat") @map("card_style")
+  borderRadius         String   @default("medium") @map("border_radius")
+  spacing              String   @default("comfortable")
+  showImages           Boolean  @default(true) @map("show_images")
+  imageStyle           String   @default("rounded") @map("image_style")
+  showPrices           Boolean  @default(true) @map("show_prices")
+  showNutrition        Boolean  @default(true) @map("show_nutrition")
+  showCategoryNav      Boolean  @default(true) @map("show_category_nav")
+  showCategoryDividers Boolean  @default(true) @map("show_category_dividers")
+  headerStyle          String   @default("banner") @map("header_style")
+  customCss            String?  @default("") @map("custom_css")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  menus                Menus    @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([menuId], map: "idx_menu_themes_menu_id")
+  @@map("menu_themes")
+  @@schema("public")
+}
+
+model Orders {
+  id                String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId            String              @map("menu_id") @db.Uuid
+  orderNumber       Int                 @default(autoincrement()) @map("order_number")
+  status            String              @default("pending")
+  totalAmount       Int                 @default(0) @map("total_amount")
+  currency          String              @default("MAD")
+  customerName      String?             @map("customer_name")
+  customerPhone     String?             @map("customer_phone")
+  customerNotes     String?             @map("customer_notes")
+  tableNumber       String?             @map("table_number")
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  completedAt       DateTime?           @map("completed_at") @db.Timestamptz(6)
+  locationId        String?             @map("location_id") @db.Uuid
+  tableZoneId       String?             @map("table_zone_id") @db.Uuid
+  orderType         OrderType?          @default(dine_in) @map("order_type")
+  deliveryAddress   String?             @map("delivery_address")
+  deliveryFee       Int?                @default(0) @map("delivery_fee")
+  paymentMethod     String?             @default("cash") @map("payment_method")
+  confirmedAt       DateTime?           @map("confirmed_at") @db.Timestamptz(6)
+  preparingAt       DateTime?           @map("preparing_at") @db.Timestamptz(6)
+  readyAt           DateTime?           @map("ready_at") @db.Timestamptz(6)
+  paymentStatus     String?             @default("unpaid") @map("payment_status")
+  paidAt            DateTime?           @map("paid_at") @db.Timestamptz(6)
+  paymentNote       String?             @map("payment_note")
+  deliveryRequests  DeliveryRequests[]
+  orderItems        OrderItems[]
+  location          Locations?          @relation(fields: [locationId], references: [id], onUpdate: NoAction)
+  menus             Menus               @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tableZone         TableZones?         @relation(fields: [tableZoneId], references: [id], onUpdate: NoAction)
+  pushSubscriptions PushSubscriptions[]
+
+  @@index([menuId], map: "idx_orders_menu_id")
+  @@index([status], map: "idx_orders_status")
+  @@index([createdAt], map: "idx_orders_created_at")
+  @@index([locationId], map: "idx_orders_location_id")
+  @@index([menuId, status, createdAt(sort: Desc)], map: "idx_orders_menu_status_created")
+  @@index([orderType], map: "idx_orders_order_type")
+  @@index([menuId, orderType, status], map: "idx_orders_menu_type_status")
+  @@index([paymentStatus], map: "idx_orders_payment_status")
+  @@map("orders")
+  @@schema("public")
+}
+
+model OrderItems {
+  id            String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  orderId       String        @map("order_id") @db.Uuid
+  dishId        String?       @map("dish_id") @db.Uuid
+  dishVariantId String?       @map("dish_variant_id") @db.Uuid
+  dishName      String        @map("dish_name")
+  quantity      Int           @default(1)
+  unitPrice     Int           @map("unit_price")
+  totalPrice    Int           @map("total_price")
+  notes         String?
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  dishes        Dishes?       @relation(fields: [dishId], references: [id], onUpdate: NoAction)
+  dishVariants  DishVariants? @relation(fields: [dishVariantId], references: [id], onUpdate: NoAction)
+  orders        Orders        @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([orderId], map: "idx_order_items_order_id")
+  @@index([dishId], map: "idx_order_items_dish_id")
+  @@index([orderId, dishName], map: "idx_order_items_order_dish_name")
+  @@map("order_items")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model PushSubscriptions {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId   String    @map("order_id") @db.Uuid
+  endpoint  String
+  p256dh    String
+  auth      String
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  orders    Orders    @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([orderId, endpoint])
+  @@index([orderId], map: "idx_push_subscriptions_order_id")
+  @@map("push_subscriptions")
+  @@schema("public")
+}
+
+model Region {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name       String
+  nameAr     String?  @map("name_ar")
+  nameFr     String?  @map("name_fr")
+  slug       String   @unique
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  sort_order Int?     @default(0)
+  cities     City[]
+
+  @@index([name], map: "idx_regions_name")
+  @@index([slug], map: "idx_regions_slug")
+  @@map("regions")
+  @@schema("public")
+}
+
+model City {
+  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  regionId      String   @map("region_id") @db.Uuid
+  name          String
+  nameAr        String?  @map("name_ar")
+  nameFr        String?  @map("name_fr")
+  slug          String   @unique
+  description   String?
+  descriptionAr String?  @map("description_ar")
+  descriptionFr String?  @map("description_fr")
+  imageUrl      String?  @map("image_url")
+  latitude      Decimal? @db.Decimal(10, 7)
+  longitude     Decimal? @db.Decimal(10, 7)
+  population    Int?
+  isFeatured    Boolean? @default(false) @map("is_featured")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  region        Region   @relation(fields: [regionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  menus         Menus[]
+
+  @@index([regionId], map: "idx_cities_region_id")
+  @@index([population(sort: Desc)], map: "idx_cities_population_desc")
+  @@index([name(ops: raw("gin_trgm_ops"))], map: "idx_cities_name_trgm", type: Gin)
+  @@index([population(sort: Desc)], map: "idx_cities_population")
+  @@index([slug], map: "idx_cities_slug")
+  @@map("cities")
+  @@schema("public")
+}
+
+model CuisineType {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String
+  nameAr      String?  @map("name_ar")
+  nameFr      String?  @map("name_fr")
+  slug        String   @unique
+  icon        String?
+  description String?
+  sortOrder   Int?     @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  menus       Menus[]
+
+  @@index([sortOrder], map: "idx_cuisine_types_sort_order")
+  @@index([slug], map: "idx_cuisine_types_slug")
+  @@map("cuisine_types")
+  @@schema("public")
+}
+
+model Restaurants {
+  id          String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId      String       @map("user_id") @db.Uuid
+  name        String
+  description String?
+  logoUrl     String?      @map("logo_url")
+  website     String?
+  cuisineType String?      @map("cuisine_type")
+  isChain     Boolean?     @default(false) @map("is_chain")
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  allergens   Allergens[]
+  locations   Locations[]
+  menus       Menus[]
+  promotions  Promotions[]
+  profiles    Profiles     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId], map: "idx_restaurants_user_id")
+  @@map("restaurants")
+  @@schema("public")
+}
+
+model Locations {
+  id              String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  restaurantId    String            @map("restaurant_id") @db.Uuid
+  name            String
+  address         String
+  city            String
+  state           String?
+  country         String?           @default("Morocco")
+  postalCode      String?           @map("postal_code")
+  latitude        Decimal?          @db.Decimal(10, 8)
+  longitude       Decimal?          @db.Decimal(11, 8)
+  phone           String?
+  email           String?
+  timezone        String?           @default("Africa/Casablanca")
+  isActive        Boolean?          @default(true) @map("is_active")
+  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime          @default(now()) @map("updated_at") @db.Timestamptz(6)
+  analyticsEvents AnalyticsEvents[]
+  restaurant      Restaurants       @relation(fields: [restaurantId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  menus           Menus[]
+  operatingHours  OperatingHours[]
+  orders          Orders[]
+  reviews         Reviews[]
+  specialHours    SpecialHours[]
+  tableZones      TableZones[]
+
+  @@index([restaurantId], map: "idx_locations_restaurant_id")
+  @@index([city], map: "idx_locations_city")
+  @@index([isActive], map: "idx_locations_is_active")
+  @@map("locations")
+  @@schema("public")
+}
+
+model OperatingHours {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  locationId String    @map("location_id") @db.Uuid
+  dayOfWeek  DayOfWeek @map("day_of_week")
+  openTime   DateTime  @map("open_time") @db.Time(6)
+  closeTime  DateTime  @map("close_time") @db.Time(6)
+  isClosed   Boolean?  @default(false) @map("is_closed")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  location   Locations @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([locationId, dayOfWeek], map: "idx_operating_hours_unique")
+  @@index([locationId], map: "idx_operating_hours_location_id")
+  @@map("operating_hours")
+  @@schema("public")
+}
+
+model SpecialHours {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  locationId String    @map("location_id") @db.Uuid
+  date       DateTime  @db.Date
+  openTime   DateTime? @map("open_time") @db.Time(6)
+  closeTime  DateTime? @map("close_time") @db.Time(6)
+  isClosed   Boolean?  @default(false) @map("is_closed")
+  reason     String?
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  location   Locations @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([locationId], map: "idx_special_hours_location_id")
+  @@index([date], map: "idx_special_hours_date")
+  @@map("special_hours")
+  @@schema("public")
+}
+
+model TableZones {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  locationId  String    @map("location_id") @db.Uuid
+  tableNumber String    @map("table_number")
+  zoneName    String?   @map("zone_name")
+  capacity    Int?      @default(4)
+  isActive    Boolean?  @default(true) @map("is_active")
+  qrCodeUrl   String?   @map("qr_code_url")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  orders      Orders[]
+  location    Locations @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([locationId, tableNumber], map: "idx_table_zones_unique")
+  @@index([locationId], map: "idx_table_zones_location_id")
+  @@map("table_zones")
+  @@schema("public")
+}
+
+model Allergens {
+  id            String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name          String
+  icon          String?
+  type          AllergenType?
+  isCustom      Boolean?        @default(false) @map("is_custom")
+  restaurantId  String?         @map("restaurant_id") @db.Uuid
+  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  restaurant    Restaurants?    @relation(fields: [restaurantId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  dishAllergens DishAllergens[]
+
+  @@map("allergens")
+  @@schema("public")
+}
+
+model DishAllergens {
+  dishId     String    @map("dish_id") @db.Uuid
+  allergenId String    @map("allergen_id") @db.Uuid
+  severity   String?   @default("contains")
+  allergen   Allergens @relation(fields: [allergenId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  dish       Dishes    @relation(fields: [dishId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([dishId, allergenId])
+  @@index([dishId], map: "idx_dish_allergens_dish_id")
+  @@index([allergenId], map: "idx_dish_allergens_allergen_id")
+  @@map("dish_allergens")
+  @@schema("public")
+}
+
+model MenuSchedules {
+  id           String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId       String       @map("menu_id") @db.Uuid
+  scheduleType ScheduleType @default(all_day) @map("schedule_type")
+  startTime    DateTime?    @map("start_time") @db.Time(6)
+  endTime      DateTime?    @map("end_time") @db.Time(6)
+  days         DayOfWeek[]  @default([monday, tuesday, wednesday, thursday, friday, saturday, sunday])
+  isActive     Boolean?     @default(true) @map("is_active")
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  categoryId   String?      @map("category_id") @db.Uuid
+  name         String       @default("")
+  isRecurring  Boolean      @default(true) @map("is_recurring")
+  startDate    DateTime?    @map("start_date") @db.Date
+  endDate      DateTime?    @map("end_date") @db.Date
+  updatedAt    DateTime     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  category     Categories?  @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  menu         Menus        @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([menuId], map: "idx_menu_schedules_menu_id")
+  @@index([categoryId], map: "idx_menu_schedules_category_id")
+  @@index([startDate, endDate], map: "idx_menu_schedules_dates")
+  @@index([isActive], map: "idx_menu_schedules_is_active")
+  @@map("menu_schedules")
+  @@schema("public")
+}
+
+model Promotions {
+  id              String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  restaurantId    String        @map("restaurant_id") @db.Uuid
+  title           String
+  description     String?
+  promotionType   PromotionType @default(daily_special) @map("promotion_type")
+  discountPercent Int?          @map("discount_percent")
+  discountAmount  Int?          @map("discount_amount")
+  startDate       DateTime      @default(now()) @map("start_date") @db.Timestamptz(6)
+  endDate         DateTime?     @map("end_date") @db.Timestamptz(6)
+  isActive        Boolean?      @default(true) @map("is_active")
+  applicableDays  DayOfWeek[]   @map("applicable_days")
+  startTime       DateTime?     @map("start_time") @db.Time(6)
+  endTime         DateTime?     @map("end_time") @db.Time(6)
+  menuId          String?       @map("menu_id") @db.Uuid
+  dishId          String?       @map("dish_id") @db.Uuid
+  categoryId      String?       @map("category_id") @db.Uuid
+  imageUrl        String?       @map("image_url")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @default(now()) @map("updated_at") @db.Timestamptz(6)
+  category        Categories?   @relation(fields: [categoryId], references: [id], onUpdate: NoAction)
+  dish            Dishes?       @relation(fields: [dishId], references: [id], onUpdate: NoAction)
+  menu            Menus?        @relation(fields: [menuId], references: [id], onUpdate: NoAction)
+  restaurant      Restaurants   @relation(fields: [restaurantId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([restaurantId], map: "idx_promotions_restaurant_id")
+  @@index([isActive], map: "idx_promotions_is_active")
+  @@index([startDate, endDate], map: "idx_promotions_dates")
+  @@map("promotions")
+  @@schema("public")
+}
+
+model Reviews {
+  id            String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId        String        @map("menu_id") @db.Uuid
+  locationId    String?       @map("location_id") @db.Uuid
+  customerName  String?       @map("customer_name")
+  customerEmail String?       @map("customer_email")
+  rating        Int
+  comment       String?
+  status        ReviewStatus? @default(pending)
+  response      String?
+  respondedAt   DateTime?     @map("responded_at") @db.Timestamptz(6)
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamptz(6)
+  location      Locations?    @relation(fields: [locationId], references: [id], onUpdate: NoAction)
+  menu          Menus         @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([menuId], map: "idx_reviews_menu_id")
+  @@index([status], map: "idx_reviews_status")
+  @@index([rating], map: "idx_reviews_rating")
+  @@index([createdAt], map: "idx_reviews_created_at")
+  @@index([menuId, status, createdAt(sort: Desc)], map: "idx_reviews_menu_status_created")
+  @@map("reviews")
+  @@schema("public")
+}
+
+model AnalyticsEvents {
+  id         String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId     String     @map("menu_id") @db.Uuid
+  locationId String?    @map("location_id") @db.Uuid
+  eventType  String     @map("event_type")
+  eventData  Json?      @default("{}") @map("event_data")
+  sessionId  String?    @map("session_id")
+  userAgent  String?    @map("user_agent")
+  ipHash     String?    @map("ip_hash")
+  referrer   String?
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  location   Locations? @relation(fields: [locationId], references: [id], onUpdate: NoAction)
+  menu       Menus      @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([menuId], map: "idx_analytics_events_menu_id")
+  @@index([eventType], map: "idx_analytics_events_type")
+  @@index([createdAt], map: "idx_analytics_events_created_at")
+  @@index([sessionId], map: "idx_analytics_events_session")
+  @@index([menuId, eventType, createdAt(sort: Desc)], map: "idx_analytics_menu_type_created")
+  @@index([menuId, createdAt(sort: Desc)], map: "idx_analytics_menu_created")
+  @@map("analytics_events")
+  @@schema("public")
+}
+
+model AppAuditLog {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId     String?   @map("user_id") @db.Uuid
+  action     String
+  entityType String    @map("entity_type")
+  entityId   String?   @map("entity_id") @db.Uuid
+  oldData    Json?     @map("old_data")
+  newData    Json?     @map("new_data")
+  ipAddress  String?   @map("ip_address")
+  userAgent  String?   @map("user_agent")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  user       Profiles? @relation(fields: [userId], references: [id], onUpdate: NoAction)
+
+  @@index([userId], map: "idx_audit_log_user_id")
+  @@index([entityType, entityId], map: "idx_audit_log_entity")
+  @@index([createdAt], map: "idx_audit_log_created_at")
+  @@index([action], map: "idx_audit_log_action")
+  @@index([entityType, action], map: "idx_audit_log_entity_action")
+  @@map("app_audit_log")
+  @@schema("public")
+}
+
+model CustomerFavorites {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId    String   @map("menu_id") @db.Uuid
+  dishId    String   @map("dish_id") @db.Uuid
+  sessionId String   @map("session_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  dish      Dishes   @relation(fields: [dishId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  menu      Menus    @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([dishId, sessionId], map: "idx_favorites_unique")
+  @@index([menuId], map: "idx_favorites_menu_id")
+  @@index([dishId], map: "idx_favorites_dish_id")
+  @@index([menuId, sessionId], map: "idx_favorites_menu_session")
+  @@map("customer_favorites")
+  @@schema("public")
+}
+
+model LoyaltyProgram {
+  id                String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId            String        @map("menu_id") @db.Uuid
+  name              String
+  description       String?
+  stampsRequired    Int           @default(10) @map("stamps_required")
+  rewardDescription String        @map("reward_description")
+  rewardType        String        @default("free_item") @map("reward_type")
+  rewardValue       Int?          @map("reward_value")
+  isActive          Boolean?      @default(true) @map("is_active")
+  icon              String?       @default("⭐")
+  color             String?       @default("#D4A853")
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  cards             LoyaltyCard[]
+  menu              Menus         @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([menuId], map: "idx_loyalty_programs_menu_id")
+  @@map("loyalty_programs")
+  @@schema("public")
+}
+
+model LoyaltyCard {
+  id                 String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  programId          String         @map("program_id") @db.Uuid
+  customerIdentifier String         @map("customer_identifier")
+  stampsCollected    Int            @default(0) @map("stamps_collected")
+  isRedeemed         Boolean?       @default(false) @map("is_redeemed")
+  redeemedAt         DateTime?      @map("redeemed_at") @db.Timestamptz(6)
+  createdAt          DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  program            LoyaltyProgram @relation(fields: [programId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  stamps             LoyaltyStamp[]
+
+  @@unique([programId, customerIdentifier])
+  @@index([programId, isRedeemed], map: "idx_loyalty_cards_program_redeemed")
+  @@index([programId, updatedAt(sort: Desc)], map: "idx_loyalty_cards_updated_desc")
+  @@index([customerIdentifier], map: "idx_loyalty_cards_customer")
+  @@index([programId], map: "idx_loyalty_cards_program_id")
+  @@map("loyalty_cards")
+  @@schema("public")
+}
+
+model LoyaltyStamp {
+  id               String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  cardId           String      @map("card_id") @db.Uuid
+  stampedBy        String?     @map("stamped_by") @db.Uuid
+  notes            String?
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  card             LoyaltyCard @relation(fields: [cardId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  stampedByProfile Profiles?   @relation(fields: [stampedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([cardId, createdAt(sort: Desc)], map: "idx_loyalty_stamps_card_created")
+  @@index([cardId], map: "idx_loyalty_stamps_card_id")
+  @@map("loyalty_stamps")
+  @@schema("public")
+}
+
+model Referrals {
+  id            String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  referrerId    String         @map("referrer_id") @db.Uuid
+  referredEmail String         @map("referred_email")
+  referralCode  String         @map("referral_code")
+  status        ReferralStatus @default(pending)
+  rewardAmount  Int            @default(0) @map("reward_amount")
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  completedAt   DateTime?      @map("completed_at") @db.Timestamptz(6)
+  referrer      Profiles       @relation(fields: [referrerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([referralCode, referredEmail])
+  @@index([referrerId], map: "idx_referrals_referrer_id")
+  @@index([referralCode], map: "idx_referrals_referral_code")
+  @@index([referredEmail], map: "idx_referrals_referred_email")
+  @@index([status], map: "idx_referrals_status")
+  @@map("referrals")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Drivers {
+  id                    String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId                String?              @map("user_id") @db.Uuid
+  fullName              String               @map("full_name")
+  phone                 String               @unique
+  email                 String?
+  city                  String
+  vehicleType           String               @default("bicycle") @map("vehicle_type")
+  licenseNumber         String?              @map("license_number")
+  idNumber              String?              @map("id_number")
+  profilePhotoUrl       String?              @map("profile_photo_url")
+  status                String               @default("pending")
+  isAvailable           Boolean              @default(false) @map("is_available")
+  rating                Float                @default(5.0)
+  totalDeliveries       Int                  @default(0) @map("total_deliveries")
+  totalEarnings         Int                  @default(0) @map("total_earnings")
+  currentLat            Float?               @map("current_lat")
+  currentLng            Float?               @map("current_lng")
+  lastLocationUpdate    DateTime?            @map("last_location_update") @db.Timestamptz(6)
+  emergencyContactName  String?              @map("emergency_contact_name")
+  emergencyContactPhone String?              @map("emergency_contact_phone")
+  dateOfBirth           DateTime?            @map("date_of_birth") @db.Date
+  nationalIdType        String?              @map("national_id_type")
+  nationalIdExpiry      DateTime?            @map("national_id_expiry") @db.Date
+  vehiclePlate          String?              @map("vehicle_plate")
+  vehicleMake           String?              @map("vehicle_make")
+  insuranceExpiry       DateTime?            @map("insurance_expiry") @db.Date
+  backgroundCheckStatus String?              @default("pending") @map("background_check_status")
+  onboardingStep        Int?                 @default(0) @map("onboarding_step")
+  onboardingCompletedAt DateTime?            @map("onboarding_completed_at") @db.Timestamptz(6)
+  createdAt             DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deliveryRequests      DeliveryRequests[]
+  availability          DriverAvailability[]
+  documents             DriverDocuments[]
+  earnings              DriverEarnings[]
+  users                 Users?               @relation(fields: [userId], references: [id], onUpdate: NoAction)
+  restaurantDrivers     RestaurantDrivers[]
+
+  @@index([userId], map: "idx_drivers_user_id")
+  @@index([phone], map: "idx_drivers_phone")
+  @@index([city], map: "idx_drivers_city")
+  @@index([status], map: "idx_drivers_status")
+  @@index([isAvailable], map: "idx_drivers_is_available")
+  @@index([status, isAvailable], map: "idx_drivers_status_available")
+  @@map("drivers")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model DriverDocuments {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  driverId      String    @map("driver_id") @db.Uuid
+  documentType  String    @map("document_type")
+  documentUrl   String    @map("document_url")
+  status        String    @default("pending")
+  reviewerNotes String?   @map("reviewer_notes")
+  submittedAt   DateTime  @default(now()) @map("submitted_at") @db.Timestamptz(6)
+  reviewedAt    DateTime? @map("reviewed_at") @db.Timestamptz(6)
+  expiresAt     DateTime? @map("expires_at") @db.Date
+  driver        Drivers   @relation(fields: [driverId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([driverId], map: "idx_driver_documents_driver_id")
+  @@index([status], map: "idx_driver_documents_status")
+  @@map("driver_documents")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model DriverAvailability {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  driverId  String   @map("driver_id") @db.Uuid
+  dayOfWeek String   @map("day_of_week")
+  startTime DateTime @map("start_time") @db.Time(6)
+  endTime   DateTime @map("end_time") @db.Time(6)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  driver    Drivers  @relation(fields: [driverId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([driverId], map: "idx_driver_availability_driver_id")
+  @@index([dayOfWeek], map: "idx_driver_availability_day")
+  @@map("driver_availability")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model RestaurantDrivers {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId     String    @map("menu_id") @db.Uuid
+  driverId   String    @map("driver_id") @db.Uuid
+  status     String    @default("pending")
+  priority   Int?      @default(0)
+  notes      String?
+  appliedAt  DateTime  @default(now()) @map("applied_at") @db.Timestamptz(6)
+  approvedAt DateTime? @map("approved_at") @db.Timestamptz(6)
+  driver     Drivers   @relation(fields: [driverId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  menus      Menus     @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([menuId, driverId])
+  @@index([menuId], map: "idx_restaurant_drivers_menu_id")
+  @@index([driverId], map: "idx_restaurant_drivers_driver_id")
+  @@index([status], map: "idx_restaurant_drivers_status")
+  @@index([menuId, status], map: "idx_restaurant_drivers_menu_status")
+  @@map("restaurant_drivers")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model DeliveryRequests {
+  id                String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  orderId           String           @map("order_id") @db.Uuid
+  menuId            String           @map("menu_id") @db.Uuid
+  assignedDriverId  String?          @map("assigned_driver_id") @db.Uuid
+  status            String           @default("pending")
+  dropoffAddress    String           @map("dropoff_address")
+  dropoffLat        Float?           @map("dropoff_lat")
+  dropoffLng        Float?           @map("dropoff_lng")
+  pickupLat         Float?           @map("pickup_lat")
+  pickupLng         Float?           @map("pickup_lng")
+  estimatedDistance Float?           @map("estimated_distance")
+  estimatedDuration Int?             @map("estimated_duration")
+  actualDuration    Int?             @map("actual_duration")
+  deliveryFee       Int              @default(0) @map("delivery_fee")
+  driverEarning     Int              @default(0) @map("driver_earning")
+  priority          Int              @default(0)
+  notes             String?
+  rating            Int?
+  ratingComment     String?          @map("rating_comment")
+  pickedUpAt        DateTime?        @map("picked_up_at") @db.Timestamptz(6)
+  deliveredAt       DateTime?        @map("delivered_at") @db.Timestamptz(6)
+  cancelledAt       DateTime?        @map("cancelled_at") @db.Timestamptz(6)
+  failureReason     String?          @map("failure_reason")
+  paymentMethod     String?          @default("cash") @map("payment_method")
+  paymentStatus     String?          @default("unpaid") @map("payment_status")
+  tipAmount         Int?             @default(0) @map("tip_amount")
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime         @default(now()) @map("updated_at") @db.Timestamptz(6)
+  driver            Drivers?         @relation(fields: [assignedDriverId], references: [id], onUpdate: NoAction)
+  menus             Menus            @relation(fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  orders            Orders           @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  driverEarnings    DriverEarnings[]
+
+  @@index([orderId], map: "idx_delivery_requests_order_id")
+  @@index([menuId], map: "idx_delivery_requests_menu_id")
+  @@index([assignedDriverId], map: "idx_delivery_requests_driver_id")
+  @@index([status], map: "idx_delivery_requests_status")
+  @@index([menuId, status], map: "idx_delivery_requests_menu_status")
+  @@index([createdAt(sort: Desc)], map: "idx_delivery_requests_created_at")
+  @@index([assignedDriverId, status], map: "idx_delivery_requests_driver_status")
+  @@map("delivery_requests")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model DriverEarnings {
+  id                String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  driverId          String            @map("driver_id") @db.Uuid
+  deliveryRequestId String?           @map("delivery_request_id") @db.Uuid
+  amount            Int               @default(0)
+  type              String            @default("delivery_fee")
+  description       String?
+  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  deliveryRequest   DeliveryRequests? @relation(fields: [deliveryRequestId], references: [id], onUpdate: NoAction)
+  driver            Drivers           @relation(fields: [driverId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([driverId], map: "idx_driver_earnings_driver_id")
+  @@index([deliveryRequestId], map: "idx_driver_earnings_request_id")
+  @@index([createdAt(sort: Desc)], map: "idx_driver_earnings_created_at")
+  @@index([driverId, createdAt(sort: Desc)], map: "idx_driver_earnings_driver_created")
+  @@map("driver_earnings")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model CateringCategories {
+  id               String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  cateringMenuId   String                  @map("catering_menu_id") @db.Uuid
+  name             String                  @db.VarChar(200)
+  description      String?
+  sortOrder        Int                     @default(0) @map("sort_order")
+  isOptional       Boolean                 @default(false) @map("is_optional")
+  createdAt        DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  cateringMenu     CateringMenus           @relation(fields: [cateringMenuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  cateringItems    CateringItems[]
+  packageItems     CateringPackageItems[]
+
+  @@index([cateringMenuId], map: "idx_catering_categories_menu_id")
+  @@index([cateringMenuId, sortOrder], map: "idx_catering_categories_sort")
+  @@map("catering_categories")
+  @@schema("public")
+}
+
+model CateringInquiries {
+  id              String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  cateringMenuId  String            @map("catering_menu_id") @db.Uuid
+  packageId       String?           @map("package_id") @db.Uuid
+  customerName    String            @map("customer_name") @db.VarChar(200)
+  customerPhone   String            @map("customer_phone") @db.VarChar(30)
+  customerEmail   String?           @map("customer_email") @db.VarChar(200)
+  eventType       String            @default("general") @map("event_type") @db.VarChar(50)
+  eventDate       DateTime          @map("event_date") @db.Date
+  eventTime       DateTime?         @map("event_time") @db.Time(6)
+  guestCount      Int               @map("guest_count")
+  venueAddress    String?           @map("venue_address")
+  venueCity       String?           @map("venue_city") @db.VarChar(100)
+  selectedItems   Json?             @default("[]") @map("selected_items")
+  specialRequests String?           @map("special_requests")
+  dietaryNotes    String?           @map("dietary_notes")
+  estimatedTotal  Int?              @map("estimated_total")
+  quotedTotal     Int?              @map("quoted_total")
+  depositAmount   Int?              @map("deposit_amount")
+  status          String            @default("pending") @db.VarChar(30)
+  adminNotes      String?           @map("admin_notes")
+  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime          @default(now()) @map("updated_at") @db.Timestamptz(6)
+  cateringMenu    CateringMenus     @relation(fields: [cateringMenuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  package         CateringPackages? @relation(fields: [packageId], references: [id], onUpdate: NoAction)
+
+  @@index([eventDate], map: "idx_catering_inquiries_event_date")
+  @@index([cateringMenuId], map: "idx_catering_inquiries_menu_id")
+  @@index([customerPhone], map: "idx_catering_inquiries_phone")
+  @@index([status], map: "idx_catering_inquiries_status")
+  @@map("catering_inquiries")
+  @@schema("public")
+}
+
+model CateringItems {
+  id                 String                 @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  cateringCategoryId String                 @map("catering_category_id") @db.Uuid
+  cateringMenuId     String                 @map("catering_menu_id") @db.Uuid
+  name               String                 @db.VarChar(200)
+  description        String?
+  pricePerPerson     Int?                   @map("price_per_person")
+  pricePerUnit       Int?                   @map("price_per_unit")
+  unitLabel          String?                @map("unit_label") @db.VarChar(50)
+  minQuantity        Int?                   @default(1) @map("min_quantity")
+  servesCount        Int?                   @map("serves_count")
+  isVegetarian       Boolean                @default(false) @map("is_vegetarian")
+  isVegan            Boolean                @default(false) @map("is_vegan")
+  isHalal            Boolean                @default(true) @map("is_halal")
+  isGlutenFree       Boolean                @default(false) @map("is_gluten_free")
+  allergens          String[]
+  imageUrl           String?                @map("image_url")
+  sortOrder          Int                    @default(0) @map("sort_order")
+  isAvailable        Boolean                @default(true) @map("is_available")
+  createdAt          DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  category           CateringCategories     @relation(fields: [cateringCategoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  cateringMenu       CateringMenus          @relation(fields: [cateringMenuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  packageItems       CateringPackageItems[]
+
+  @@index([cateringCategoryId], map: "idx_catering_items_category_id")
+  @@index([cateringMenuId], map: "idx_catering_items_menu_id")
+  @@map("catering_items")
+  @@schema("public")
+}
+
+model CateringMenus {
+  id                  String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId              String                @map("user_id") @db.Uuid
+  menuId              String?               @map("menu_id") @db.Uuid
+  name                String                @db.VarChar(200)
+  slug                String                @unique @db.VarChar(300)
+  description         String?
+  eventType           String                @default("general") @map("event_type") @db.VarChar(50)
+  minGuests           Int                   @default(10) @map("min_guests")
+  maxGuests           Int?                  @map("max_guests")
+  basePricePerPerson  Int                   @default(0) @map("base_price_per_person")
+  currency            String                @default("MAD") @db.VarChar(10)
+  city                String?               @db.VarChar(100)
+  serviceArea         String?               @map("service_area")
+  leadTimeDays        Int                   @default(3) @map("lead_time_days")
+  isPublished         Boolean               @default(false) @map("is_published")
+  isFeatured          Boolean               @default(false) @map("is_featured")
+  contactPhone        String?               @map("contact_phone") @db.VarChar(30)
+  contactEmail        String?               @map("contact_email") @db.VarChar(200)
+  whatsappNumber      String?               @map("whatsapp_number") @db.VarChar(30)
+  logoUrl             String?               @map("logo_url")
+  coverImageUrl       String?               @map("cover_image_url")
+  serviceOptions      Json                  @default("{\"setup\": true, \"cleanup\": false, \"delivery\": true, \"staffService\": false, \"equipmentRental\": false}") @map("service_options")
+  metaTitle           String?               @map("meta_title") @db.VarChar(200)
+  metaDescription     String?               @map("meta_description") @db.VarChar(500)
+  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime              @default(now()) @map("updated_at") @db.Timestamptz(6)
+  categories          CateringCategories[]
+  inquiries           CateringInquiries[]
+  items               CateringItems[]
+  menus               Menus?                @relation(fields: [menuId], references: [id], onUpdate: NoAction)
+  users               Users                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  packages            CateringPackages[]
+  theme               CateringThemes?
+
+  @@index([city], map: "idx_catering_menus_city")
+  @@index([eventType], map: "idx_catering_menus_event_type")
+  @@index([slug], map: "idx_catering_menus_slug")
+  @@index([userId], map: "idx_catering_menus_user_id")
+  @@map("catering_menus")
+  @@schema("public")
+}
+
+model CateringPackageItems {
+  id          String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  packageId   String             @map("package_id") @db.Uuid
+  itemId      String             @map("item_id") @db.Uuid
+  categoryId  String             @map("category_id") @db.Uuid
+  isIncluded  Boolean            @default(true) @map("is_included")
+  maxSelections Int?             @map("max_selections")
+  category    CateringCategories @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  item        CateringItems      @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  package     CateringPackages   @relation(fields: [packageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([packageId, itemId])
+  @@index([itemId], map: "idx_catering_package_items_item")
+  @@index([packageId], map: "idx_catering_package_items_package")
+  @@map("catering_package_items")
+  @@schema("public")
+}
+
+model CateringPackages {
+  id              String                 @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  cateringMenuId  String                 @map("catering_menu_id") @db.Uuid
+  name            String                 @db.VarChar(200)
+  description     String?
+  pricePerPerson  Int                    @default(0) @map("price_per_person")
+  minGuests       Int                    @default(10) @map("min_guests")
+  maxGuests       Int?                   @map("max_guests")
+  isFeatured      Boolean                @default(false) @map("is_featured")
+  sortOrder       Int                    @default(0) @map("sort_order")
+  imageUrl        String?                @map("image_url")
+  includesText    String?                @map("includes_text")
+  createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
+  inquiries       CateringInquiries[]
+  packageItems    CateringPackageItems[]
+  cateringMenu    CateringMenus          @relation(fields: [cateringMenuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([cateringMenuId], map: "idx_catering_packages_menu_id")
+  @@index([cateringMenuId, sortOrder], map: "idx_catering_packages_sort")
+  @@map("catering_packages")
+  @@schema("public")
+}
+
+model CateringThemes {
+  id              String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  cateringMenuId  String        @unique @map("catering_menu_id") @db.Uuid
+  primaryColor    String        @default("#B8860B") @map("primary_color") @db.VarChar(7)
+  secondaryColor  String        @default("#8B6914") @map("secondary_color") @db.VarChar(7)
+  backgroundColor String        @default("#FFFDF7") @map("background_color") @db.VarChar(7)
+  surfaceColor    String        @default("#FFFFFF") @map("surface_color") @db.VarChar(7)
+  textColor       String        @default("#1A1A1A") @map("text_color") @db.VarChar(7)
+  accentColor     String        @default("#C2703E") @map("accent_color") @db.VarChar(7)
+  headingFont     String        @default("Cormorant") @map("heading_font") @db.VarChar(100)
+  bodyFont        String        @default("EB Garamond") @map("body_font") @db.VarChar(100)
+  layoutStyle     String        @default("elegant") @map("layout_style") @db.VarChar(30)
+  cardStyle       String        @default("elevated") @map("card_style") @db.VarChar(30)
+  borderRadius    String        @default("medium") @map("border_radius") @db.VarChar(30)
+  headerStyle     String        @default("banner") @map("header_style") @db.VarChar(30)
+  customCss       String?       @default("") @map("custom_css")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @default(now()) @map("updated_at") @db.Timestamptz(6)
+  cateringMenu    CateringMenus @relation(fields: [cateringMenuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([cateringMenuId], map: "idx_catering_themes_menu_id")
+  @@map("catering_themes")
+  @@schema("public")
+}
+
+enum ReferralStatus {
+  pending
+  completed
+  rewarded
+
+  @@map("referral_status")
+  @@schema("public")
+}
+
+enum UserRole {
+  super_admin
+  admin
+  manager
+  staff
+  user
+
+  @@map("user_role")
+  @@schema("public")
+}
+
+enum AalLevel {
+  aal1
+  aal2
+  aal3
+
+  @@map("aal_level")
+  @@schema("auth")
+}
+
+enum CodeChallengeMethod {
+  s256
+  plain
+
+  @@map("code_challenge_method")
+  @@schema("auth")
+}
+
+enum FactorStatus {
+  unverified
+  verified
+
+  @@map("factor_status")
+  @@schema("auth")
+}
+
+enum FactorType {
+  totp
+  webauthn
+  phone
+
+  @@map("factor_type")
+  @@schema("auth")
+}
+
+enum Continents {
+  Africa
+  Antarctica
+  Asia
+  Europe
+  Oceania
+  North_America @map("North America")
+  South_America @map("South America")
+
+  @@map("continents")
+  @@schema("public")
+}
+
+enum TagType {
+  keto
+  vegan
+  vegetarian
+  low_carb
+  sugar_free
+  low_fat
+  high_protein
+  high_fiber
+  organic
+  gluten_free
+  lactose_free
+
+  @@map("tag_type")
+  @@schema("public")
+}
+
+enum DayOfWeek {
+  monday
+  tuesday
+  wednesday
+  thursday
+  friday
+  saturday
+  sunday
+
+  @@map("day_of_week")
+  @@schema("public")
+}
+
+enum AllergenType {
+  gluten
+  crustaceans
+  eggs
+  fish
+  peanuts
+  soybeans
+  dairy
+  nuts
+  celery
+  mustard
+  sesame
+  sulphites
+  lupin
+  molluscs
+
+  @@map("allergen_type")
+  @@schema("public")
+}
+
+enum PromotionType {
+  daily_special
+  happy_hour
+  discount
+  combo
+  seasonal
+
+  @@map("promotion_type")
+  @@schema("public")
+}
+
+enum ReviewStatus {
+  pending
+  approved
+  rejected
+
+  @@map("review_status")
+  @@schema("public")
+}
+
+enum OrderType {
+  dine_in
+  pickup
+  delivery
+
+  @@map("order_type")
+  @@schema("public")
+}
+
+enum ScheduleType {
+  breakfast
+  brunch
+  lunch
+  afternoon
+  dinner
+  late_night
+  all_day
+
+  @@map("schedule_type")
+  @@schema("public")
+}
+
+enum OauthAuthorizationStatus {
+  pending
+  approved
+  denied
+  expired
+
+  @@map("oauth_authorization_status")
+  @@schema("auth")
+}
+
+enum OauthClientType {
+  public
+  confidential
+
+  @@map("oauth_client_type")
+  @@schema("auth")
+}
+
+enum OauthRegistrationType {
+  dynamic
+  manual
+
+  @@map("oauth_registration_type")
+  @@schema("auth")
+}
+
+enum OauthResponseType {
+  code
+
+  @@map("oauth_response_type")
+  @@schema("auth")
+}
+
+enum OneTimeTokenType {
+  confirmation_token
+  reauthentication_token
+  recovery_token
+  email_change_token_new
+  email_change_token_current
+  phone_change_token
+
+  @@map("one_time_token_type")
+  @@schema("auth")
+}

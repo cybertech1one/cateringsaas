@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="96" fill="#c2410c"/>
+  <rect x="24" y="24" width="464" height="464" rx="80" fill="#ea580c"/>
+  <!-- Fork -->
+  <g transform="translate(120, 80)">
+    <rect x="46" y="180" width="28" height="180" rx="14" fill="white"/>
+    <rect x="18" y="60" width="12" height="120" rx="6" fill="white"/>
+    <rect x="54" y="60" width="12" height="120" rx="6" fill="white"/>
+    <rect x="90" y="60" width="12" height="120" rx="6" fill="white"/>
+    <path d="M14 60 C14 30, 106 30, 106 60" stroke="white" stroke-width="10" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- QR grid -->
+  <g transform="translate(270, 140)">
+    <rect x="0" y="0" width="48" height="48" rx="6" fill="white"/>
+    <rect x="8" y="8" width="32" height="32" rx="4" fill="#ea580c"/>
+    <rect x="16" y="16" width="16" height="16" rx="2" fill="white"/>
+    <rect x="72" y="0" width="48" height="48" rx="6" fill="white"/>
+    <rect x="80" y="8" width="32" height="32" rx="4" fill="#ea580c"/>
+    <rect x="88" y="16" width="16" height="16" rx="2" fill="white"/>
+    <rect x="0" y="72" width="48" height="48" rx="6" fill="white"/>
+    <rect x="8" y="80" width="32" height="32" rx="4" fill="#ea580c"/>
+    <rect x="16" y="88" width="16" height="16" rx="2" fill="white"/>
+    <rect x="60" y="60" width="16" height="16" rx="3" fill="white"/>
+    <rect x="84" y="60" width="16" height="16" rx="3" fill="white"/>
+    <rect x="108" y="60" width="16" height="16" rx="3" fill="white"/>
+    <rect x="60" y="84" width="16" height="16" rx="3" fill="white"/>
+    <rect x="84" y="84" width="16" height="16" rx="3" fill="white"/>
+    <rect x="108" y="84" width="16" height="16" rx="3" fill="white"/>
+    <rect x="72" y="108" width="48" height="48" rx="6" fill="white" opacity="0.3"/>
+  </g>
+  <!-- Text -->
+  <text x="256" y="440" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="72" fill="white" opacity="0.9">FeastQR</text>
+</svg>

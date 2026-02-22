@@ -1,0 +1,14 @@
+import Image from "next/image";
+import Icon from "~/assets/icon.png";
+
+export const FeastQRLogo = () => {
+  return (
+    <div className="flex items-center gap-3">
+      <Image src={Icon} alt="FeastQR logo" height={32} />
+      <span className="font-display text-xl font-bold tracking-tight text-foreground">
+        Feast<span className="text-primary">QR</span>
+        <span className="ml-0.5 inline-block h-1.5 w-1.5 rounded-full bg-primary align-super" />
+      </span>
+    </div>
+  );
+};
