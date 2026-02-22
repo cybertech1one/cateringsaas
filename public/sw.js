@@ -1,8 +1,8 @@
-// FeastQR Service Worker
+// Diyafa Service Worker
 // Strategy: network-first for menu data, cache-first for static assets
 
-const CACHE_NAME = "feastqr-v1";
-const STATIC_CACHE = "feastqr-static-v1";
+const CACHE_NAME = "diyafa-v1";
+const STATIC_CACHE = "diyafa-static-v1";
 
 // Static assets to pre-cache on install
 const PRECACHE_URLS = ["/manifest.json", "/icons/icon-192x192.svg", "/icons/icon-512x512.svg"];

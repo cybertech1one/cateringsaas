@@ -61,7 +61,7 @@ export const env = createEnv({
     NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().optional(),
     NEXT_PUBLIC_UMAMI_URL: z.string().optional(),
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().optional().default(""),
-    NEXT_PUBLIC_APP_URL: z.string().url().optional().default("https://www.feastqr.com"),
+    NEXT_PUBLIC_APP_URL: z.string().url().optional().default("https://www.diyafa.ma"),
   },
 
   /**

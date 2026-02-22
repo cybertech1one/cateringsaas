@@ -1,5 +1,5 @@
 /**
- * Subscription tier limits for FeastQR.
+ * Subscription tier limits for Diyafa.
  *
  * Free-tier users are capped on menus, dishes-per-menu, and categories-per-menu.
  * Pro (subscribed) users have no limits.

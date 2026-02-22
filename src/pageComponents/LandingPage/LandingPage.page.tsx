@@ -47,11 +47,11 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "SoftwareApplication",
-      name: "FeastQR",
+      name: "Diyafa",
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
       description:
-        "Digital menu builder for restaurants with QR code generation, multi-language support, and AI-powered content tools.",
+        "Morocco's premier catering platform for weddings, corporate events & celebrations with multi-language support and AI-powered tools.",
       url: appUrl,
       offers: {
         "@type": "Offer",
@@ -70,7 +70,7 @@ const jsonLd = {
     },
     {
       "@type": "Organization",
-      name: "FeastQR",
+      name: "Diyafa",
       url: appUrl,
       logo: `${appUrl}/images/logo.png`,
       sameAs: [],

@@ -8,6 +8,6 @@ export const getBaseUrl = () => {
 export const getAppUrl = () => {
   return (
     process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-    "https://www.feastqr.com"
+    "https://www.diyafa.ma"
   );
 };

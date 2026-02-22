@@ -1,24 +1,27 @@
 /**
- * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
- * 1. You want to modify request context (see Part 1).
- * 2. You want to create a new middleware or type of procedure (see Part 3).
+ * Diyafa — tRPC Server Configuration
  *
- * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
- * need to use are documented accordingly near the end.
+ * Multi-tenant catering SaaS with organization-scoped procedures.
+ * Every data access is scoped to the user's organization via middleware.
+ *
+ * Procedure hierarchy:
+ *   publicProcedure     — No auth required (marketplace browse, public profiles)
+ *   privateProcedure    — User must be authenticated
+ *   orgProcedure        — User must be an active org member (adds orgId + orgRole to ctx)
+ *   orgAdminProcedure   — User must be org admin or higher
+ *   orgOwnerProcedure   — User must be org owner
+ *   superAdminProcedure — User must be platform super_admin
  */
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 
 import { db } from "~/server/db";
 import { getUserAsAdmin } from "../supabase/supabaseClient";
 
-/**
- * This is the actual context you will use in your router. It will be used to process every request
- * that goes through your tRPC endpoint.
- *
- * @see https://trpc.io/docs/context
- */
+// ──────────────────────────────────────────────
+// 1. CONTEXT
+// ──────────────────────────────────────────────
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const headers = opts.headers;
@@ -32,13 +35,10 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     user,
   };
 };
-/**
- * 2. INITIALIZATION
- *
- * This is where the tRPC API is initialized, connecting the context and transformer. We also parse
- * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
- * errors on the backend.
- */
+
+// ──────────────────────────────────────────────
+// 2. INITIALIZATION
+// ──────────────────────────────────────────────
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -54,33 +54,26 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
   },
 });
 
-/**
- * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
- *
- * These are the pieces you use to build your tRPC API. You should import these a lot in the
- * "/src/server/api/routers" directory.
- */
+// ──────────────────────────────────────────────
+// 3. ROUTER & PROCEDURES
+// ──────────────────────────────────────────────
 
-/**
- * This is how you create new routers and sub-routers in your tRPC API.
- *
- * @see https://trpc.io/docs/router
- */
 export const createTRPCRouter = t.router;
 
 /**
- * Public (unauthenticated) procedure
- *
- * This is the base piece you use to build new queries and mutations on your tRPC API. It does not
- * guarantee that a user querying is authorized, but you can still access user session data if they
- * are logged in.
+ * Public procedure — No authentication required.
+ * Used for marketplace browse, public caterer profiles, etc.
  */
 export const publicProcedure = t.procedure;
 
+/**
+ * Middleware: Enforce user is authenticated
+ */
 const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
+      message: "You must be logged in to access this resource",
     });
   }
 
@@ -91,8 +84,143 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
   });
 });
 
+/**
+ * Private procedure — User must be authenticated.
+ */
 export const privateProcedure = t.procedure.use(enforceUserIsAuthed);
 
+// ──────────────────────────────────────────────
+// 4. ORGANIZATION-SCOPED PROCEDURES (Multi-tenancy)
+// ──────────────────────────────────────────────
+
+/** Org role hierarchy (highest to lowest) */
+export const ORG_ROLES = ["super_admin", "org_owner", "admin", "manager", "staff"] as const;
+export type OrgRole = (typeof ORG_ROLES)[number];
+
+/** Check if a role meets a minimum role requirement */
+function meetsMinimumRole(userRole: OrgRole, minimumRole: OrgRole): boolean {
+  const userIndex = ORG_ROLES.indexOf(userRole);
+  const minIndex = ORG_ROLES.indexOf(minimumRole);
+  return userIndex <= minIndex; // Lower index = higher privilege
+}
+
+/**
+ * Middleware: Enforce user is a member of an organization.
+ * Requires `orgId` in input (passed explicitly or from user's default org).
+ *
+ * Adds to context: orgId, orgRole, orgMembership
+ */
+const enforceOrgMembership = (minimumRole: OrgRole = "staff") =>
+  t.middleware(async ({ ctx, next, rawInput }) => {
+    if (!ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    // Extract orgId from input
+    const input = rawInput as Record<string, unknown> | undefined;
+    let orgId = input?.orgId as string | undefined;
+
+    // If no orgId in input, try to get user's default/only org
+    if (!orgId) {
+      const membership = await ctx.db.orgMembers.findFirst({
+        where: {
+          userId: ctx.user.id,
+          isActive: true,
+        },
+        select: { orgId: true, role: true },
+        orderBy: { createdAt: "asc" },
+      });
+
+      if (!membership) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You are not a member of any organization",
+        });
+      }
+
+      orgId = membership.orgId;
+    }
+
+    // Verify membership and role
+    const membership = await ctx.db.orgMembers.findFirst({
+      where: {
+        orgId,
+        userId: ctx.user.id,
+        isActive: true,
+      },
+      select: {
+        id: true,
+        orgId: true,
+        role: true,
+        permissions: true,
+      },
+    });
+
+    if (!membership) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You are not a member of this organization",
+      });
+    }
+
+    const orgRole = membership.role as OrgRole;
+    if (!meetsMinimumRole(orgRole, minimumRole)) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: `This action requires at least ${minimumRole} role`,
+      });
+    }
+
+    return next({
+      ctx: {
+        user: ctx.user,
+        orgId: membership.orgId,
+        orgRole,
+        orgMemberId: membership.id,
+        orgPermissions: membership.permissions as Record<string, boolean> | null,
+      },
+    });
+  });
+
+/**
+ * Org procedure — User must be an active org member (any role).
+ * Use for: viewing events, browsing menus, reading data.
+ */
+export const orgProcedure = t.procedure
+  .use(enforceUserIsAuthed)
+  .use(enforceOrgMembership("staff"));
+
+/**
+ * Org manager procedure — User must be manager or higher.
+ * Use for: creating events, managing staff, editing menus.
+ */
+export const orgManagerProcedure = t.procedure
+  .use(enforceUserIsAuthed)
+  .use(enforceOrgMembership("manager"));
+
+/**
+ * Org admin procedure — User must be admin or higher.
+ * Use for: managing members, org settings, financial operations.
+ */
+export const orgAdminProcedure = t.procedure
+  .use(enforceUserIsAuthed)
+  .use(enforceOrgMembership("admin"));
+
+/**
+ * Org owner procedure — User must be the org owner.
+ * Use for: deleting org, transferring ownership, billing.
+ */
+export const orgOwnerProcedure = t.procedure
+  .use(enforceUserIsAuthed)
+  .use(enforceOrgMembership("org_owner"));
+
+// ──────────────────────────────────────────────
+// 5. PLATFORM-LEVEL PROCEDURES
+// ──────────────────────────────────────────────
+
+/**
+ * Middleware: Enforce user has a platform-level role
+ */
 const enforceUserRole = (allowedRoles: string[]) =>
   t.middleware(async ({ ctx, next }) => {
     if (!ctx.user) {
@@ -107,7 +235,7 @@ const enforceUserRole = (allowedRoles: string[]) =>
     if (!profile || !allowedRoles.includes(profile.role)) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "Insufficient permissions",
+        message: "Insufficient platform permissions",
       });
     }
 
@@ -116,10 +244,25 @@ const enforceUserRole = (allowedRoles: string[]) =>
     });
   });
 
+/**
+ * Admin procedure — User must be platform admin.
+ * Use for: platform analytics, org management, moderation.
+ */
 export const adminProcedure = t.procedure
   .use(enforceUserIsAuthed)
   .use(enforceUserRole(["super_admin", "admin"]));
 
+/**
+ * Super admin procedure — User must be platform super_admin.
+ * Use for: feature flags, system settings, financial settlements.
+ */
+export const superAdminProcedure = t.procedure
+  .use(enforceUserIsAuthed)
+  .use(enforceUserRole(["super_admin"]));
+
+/**
+ * Manager procedure — Kept for backward compatibility.
+ */
 export const managerProcedure = t.procedure
   .use(enforceUserIsAuthed)
   .use(enforceUserRole(["super_admin", "admin", "manager"]));

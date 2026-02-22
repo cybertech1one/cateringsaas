@@ -57,7 +57,7 @@ export function MainNav({ items, children }: MainNavProps) {
         aria-label="Toggle navigation menu"
       >
         {showMobileMenu ? <Icons.close /> : <Icons.menu />}
-        <span className="font-bold">FeastQR</span>
+        <span className="font-bold">Diyafa</span>
       </button>
       {showMobileMenu && items && (
         <MobileNav items={items}>{children}</MobileNav>

@@ -1,7 +1,7 @@
 {
-  "name": "FeastQR Menu",
-  "short_name": "FeastQR",
-  "description": "Digital restaurant menus with QR codes - view menus instantly on your phone",
+  "name": "Diyafa - Catering Platform",
+  "short_name": "Diyafa",
+  "description": "Morocco's premier catering platform for weddings, corporate events & celebrations",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

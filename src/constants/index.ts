@@ -1,6 +1,6 @@
 /**
  * Application-wide constants
- * Centralized location for all hardcoded values used across the FeastQR application
+ * Centralized location for all hardcoded values used across the Diyafa application
  */
 
 // ── Cuisine Types ─────────────────────────────────────────────

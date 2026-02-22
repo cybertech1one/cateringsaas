@@ -23,11 +23,11 @@ export async function generateMetadata() {
   return {
     title: {
       default: t("globalMetadata.title"),
-      template: "%s | FeastQR",
+      template: "%s | Diyafa",
     },
     description: t("globalMetadata.description"),
     keywords: (t("globalMetadata.keywords") as string).split(","),
-    category: "restaurant menu builder",
+    category: "catering platform",
     metadataBase: new URL(`${appUrl}/`),
     openGraph: {
       type: "website",
@@ -45,7 +45,7 @@ export async function generateMetadata() {
       card: "summary_large_image",
       title: t("globalMetadata.twitter.title"),
       description: t("globalMetadata.twitter.description"),
-      site: "@feastqr",
+      site: "@diyafa_ma",
     },
   } satisfies Metadata;
 }
@@ -84,7 +84,7 @@ async function RootLayout({ children }: { children: React.ReactNode }) {
           <meta name="theme-color" content="#c2410c" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-          <meta name="apple-mobile-web-app-title" content="FeastQR" />
+          <meta name="apple-mobile-web-app-title" content="Diyafa" />
           <meta name="mobile-web-app-capable" content="yes" />
           <link rel="icon" href="/favicon.ico" sizes="any" />
           <link rel="apple-touch-icon" href="/icons/icon-192x192.svg" />

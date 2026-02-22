@@ -13,10 +13,10 @@ export const Footer = async () => {
           {/* Brand */}
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2.5">
-              <Image src={Icon} width={32} height={32} alt="FeastQR Logo" />
+              <Image src={Icon} width={32} height={32} alt="Diyafa Logo" />
               <div>
                 <span className="font-sans text-lg font-bold tracking-tight">
-                  FeastQR
+                  Diyafa
                   <span className="ml-0.5 inline-block h-1.5 w-1.5 rounded-full bg-primary" />
                 </span>
                 <p className="text-xs text-muted-foreground mt-0.5">{t("footer.tagline")}</p>
@@ -70,14 +70,14 @@ export const Footer = async () => {
             </ul>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4 mt-8">{t("footer.contact")}</h3>
             <ul className="space-y-3 text-sm">
-              <li><a href="mailto:support@feastqr.com" className="text-muted-foreground hover:text-foreground transition-colors">support@feastqr.com</a></li>
+              <li><a href="mailto:support@diyafa.ma" className="text-muted-foreground hover:text-foreground transition-colors">support@diyafa.ma</a></li>
             </ul>
           </div>
         </nav>
 
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-border/50 pt-8">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} FeastQR. {t("footer.allRightsReserved")}
+            &copy; {new Date().getFullYear()} Diyafa. {t("footer.allRightsReserved")}
           </p>
         </div>
       </div>

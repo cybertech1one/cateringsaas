@@ -2,10 +2,10 @@ import { type MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "FeastQR - Restaurant Menu Builder",
-    short_name: "FeastQR",
+    name: "Diyafa - Catering Platform",
+    short_name: "Diyafa",
     description:
-      "Create beautiful digital menus with QR codes for your restaurant",
+      "Morocco's premier catering platform for weddings, corporate events & celebrations",
     start_url: "/",
     display: "standalone",
     background_color: "#faf8f5",

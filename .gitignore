@@ -55,4 +55,6 @@ phase-diagrams.md
 quality-gates.md
 workspace-structure.md
 nul
-qa-screenshots/
+qa-screenshots/# Large image files
+public/images/landing-bg.jpeg
+public/images/coctails-menu.png
