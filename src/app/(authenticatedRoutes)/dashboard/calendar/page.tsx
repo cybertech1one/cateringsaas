@@ -1,11 +1,6 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import dynamic from "next/dynamic";
-
-const CalendarView = dynamic(
-  () => import("~/pageComponents/CalendarView/CalendarView.page"),
-  { ssr: false }
-);
+import CalendarView from "~/pageComponents/CalendarView/CalendarView.page";
 
 export default function CalendarPage() {
   return <CalendarView />;

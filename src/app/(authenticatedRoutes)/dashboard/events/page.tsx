@@ -1,12 +1,6 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import dynamic from "next/dynamic";
-import type { Metadata } from "next";
-
-const EventsManagement = dynamic(
-  () => import("~/pageComponents/EventsManagement/EventsManagement.page"),
-  { ssr: false }
-);
+import EventsManagement from "~/pageComponents/EventsManagement/EventsManagement.page";
 
 export default function EventsPage() {
   return <EventsManagement />;

@@ -1,11 +1,6 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import dynamic from "next/dynamic";
-
-const ClientsManagement = dynamic(
-  () => import("~/pageComponents/ClientsManagement/ClientsManagement.page"),
-  { ssr: false }
-);
+import ClientsManagement from "~/pageComponents/ClientsManagement/ClientsManagement.page";
 
 export default function ClientsPage() {
   return <ClientsManagement />;

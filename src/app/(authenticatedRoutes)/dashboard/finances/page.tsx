@@ -1,11 +1,6 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import dynamic from "next/dynamic";
-
-const FinancesDashboard = dynamic(
-  () => import("~/pageComponents/FinancesDashboard/FinancesDashboard.page"),
-  { ssr: false }
-);
+import FinancesDashboard from "~/pageComponents/FinancesDashboard/FinancesDashboard.page";
 
 export default function FinancesPage() {
   return <FinancesDashboard />;

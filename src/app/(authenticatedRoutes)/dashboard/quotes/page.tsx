@@ -1,11 +1,6 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import dynamic from "next/dynamic";
-
-const QuotesManagement = dynamic(
-  () => import("~/pageComponents/QuotesManagement/QuotesManagement.page"),
-  { ssr: false }
-);
+import QuotesManagement from "~/pageComponents/QuotesManagement/QuotesManagement.page";
 
 export default function QuotesPage() {
   return <QuotesManagement />;

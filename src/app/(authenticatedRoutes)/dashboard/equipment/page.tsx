@@ -1,11 +1,6 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import dynamic from "next/dynamic";
-
-const EquipmentManagement = dynamic(
-  () => import("~/pageComponents/EquipmentManagement/EquipmentManagement.page"),
-  { ssr: false }
-);
+import EquipmentManagement from "~/pageComponents/EquipmentManagement/EquipmentManagement.page";
 
 export default function EquipmentPage() {
   return <EquipmentManagement />;

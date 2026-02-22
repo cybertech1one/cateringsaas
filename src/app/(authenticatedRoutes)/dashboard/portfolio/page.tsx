@@ -1,11 +1,6 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import dynamic from "next/dynamic";
-
-const PortfolioManagement = dynamic(
-  () => import("~/pageComponents/PortfolioManagement/PortfolioManagement.page"),
-  { ssr: false }
-);
+import PortfolioManagement from "~/pageComponents/PortfolioManagement/PortfolioManagement.page";
 
 export default function PortfolioPage() {
   return <PortfolioManagement />;

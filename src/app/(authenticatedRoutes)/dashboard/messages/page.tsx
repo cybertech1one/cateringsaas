@@ -1,11 +1,6 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import dynamic from "next/dynamic";
-
-const MessagesCenter = dynamic(
-  () => import("~/pageComponents/MessagesCenter/MessagesCenter.page"),
-  { ssr: false }
-);
+import MessagesCenter from "~/pageComponents/MessagesCenter/MessagesCenter.page";
 
 export default function MessagesPage() {
   return <MessagesCenter />;
