@@ -37,13 +37,14 @@ import { timelineRouter } from "./routers/timeline";
 import { orgAnalyticsRouter } from "./routers/orgAnalytics";
 import { portfolioRouter } from "./routers/portfolio";
 import { calendarRouter } from "./routers/calendar";
+import { orgThemesRouter } from "./routers/orgThemes";
 
 /**
  * Diyafa — Primary Router
  *
- * 34 routers total:
+ * 35 routers total:
  * - 19 foundation routers (retained, gradually evolving)
- * - 15 new Diyafa org-scoped routers
+ * - 16 new Diyafa org-scoped routers
  */
 export const appRouter = createTRPCRouter({
   // ── Foundation ─────────────────────────────────────────────────────
@@ -83,6 +84,7 @@ export const appRouter = createTRPCRouter({
   orgAnalytics: orgAnalyticsRouter,
   portfolio: portfolioRouter,
   calendar: calendarRouter,
+  orgThemes: orgThemesRouter,
 });
 
 // export type definition of API
