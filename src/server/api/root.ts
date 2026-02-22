@@ -1,4 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
+
+// ── Legacy FeastQR Routers (retained for compatibility) ──────────────
 import { authRouter } from "./routers/auth";
 import { menusRouter } from "./routers/menus";
 import { languagesRouter } from "./routers/languages";
@@ -18,16 +20,30 @@ import { kitchenRouter } from "./routers/kitchen";
 import { loyaltyRouter } from "./routers/loyalty";
 import { affiliatesRouter } from "./routers/affiliates";
 import { crmRouter } from "./routers/crm";
-import { deliveryRouter } from "./routers/delivery";
-import { driversRouter } from "./routers/drivers";
-import { cateringRouter } from "./routers/catering";
+
+// ── Diyafa Core Routers (new org-scoped multi-tenant) ────────────────
+import { organizationsRouter } from "./routers/organizations";
+import { eventsRouter } from "./routers/events";
+import { quotesRouter } from "./routers/quotes";
+import { financesRouter } from "./routers/finances";
+import { clientsRouter } from "./routers/clients";
+import { cateringMenusRouter } from "./routers/cateringMenus";
+import { staffSchedulingRouter } from "./routers/staffScheduling";
+import { equipmentRouter } from "./routers/equipment";
+import { marketplaceRouter } from "./routers/marketplace";
+import { messagesRouter } from "./routers/messages";
+import { eventReviewsRouter } from "./routers/eventReviews";
+import { timelineRouter } from "./routers/timeline";
 
 /**
- * This is the primary router for your server.
+ * Diyafa — Primary Router
  *
- * All routers added in /api/routers should be manually added here.
+ * 31 routers total:
+ * - 19 legacy FeastQR routers (retained, gradually evolving)
+ * - 12 new Diyafa org-scoped routers
  */
 export const appRouter = createTRPCRouter({
+  // ── Legacy (FeastQR) ─────────────────────────────────────────────
   menus: menusRouter,
   auth: authRouter,
   languages: languagesRouter,
@@ -47,9 +63,20 @@ export const appRouter = createTRPCRouter({
   loyalty: loyaltyRouter,
   affiliates: affiliatesRouter,
   crm: crmRouter,
-  delivery: deliveryRouter,
-  drivers: driversRouter,
-  catering: cateringRouter,
+
+  // ── Diyafa Core ──────────────────────────────────────────────────
+  organizations: organizationsRouter,
+  events: eventsRouter,
+  quotes: quotesRouter,
+  finances: financesRouter,
+  clients: clientsRouter,
+  cateringMenus: cateringMenusRouter,
+  staffScheduling: staffSchedulingRouter,
+  equipment: equipmentRouter,
+  marketplace: marketplaceRouter,
+  messages: messagesRouter,
+  eventReviews: eventReviewsRouter,
+  timeline: timelineRouter,
 });
 
 // export type definition of API
