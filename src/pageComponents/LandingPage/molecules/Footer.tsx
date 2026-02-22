@@ -43,13 +43,12 @@ export const Footer = async () => {
             <ul className="space-y-3 text-sm">
               <li><Link href="/explore" className="text-muted-foreground hover:text-foreground transition-colors">{t("footer.explore")}</Link></li>
               <li><Link href="/for-restaurants" className="text-muted-foreground hover:text-foreground transition-colors">{t("footer.forRestaurants")}</Link></li>
-              <li><Link href="/for-drivers" className="text-muted-foreground hover:text-foreground transition-colors">{t("footer.forDrivers")}</Link></li>
               <li><Link href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">{t("footer.pricing")}</Link></li>
               <li><Link href="/login" className="text-muted-foreground hover:text-foreground transition-colors">{t("footer.signIn")}</Link></li>
             </ul>
           </div>
 
-          {/* Popular Cities */}
+          {/* Top Cities */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4">{t("footer.popularCities")}</h3>
             <ul className="space-y-3 text-sm">

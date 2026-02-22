@@ -22,14 +22,16 @@ import {
   MousePointerClick,
   Languages,
   Utensils,
-  Search,
-  QrCode,
-  Smartphone,
-  Palette,
+  CalendarDays,
+  FileText,
+  DollarSign,
+  Users,
+  MessageSquare,
   BarChart3,
   CheckCircle2,
-  ShoppingBag,
   ChefHat,
+  Camera,
+  ClipboardList,
 } from "lucide-react";
 
 const HeroIllustration = dynamic(
@@ -51,21 +53,22 @@ const jsonLd = {
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
       description:
-        "Morocco's premier catering platform for weddings, corporate events & celebrations with multi-language support and AI-powered tools.",
+        "Morocco's premier catering management platform. Manage events, quotes, menus, payments, and staff for weddings, corporate events & celebrations.",
       url: appUrl,
       offers: {
         "@type": "Offer",
         price: "0",
-        priceCurrency: "USD",
-        description: "Free tier available",
+        priceCurrency: "MAD",
+        description: "Free tier available. Pro at 299 MAD/month.",
       },
       featureList: [
-        "Digital menu creation",
-        "QR code generation",
-        "Multi-language support",
-        "AI-powered descriptions",
-        "Theme customization",
-        "Analytics dashboard",
+        "Event management & booking pipeline",
+        "Professional quote builder with TVA compliance",
+        "Catering menu management",
+        "Financial tracking (COD, milestones, invoices)",
+        "Staff & equipment scheduling",
+        "Multi-language support (EN/FR/AR)",
+        "Analytics & revenue dashboard",
       ],
     },
     {
@@ -122,14 +125,14 @@ export const LandingPage = async () => {
 
                 <div className="animate-fade-up animate-delay-300 mt-10 flex flex-col gap-3 sm:flex-row">
                   <Link
-                    href="/explore"
+                    href="/register"
                     className="group hero-cta-primary inline-flex items-center justify-center gap-2.5 rounded-2xl bg-ember px-8 py-4 text-base font-semibold text-white shadow-lg shadow-ember/20 transition-all duration-300 hover:shadow-xl hover:shadow-ember/30 hover:-translate-y-0.5"
                   >
-                    <Search className="h-4.5 w-4.5" />
+                    <ChefHat className="h-4.5 w-4.5" />
                     {t("landing.hero.ctaExplore")}
                   </Link>
                   <Link
-                    href="/register"
+                    href="#features"
                     className="group inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-foreground/10 px-8 py-4 text-base font-semibold text-foreground transition-all duration-300 hover:border-ember/30 hover:bg-ember/[0.04]"
                   >
                     {t("landing.hero.ctaBrowse")}
@@ -169,13 +172,13 @@ export const LandingPage = async () => {
             <div className="animate-fade-up animate-delay-500 mt-14 flex flex-col gap-4 rounded-2xl border border-border/40 bg-background/60 px-6 py-5 backdrop-blur-sm sm:flex-row sm:items-center sm:gap-10 sm:px-8">
               <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-ember/[0.08]">
-                  <Utensils className="h-4 w-4 text-ember" />
+                  <ChefHat className="h-4 w-4 text-ember" />
                 </div>
                 <span className="text-sm text-muted-foreground">
                   {t("landing.hero.ownerStrip")}
                 </span>
                 <Link
-                  href="/for-restaurants"
+                  href="/register"
                   className="group text-sm font-semibold text-ember transition-colors hover:text-ember/80"
                 >
                   {t("landing.hero.ownerCta")}
@@ -185,13 +188,13 @@ export const LandingPage = async () => {
               <div className="hidden h-6 w-px bg-border/50 sm:block" />
               <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sage/[0.08]">
-                  <ShoppingBag className="h-4 w-4 text-sage" />
+                  <CalendarDays className="h-4 w-4 text-sage" />
                 </div>
                 <span className="text-sm text-muted-foreground">
                   {t("landing.hero.driverStrip")}
                 </span>
                 <Link
-                  href="/for-drivers"
+                  href="/explore"
                   className="group text-sm font-semibold text-sage transition-colors hover:text-sage/80"
                 >
                   {t("landing.hero.driverCta")}
@@ -211,17 +214,17 @@ export const LandingPage = async () => {
               <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
                 {[
                   {
-                    target: 500,
+                    target: 200,
                     suffix: "+",
-                    label: "Restaurants",
-                    icon: Utensils,
+                    label: "Caterers",
+                    icon: ChefHat,
                   },
                   { target: 12, suffix: "", label: "Cities", icon: MapPin },
                   {
-                    target: 50,
+                    target: 5,
                     suffix: "K+",
-                    label: "Dishes",
-                    icon: Search,
+                    label: "Events Managed",
+                    icon: CalendarDays,
                   },
                   {
                     target: 3,
@@ -260,11 +263,11 @@ export const LandingPage = async () => {
         <div className="border-b border-border/30 bg-background/50 py-3">
           <Marquee speed={35} pauseOnHover className="select-none">
             <span className="text-sm font-medium text-muted-foreground/50">
-              500+ Restaurants
+              200+ Caterers
             </span>
             <span className="text-muted-foreground/20">&bull;</span>
             <span className="text-sm font-medium text-muted-foreground/50">
-              50,000+ Menus Served
+              5,000+ Events Managed
             </span>
             <span className="text-muted-foreground/20">&bull;</span>
             <span className="text-sm font-medium text-muted-foreground/50">
@@ -272,7 +275,7 @@ export const LandingPage = async () => {
             </span>
             <span className="text-muted-foreground/20">&bull;</span>
             <span className="text-sm font-medium text-muted-foreground/50">
-              4.8 Average Rating
+              Weddings &amp; Corporate
             </span>
             <span className="text-muted-foreground/20">&bull;</span>
             <span className="text-sm font-medium text-muted-foreground/50">
@@ -280,20 +283,20 @@ export const LandingPage = async () => {
             </span>
             <span className="text-muted-foreground/20">&bull;</span>
             <span className="text-sm font-medium text-muted-foreground/50">
-              AI-Powered
+              COD &amp; Milestones
             </span>
             <span className="text-muted-foreground/20">&bull;</span>
             <span className="text-sm font-medium text-muted-foreground/50">
-              Multi-Language
+              EN / FR / AR
             </span>
             <span className="text-muted-foreground/20">&bull;</span>
           </Marquee>
         </div>
 
         {/* ═══════════════════════════════════════════════════════════
-            FEATURES -- Bento grid with visual elements
+            FEATURES -- Bento grid with catering-specific features
         ═══════════════════════════════════════════════════════════ */}
-        <section className="relative px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+        <section id="features" className="relative px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
           <div className="noise-overlay absolute inset-0 pointer-events-none" aria-hidden="true" />
           <div className="container relative z-10 mx-auto max-w-6xl">
             <ScrollReveal>
@@ -313,41 +316,38 @@ export const LandingPage = async () => {
                 <div className="card-3d group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-ember/20 hover:shadow-lg hover:glow-ember md:col-span-2 sm:p-10">
                   <div className="relative z-10">
                     <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-ember/[0.08]">
-                      <Search className="h-6 w-6 text-ember" />
+                      <CalendarDays className="h-6 w-6 text-ember" />
                     </div>
                     <h3 className="mb-2.5 font-display text-xl font-bold text-foreground sm:text-2xl">
-                      {t("landing.features.dinerBrowseTitle")}
+                      {t("landing.features.eventManagementTitle")}
                     </h3>
                     <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-                      {t("landing.features.dinerBrowseDesc")}
+                      {t("landing.features.eventManagementDesc")}
                     </p>
                   </div>
-                  {/* Decorative restaurant image */}
-                  <div className="absolute -bottom-2 -right-2 h-40 w-60 opacity-[0.15] transition-opacity group-hover:opacity-[0.25] overflow-hidden rounded-xl sm:h-48 sm:w-72">
-                    <Image
-                      src="/images/landing/restaurant-ambiance.jpg"
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="288px"
-                      aria-hidden="true"
-                    />
+                  {/* Decorative event types */}
+                  <div className="absolute -bottom-2 -right-4 flex flex-col gap-2 opacity-[0.15] sm:opacity-[0.2]" aria-hidden="true">
+                    {["Wedding", "Corporate", "Ramadan", "Birthday"].map((type) => (
+                      <span key={type} className="rounded-full bg-ember px-4 py-1.5 text-sm font-medium text-white">
+                        {type}
+                      </span>
+                    ))}
                   </div>
                 </div>
 
                 <div className="card-3d group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-sage/20 hover:shadow-lg hover:shadow-sage/[0.04]">
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-sage/[0.08]">
-                    <MousePointerClick className="h-6 w-6 text-sage" />
+                    <FileText className="h-6 w-6 text-sage" />
                   </div>
                   <h3 className="mb-2.5 font-display text-xl font-bold text-foreground">
-                    {t("landing.features.dinerOrderTitle")}
+                    {t("landing.features.quoteBuilderTitle")}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    {t("landing.features.dinerOrderDesc")}
+                    {t("landing.features.quoteBuilderDesc")}
                   </p>
-                  {/* Mini order type badges */}
+                  {/* Mini pricing type badges */}
                   <div className="mt-5 flex flex-wrap gap-2">
-                    {["Dine-in", "Pickup", "Delivery"].map((mode) => (
+                    {["Per Head", "Per Dish", "Package"].map((mode) => (
                       <span
                         key={mode}
                         className="rounded-full bg-sage/[0.06] px-3 py-1 text-xs font-medium text-sage/70"
@@ -365,27 +365,24 @@ export const LandingPage = async () => {
               <div className="mt-4 grid gap-4 md:grid-cols-3">
                 <div className="card-3d group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-gold/20 hover:shadow-lg hover:shadow-gold/[0.04]">
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/[0.08]">
-                    <Languages className="h-6 w-6 text-gold" />
+                    <DollarSign className="h-6 w-6 text-gold" />
                   </div>
                   <h3 className="mb-2.5 font-display text-xl font-bold text-foreground">
-                    {t("landing.features.dinerLanguageTitle")}
+                    {t("landing.features.financialTitle")}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    {t("landing.features.dinerLanguageDesc")}
+                    {t("landing.features.financialDesc")}
                   </p>
-                  {/* Language flags */}
+                  {/* Payment method badges */}
                   <div className="mt-5 flex items-center gap-3">
                     <span className="rounded-md bg-background px-2.5 py-1 text-xs font-bold text-foreground/60 shadow-sm ring-1 ring-border/50">
-                      EN
+                      COD
                     </span>
                     <span className="rounded-md bg-background px-2.5 py-1 text-xs font-bold text-foreground/60 shadow-sm ring-1 ring-border/50">
-                      FR
+                      Milestones
                     </span>
                     <span className="rounded-md bg-background px-2.5 py-1 text-xs font-bold text-foreground/60 shadow-sm ring-1 ring-border/50">
-                      AR
-                    </span>
-                    <span className="text-xs text-muted-foreground/50">
-                      + RTL
+                      Invoices
                     </span>
                   </div>
                 </div>
@@ -394,22 +391,22 @@ export const LandingPage = async () => {
                   <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-10">
                     <div className="flex-1">
                       <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-ember/[0.08]">
-                        <Sparkles className="h-6 w-6 text-ember" />
+                        <Utensils className="h-6 w-6 text-ember" />
                       </div>
                       <h3 className="mb-2.5 font-display text-xl font-bold text-foreground sm:text-2xl">
-                        {t("landing.features.aiTitle")}
+                        {t("landing.features.menuManagementTitle")}
                       </h3>
                       <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-                        {t("landing.features.aiDescription")}
+                        {t("landing.features.menuManagementDesc")}
                       </p>
                     </div>
-                    {/* AI feature checklist */}
+                    {/* Menu feature checklist */}
                     <div className="flex flex-col gap-2.5 rounded-xl bg-background/60 p-4 ring-1 ring-border/30">
                       {[
-                        "Auto descriptions",
-                        "Menu translation",
-                        "Photo to menu",
-                        "Nutrition estimates",
+                        "Per-head pricing",
+                        "Package deals",
+                        "Dietary options",
+                        "Multi-language (EN/FR/AR)",
                       ].map((feat) => (
                         <div
                           key={feat}
@@ -425,43 +422,54 @@ export const LandingPage = async () => {
               </div>
             </ScrollReveal>
 
-            {/* Row 3: Three equal cards -- QR, Themes, Analytics */}
+            {/* Row 3: Four equal cards */}
             <ScrollReveal delay={200}>
-              <div className="mt-4 grid gap-4 md:grid-cols-3">
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
                 <div className="card-3d group rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-ember/20 hover:shadow-lg hover:shadow-ember/[0.04]">
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-ember/[0.08]">
-                    <QrCode className="h-6 w-6 text-ember" />
+                    <Users className="h-6 w-6 text-ember" />
                   </div>
                   <h3 className="mb-2.5 font-display text-lg font-bold text-foreground">
-                    {t("landing.features.ownerQrTitle")}
+                    {t("landing.features.staffEquipmentTitle")}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    {t("landing.features.ownerQrDesc")}
-                  </p>
-                </div>
-
-                <div className="card-3d group rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-gold/20 hover:shadow-lg hover:shadow-gold/[0.04]">
-                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/[0.08]">
-                    <Palette className="h-6 w-6 text-gold" />
-                  </div>
-                  <h3 className="mb-2.5 font-display text-lg font-bold text-foreground">
-                    30+ Templates
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    Choose from 30 professionally designed menu themes. Customize
-                    colors, fonts, and layouts to match your brand perfectly.
+                    {t("landing.features.staffEquipmentDesc")}
                   </p>
                 </div>
 
                 <div className="card-3d group rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-sage/20 hover:shadow-lg hover:shadow-sage/[0.04]">
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-sage/[0.08]">
-                    <BarChart3 className="h-6 w-6 text-sage" />
+                    <MessageSquare className="h-6 w-6 text-sage" />
                   </div>
                   <h3 className="mb-2.5 font-display text-lg font-bold text-foreground">
-                    {t("landing.features.ownerAnalyticsTitle")}
+                    {t("landing.features.clientHubTitle")}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    {t("landing.features.ownerAnalyticsDesc")}
+                    {t("landing.features.clientHubDesc")}
+                  </p>
+                </div>
+
+                <div className="card-3d group rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-gold/20 hover:shadow-lg hover:shadow-gold/[0.04]">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/[0.08]">
+                    <BarChart3 className="h-6 w-6 text-gold" />
+                  </div>
+                  <h3 className="mb-2.5 font-display text-lg font-bold text-foreground">
+                    {t("landing.features.analyticsTitle")}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {t("landing.features.analyticsDesc")}
+                  </p>
+                </div>
+
+                <div className="card-3d group rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-ember/20 hover:shadow-lg hover:shadow-ember/[0.04]">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-ember/[0.08]">
+                    <Camera className="h-6 w-6 text-ember" />
+                  </div>
+                  <h3 className="mb-2.5 font-display text-lg font-bold text-foreground">
+                    {t("landing.features.portfolioTitle")}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {t("landing.features.portfolioDesc")}
                   </p>
                 </div>
               </div>
@@ -472,7 +480,7 @@ export const LandingPage = async () => {
                 <p className="text-sm text-muted-foreground">
                   {t("landing.features.ownerCtaText")}{" "}
                   <Link
-                    href="/for-restaurants"
+                    href="#pricing"
                     className="font-semibold text-ember hover:underline"
                   >
                     {t("landing.features.ownerCtaLink")}
@@ -485,7 +493,7 @@ export const LandingPage = async () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════
-            PHONE MOCKUP -- What customers see when they scan
+            DASHBOARD PREVIEW -- What caterers see in their dashboard
         ═══════════════════════════════════════════════════════════ */}
         <section
           className="relative overflow-hidden zellige-divider"
@@ -512,28 +520,28 @@ export const LandingPage = async () => {
 
                   <div className="mt-8 grid grid-cols-2 gap-4">
                     <div className="rounded-xl border border-border/50 bg-background p-5 transition-colors hover:border-ember/20">
-                      <QrCode className="mb-3 h-6 w-6 text-ember" />
+                      <CalendarDays className="mb-3 h-6 w-6 text-ember" />
                       <p className="font-semibold text-foreground">
                         {t("landing.mobile.scanAndView")}
                       </p>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        {t("landing.mobile.instantLoading")}
+                        Manage events on the go
                       </p>
                     </div>
                     <div className="rounded-xl border border-border/50 bg-background p-5 transition-colors hover:border-sage/20">
-                      <Smartphone className="mb-3 h-6 w-6 text-sage" />
+                      <ClipboardList className="mb-3 h-6 w-6 text-sage" />
                       <p className="font-semibold text-foreground">
-                        Mobile-First
+                        {t("landing.mobile.instantLoading")}
                       </p>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        Optimized for all screens
+                        Quotes &amp; payments sync live
                       </p>
                     </div>
                   </div>
                 </div>
               </ScrollReveal>
 
-              {/* Right -- Phone mockup */}
+              {/* Right -- Dashboard mockup showing event pipeline */}
               <ScrollReveal direction="right">
                 <div className="flex justify-center">
                   <div className="relative">
@@ -554,102 +562,99 @@ export const LandingPage = async () => {
                           </div>
                         </div>
 
-                        {/* Restaurant header */}
+                        {/* Caterer header */}
                         <div className="px-4 pb-3 pt-2">
                           <div className="flex items-center gap-3">
                             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-ember/20 to-gold/20">
-                              <Utensils className="h-5 w-5 text-ember" />
+                              <ChefHat className="h-5 w-5 text-ember" />
                             </div>
                             <div>
-                              <p className="text-sm font-bold">Riad Al Baraka</p>
-                              <div className="mt-0.5 flex items-center gap-1">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className="h-3 w-3 fill-gold text-gold"
-                                  />
-                                ))}
-                                <span className="ml-1 text-[10px] text-muted-foreground">
-                                  4.8
-                                </span>
-                              </div>
+                              <p className="text-sm font-bold">My Events</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                3 upcoming this week
+                              </p>
                             </div>
                           </div>
                         </div>
 
-                        {/* Category tabs */}
+                        {/* Pipeline tabs */}
                         <div className="flex gap-2 px-4 pb-3">
                           <span className="rounded-full bg-ember px-3.5 py-1.5 text-[11px] font-semibold text-white">
-                            All
+                            Pipeline
                           </span>
                           <span className="rounded-full bg-muted px-3.5 py-1.5 text-[11px] text-muted-foreground">
-                            Tagines
+                            Quotes
                           </span>
                           <span className="rounded-full bg-muted px-3.5 py-1.5 text-[11px] text-muted-foreground">
-                            Grills
-                          </span>
-                          <span className="rounded-full bg-muted px-3.5 py-1.5 text-[11px] text-muted-foreground">
-                            Salads
+                            Revenue
                           </span>
                         </div>
 
-                        {/* Dish cards */}
+                        {/* Event cards */}
                         <div className="space-y-3 px-4 pb-4">
                           <div className="overflow-hidden rounded-xl border border-border/50">
-                            <div className="relative h-28 bg-gradient-to-br from-amber-200 via-orange-200 to-amber-300">
+                            <div className="relative h-16 bg-gradient-to-br from-amber-200 via-orange-200 to-amber-300 flex items-center px-4">
+                              <div className="flex items-center gap-2">
+                                <span className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-ember">Wedding</span>
+                                <span className="text-[10px] text-white/80 font-medium">Mar 15</span>
+                              </div>
                               <div className="absolute bottom-2 right-2 rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-bold text-ember shadow-sm">
-                                85 MAD
+                                45,000 MAD
                               </div>
                             </div>
                             <div className="p-3">
                               <p className="text-[13px] font-bold">
-                                Lamb Tagine with Prunes
+                                El Amrani Wedding
                               </p>
                               <p className="mt-0.5 text-[11px] text-muted-foreground">
-                                Slow-cooked with almonds &amp; cinnamon
+                                200 guests &middot; Full service &middot; Casablanca
                               </p>
                             </div>
                           </div>
 
                           <div className="overflow-hidden rounded-xl border border-border/50">
-                            <div className="relative h-28 bg-gradient-to-br from-emerald-200 via-teal-200 to-emerald-300">
-                              <div className="absolute bottom-2 right-2 rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-bold text-ember shadow-sm">
-                                65 MAD
+                            <div className="relative h-16 bg-gradient-to-br from-emerald-200 via-teal-200 to-emerald-300 flex items-center px-4">
+                              <div className="flex items-center gap-2">
+                                <span className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-sage">Corporate</span>
+                                <span className="text-[10px] text-white/80 font-medium">Mar 20</span>
+                              </div>
+                              <div className="absolute bottom-2 right-2 rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-bold text-sage shadow-sm">
+                                12,000 MAD
                               </div>
                             </div>
                             <div className="p-3">
                               <p className="text-[13px] font-bold">
-                                Couscous Royal
+                                OCP Annual Lunch
                               </p>
                               <p className="mt-0.5 text-[11px] text-muted-foreground">
-                                Seven vegetables &amp; tender chicken
+                                80 guests &middot; Buffet &middot; Rabat
                               </p>
                             </div>
                           </div>
                         </div>
 
-                        {/* Cart button */}
+                        {/* Action button */}
                         <div className="px-4 pb-6">
                           <div className="flex items-center justify-center gap-2 rounded-full bg-ember py-3 text-[13px] font-semibold text-white shadow-md shadow-ember/25">
-                            <ShoppingBag className="h-4 w-4" />
-                            View Cart &middot; 150 MAD
+                            <FileText className="h-4 w-4" />
+                            Create New Quote
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Floating QR badge */}
+                    {/* Floating quote badge */}
                     <div
                       className="absolute -left-10 top-1/4 hidden animate-float rounded-2xl border border-border bg-background p-3.5 shadow-elevated sm:block"
                       aria-hidden="true"
                     >
-                      <QrCode className="h-9 w-9 text-ember" />
+                      <FileText className="h-9 w-9 text-ember" />
                       <p className="mt-1.5 text-center text-[10px] font-bold">
-                        Scan Me
+                        Quote Sent
                       </p>
                     </div>
 
-                    {/* Floating order notification */}
+                    {/* Floating booking notification */}
                     <div
                       className="absolute -right-6 bottom-1/4 hidden animate-float rounded-xl border border-border bg-background px-3.5 py-2.5 shadow-elevated sm:block"
                       style={{ animationDelay: "1.5s" }}
@@ -660,9 +665,9 @@ export const LandingPage = async () => {
                           <CheckCircle2 className="h-4 w-4 text-sage" />
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold">Order Placed!</p>
+                          <p className="text-[11px] font-bold">Booking Confirmed!</p>
                           <p className="text-[10px] text-muted-foreground">
-                            Table 5 &middot; 2 items
+                            Wedding &middot; 200 guests
                           </p>
                         </div>
                       </div>
@@ -675,7 +680,7 @@ export const LandingPage = async () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════
-            CITIES -- Explore Morocco
+            CITIES -- Caterers across Morocco
         ═══════════════════════════════════════════════════════════ */}
         <section className="relative bg-background px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
           <div className="moroccan-geo absolute inset-0 pointer-events-none" aria-hidden="true" />
@@ -705,7 +710,7 @@ export const LandingPage = async () => {
                   <div className="relative flex aspect-[16/10] items-end p-6 transition-all duration-300 lg:aspect-auto lg:h-full lg:min-h-[320px]">
                     <Image
                       src="/images/landing/restaurant-interior.jpg"
-                      alt="Casablanca restaurants"
+                      alt="Casablanca caterers"
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 768px) 100vw, 500px"
@@ -713,7 +718,7 @@ export const LandingPage = async () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     <div className="relative z-10">
                       <p className="mb-1 text-xs font-medium uppercase tracking-wider text-white/50">
-                        120+ restaurants
+                        60+ caterers
                       </p>
                       <h3 className="font-display text-3xl font-bold text-white drop-shadow-sm sm:text-4xl">
                         Casablanca
@@ -730,30 +735,30 @@ export const LandingPage = async () => {
                   {
                     name: "Marrakech",
                     slug: "marrakech",
-                    count: "85+",
+                    count: "45+",
                     image: "/images/landing/tagine.jpg",
-                    alt: "Marrakech restaurants",
+                    alt: "Marrakech caterers",
                   },
                   {
                     name: "Rabat",
                     slug: "rabat",
-                    count: "60+",
+                    count: "30+",
                     image: "/images/landing/moroccan-food.jpg",
-                    alt: "Rabat restaurants",
+                    alt: "Rabat caterers",
                   },
                   {
                     name: "Fes",
                     slug: "fes",
-                    count: "45+",
+                    count: "25+",
                     image: "/images/landing/couscous.jpg",
-                    alt: "Fes restaurants",
+                    alt: "Fes caterers",
                   },
                   {
                     name: "Tangier",
                     slug: "tangier",
-                    count: "40+",
+                    count: "20+",
                     image: "/images/landing/food-plating.jpg",
-                    alt: "Tangier restaurants",
+                    alt: "Tangier caterers",
                   },
                 ].map((city) => (
                   <Link
@@ -772,7 +777,7 @@ export const LandingPage = async () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                       <div className="relative z-10">
                         <p className="mb-0.5 text-[10px] font-medium uppercase tracking-wider text-white/40">
-                          {city.count} restaurants
+                          {city.count} caterers
                         </p>
                         <h3 className="font-display text-xl font-bold text-white drop-shadow-sm sm:text-2xl">
                           {city.name}
@@ -836,14 +841,14 @@ export const LandingPage = async () => {
                   },
                   {
                     num: "02",
-                    icon: QrCode,
+                    icon: CalendarDays,
                     color: "text-gold bg-gold/[0.08]",
                     title: t("landing.howItWorks.step2Title"),
                     desc: t("landing.howItWorks.step2Description"),
                   },
                   {
                     num: "03",
-                    icon: MousePointerClick,
+                    icon: CheckCircle2,
                     color: "text-sage bg-sage/[0.08]",
                     title: t("landing.howItWorks.step3Title"),
                     desc: t("landing.howItWorks.step3Description"),
@@ -894,7 +899,7 @@ export const LandingPage = async () => {
               <div className="mb-10 relative overflow-hidden rounded-2xl h-40 sm:h-48">
                 <Image
                   src="/images/landing/restaurant-owner.jpg"
-                  alt="Happy restaurant owner"
+                  alt="Happy catering business owner"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 1152px"
@@ -1033,14 +1038,14 @@ export const LandingPage = async () => {
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
-                  href="/explore"
+                  href="/register"
                   className="glow-pulse-ember group inline-flex items-center justify-center gap-2.5 rounded-full bg-primary px-10 py-4 text-lg font-semibold text-white shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30"
                 >
-                  <Search className="h-5 w-5" />
+                  <ChefHat className="h-5 w-5" />
                   {t("landing.cta.buttonExplore")}
                 </Link>
                 <Link
-                  href="/register"
+                  href="#features"
                   className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-8 py-4 text-base font-semibold text-white/80 transition-all duration-200 hover:bg-white/5 hover:text-white"
                 >
                   {t("landing.cta.buttonCreate")}
@@ -1060,7 +1065,7 @@ export const LandingPage = async () => {
                 </Link>
                 <span>&middot;</span>
                 <Link
-                  href="/for-drivers"
+                  href="/explore"
                   className="transition-colors hover:text-white/50"
                 >
                   {t("navbar.forDrivers")}

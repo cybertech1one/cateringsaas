@@ -7,7 +7,7 @@ export const HeroIllustration = () => {
   return (
     <div className="relative w-full max-w-lg mx-auto">
       <div className="absolute -inset-8 rounded-3xl bg-gradient-to-br from-[#E84D25]/10 via-transparent to-[#D4A017]/10 blur-2xl" aria-hidden="true" />
-      <svg viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative w-full h-auto" role="img" aria-label="Diyafa platform illustration with phone menu, QR code, and Moroccan food">
+      <svg viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative w-full h-auto" role="img" aria-label="Diyafa catering platform illustration with event dashboard, quotes, and Moroccan cuisine">
         <defs>
           <linearGradient id="h-ember" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#E84D25" /><stop offset="100%" stopColor="#D4A017" /></linearGradient>
           <linearGradient id="h-phone" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#1A1B2E" /><stop offset="100%" stopColor="#12131F" /></linearGradient>
@@ -37,50 +37,50 @@ export const HeroIllustration = () => {
         <rect x="262" y="44" width="76" height="22" rx="11" fill="#1A1B2E" />
         <circle cx="300" cy="55" r="4" fill="#2A2B45" />
 
-        {/* Screen content */}
+        {/* Screen content — Catering event dashboard */}
         <g clipPath="url(#sc)">
           <text x="218" y="90" fontSize="9" fontWeight="600" fill="#999" fontFamily="system-ui">9:41</text>
-          {/* Restaurant header */}
+          {/* Caterer header */}
           <rect x="218" y="100" width="32" height="32" rx="8" fill="#E84D25" opacity="0.12" />
-          <g transform="translate(226,108)"><path d="M4 1v6M4 10v5M1 4h6M10 1c0 0 0 4 3 6l-1.5 1.5L10 10v5" stroke="#E84D25" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none" /></g>
-          <text x="258" y="113" fontSize="11" fontWeight="700" fill="#1A1B2E" fontFamily="system-ui">Riad Al Baraka</text>
-          <g transform="translate(258,120)">
-            {[0,1,2,3,4].map(i => <polygon key={i} points={S} fill="#D4A017" transform={`translate(${i*12},0) scale(0.7)`} />)}
-            <text x="46" y="7" fontSize="8" fill="#999" fontFamily="system-ui">4.8</text>
-          </g>
-          {/* Category pills */}
-          <rect x="218" y="140" width="36" height="20" rx="10" fill="#E84D25" />
-          <text x="226" y="154" fontSize="8" fontWeight="600" fill="white" fontFamily="system-ui">All</text>
-          <rect x="260" y="140" width="52" height="20" rx="10" fill="#F5F0E8" />
-          <text x="268" y="154" fontSize="8" fill="#888" fontFamily="system-ui">Tagines</text>
-          <rect x="318" y="140" width="42" height="20" rx="10" fill="#F5F0E8" />
-          <text x="326" y="154" fontSize="8" fill="#888" fontFamily="system-ui">Grills</text>
-          {/* Dish 1 */}
-          <rect x="218" y="170" width="164" height="100" rx="12" fill="white" stroke="#F0E8D8" strokeWidth="0.5" />
-          <rect x="218" y="170" width="164" height="56" rx="12" fill="#FFF0D4" />
-          <rect x="218" y="200" width="164" height="26" fill="#FFF0D4" />
-          <circle cx="260" cy="195" r="8" fill="#E8A44E" opacity="0.5" /><circle cx="290" cy="190" r="6" fill="#CD7F32" opacity="0.4" />
-          <circle cx="320" cy="198" r="7" fill="#D4A017" opacity="0.35" /><circle cx="350" cy="192" r="5" fill="#A0522D" opacity="0.3" />
-          <rect x="342" y="175" width="36" height="18" rx="9" fill="white" opacity="0.92" />
-          <text x="348" y="188" fontSize="8" fontWeight="700" fill="#E84D25" fontFamily="system-ui">85 MAD</text>
-          <text x="226" y="242" fontSize="10" fontWeight="700" fill="#1A1B2E" fontFamily="system-ui">Lamb Tagine</text>
-          <text x="226" y="254" fontSize="7.5" fill="#999" fontFamily="system-ui">Slow-cooked with prunes</text>
-          <g transform="translate(226,258)">{[0,1,2,3].map(i => <polygon key={i} points="4,0 5.2,2.8 8,2.8 5.8,4.6 6.6,7.5 4,5.6 1.4,7.5 2.2,4.6 0,2.8 2.8,2.8" fill="#D4A017" transform={`translate(${i*9},0) scale(0.55)`} />)}</g>
-          {/* Dish 2 */}
+          <g transform="translate(228,108)"><path d="M8 2C5 2 2 4 2 7c0 2 1 3 2 4l4 5 4-5c1-1 2-2 2-4 0-3-3-5-6-5z" stroke="#E84D25" strokeWidth="1.2" fill="none" /><circle cx="8" cy="7" r="2" fill="#E84D25" opacity="0.4" /></g>
+          <text x="258" y="113" fontSize="11" fontWeight="700" fill="#1A1B2E" fontFamily="system-ui">My Events</text>
+          <text x="258" y="126" fontSize="8" fill="#999" fontFamily="system-ui">3 upcoming this week</text>
+          {/* Pipeline tabs */}
+          <rect x="218" y="140" width="52" height="20" rx="10" fill="#E84D25" />
+          <text x="226" y="154" fontSize="8" fontWeight="600" fill="white" fontFamily="system-ui">Pipeline</text>
+          <rect x="276" y="140" width="46" height="20" rx="10" fill="#F5F0E8" />
+          <text x="284" y="154" fontSize="8" fill="#888" fontFamily="system-ui">Quotes</text>
+          <rect x="328" y="140" width="52" height="20" rx="10" fill="#F5F0E8" />
+          <text x="336" y="154" fontSize="8" fill="#888" fontFamily="system-ui">Revenue</text>
+          {/* Event 1 — Wedding */}
+          <rect x="218" y="170" width="164" height="88" rx="12" fill="white" stroke="#F0E8D8" strokeWidth="0.5" />
+          <rect x="218" y="170" width="164" height="42" rx="12" fill="#FFF0D4" />
+          <rect x="218" y="196" width="164" height="16" fill="#FFF0D4" />
+          <rect x="226" y="178" width="56" height="18" rx="9" fill="white" opacity="0.92" />
+          <text x="232" y="191" fontSize="7.5" fontWeight="700" fill="#E84D25" fontFamily="system-ui">Wedding</text>
+          <text x="290" y="190" fontSize="7.5" fill="#888" fontFamily="system-ui">Mar 15</text>
+          <rect x="342" y="178" width="36" height="18" rx="9" fill="white" opacity="0.92" />
+          <text x="346" y="191" fontSize="7.5" fontWeight="700" fill="#E84D25" fontFamily="system-ui">45K MAD</text>
+          <text x="226" y="228" fontSize="10" fontWeight="700" fill="#1A1B2E" fontFamily="system-ui">El Amrani Wedding</text>
+          <text x="226" y="242" fontSize="7.5" fill="#999" fontFamily="system-ui">200 guests &middot; Full service</text>
+          <rect x="226" y="248" width="40" height="4" rx="2" fill="#4A9A6E" opacity="0.5" />
+          {/* Event 2 — Corporate */}
           <g opacity="0.9">
-            <rect x="218" y="278" width="164" height="78" rx="12" fill="white" stroke="#F0E8D8" strokeWidth="0.5" />
-            <rect x="218" y="278" width="164" height="40" rx="12" fill="#E8F5E9" /><rect x="218" y="298" width="164" height="20" fill="#E8F5E9" />
-            <circle cx="265" cy="296" r="6" fill="#4A9A6E" opacity="0.3" /><circle cx="300" cy="293" r="5" fill="#4A9A6E" opacity="0.2" /><circle cx="330" cy="298" r="7" fill="#4A9A6E" opacity="0.25" />
-            <rect x="342" y="283" width="36" height="18" rx="9" fill="white" opacity="0.92" />
-            <text x="348" y="296" fontSize="8" fontWeight="700" fill="#E84D25" fontFamily="system-ui">65 MAD</text>
-            <text x="226" y="332" fontSize="10" fontWeight="700" fill="#1A1B2E" fontFamily="system-ui">Couscous Royal</text>
-            <text x="226" y="344" fontSize="7.5" fill="#999" fontFamily="system-ui">Seven vegetables &amp; chicken</text>
+            <rect x="218" y="268" width="164" height="78" rx="12" fill="white" stroke="#F0E8D8" strokeWidth="0.5" />
+            <rect x="218" y="268" width="164" height="36" rx="12" fill="#E8F5E9" /><rect x="218" y="288" width="164" height="16" fill="#E8F5E9" />
+            <rect x="226" y="275" width="60" height="18" rx="9" fill="white" opacity="0.92" />
+            <text x="232" y="288" fontSize="7.5" fontWeight="700" fill="#4A9A6E" fontFamily="system-ui">Corporate</text>
+            <text x="294" y="287" fontSize="7.5" fill="#888" fontFamily="system-ui">Mar 20</text>
+            <rect x="342" y="275" width="36" height="18" rx="9" fill="white" opacity="0.92" />
+            <text x="346" y="288" fontSize="7.5" fontWeight="700" fill="#4A9A6E" fontFamily="system-ui">12K MAD</text>
+            <text x="226" y="322" fontSize="10" fontWeight="700" fill="#1A1B2E" fontFamily="system-ui">OCP Annual Lunch</text>
+            <text x="226" y="334" fontSize="7.5" fill="#999" fontFamily="system-ui">80 guests &middot; Buffet</text>
           </g>
-          {/* Cart */}
-          <rect x="218" y="370" width="164" height="36" rx="18" fill="#E84D25" />
-          <text x="258" y="392" fontSize="9" fontWeight="700" fill="white" fontFamily="system-ui">View Cart - 150 MAD</text>
-          <g transform="translate(234,381)"><path d="M0 0h2l1.5 7h8l1.5-5H4" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none" /><circle cx="5" cy="9" r="1" fill="white" /><circle cx="10" cy="9" r="1" fill="white" /></g>
-          <rect x="272" y="418" width="56" height="4" rx="2" fill="#DDD" />
+          {/* Create Quote CTA */}
+          <rect x="218" y="360" width="164" height="36" rx="18" fill="#E84D25" />
+          <text x="252" y="382" fontSize="9" fontWeight="700" fill="white" fontFamily="system-ui">Create New Quote</text>
+          <g transform="translate(234,372)"><rect width="10" height="12" rx="1.5" fill="none" stroke="white" strokeWidth="1" /><line x1="3" y1="5" x2="8" y2="5" stroke="white" strokeWidth="0.8" /><line x1="3" y1="7.5" x2="7" y2="7.5" stroke="white" strokeWidth="0.8" /><line x1="3" y1="10" x2="6" y2="10" stroke="white" strokeWidth="0.8" /></g>
+          <rect x="272" y="408" width="56" height="4" rx="2" fill="#DDD" />
         </g>
 
         {/* QR code card - floating */}
@@ -156,15 +156,19 @@ export const HeroIllustration = () => {
           <circle cx="486" cy="282" r="3" fill="#D4A017" opacity="0.5" /><circle cx="496" cy="288" r="2.5" fill="#E84D25" opacity="0.4" /><circle cx="483" cy="290" r="2" fill="#4A9A6E" opacity="0.4" />
         </g>
 
-        {/* Delivery scooter badge */}
+        {/* Event calendar badge */}
         <g opacity="0.7">
           <animateTransform attributeName="transform" type="translate" values="0,0; 5,-4; 0,0" dur="4s" repeatCount="indefinite" />
           <g transform="translate(450,200) scale(0.9)">
             <rect x="-10" y="-10" width="56" height="42" rx="12" fill="white" stroke="#4A9A6E" strokeWidth="0.8" strokeOpacity="0.2" />
-            <circle cx="8" cy="18" r="6" fill="none" stroke="#4A9A6E" strokeWidth="1.5" /><circle cx="8" cy="18" r="2" fill="#4A9A6E" />
-            <circle cx="30" cy="18" r="6" fill="none" stroke="#4A9A6E" strokeWidth="1.5" /><circle cx="30" cy="18" r="2" fill="#4A9A6E" />
-            <path d="M8 12 L14 2 L28 2 L32 8 L30 12" fill="none" stroke="#4A9A6E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            <rect x="14" y="-4" width="14" height="8" rx="2" fill="#E84D25" opacity="0.7" />
+            {/* Calendar icon */}
+            <rect x="4" y="2" width="28" height="24" rx="4" fill="none" stroke="#4A9A6E" strokeWidth="1.5" />
+            <line x1="4" y1="10" x2="32" y2="10" stroke="#4A9A6E" strokeWidth="1" />
+            <line x1="12" y1="-1" x2="12" y2="5" stroke="#4A9A6E" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="24" y1="-1" x2="24" y2="5" stroke="#4A9A6E" strokeWidth="1.5" strokeLinecap="round" />
+            <circle cx="12" cy="17" r="2" fill="#E84D25" opacity="0.7" />
+            <circle cx="18" cy="17" r="2" fill="#4A9A6E" opacity="0.5" />
+            <circle cx="24" cy="17" r="2" fill="#D4A017" opacity="0.5" />
           </g>
         </g>
 

@@ -117,7 +117,7 @@ describe("PricingSection", () => {
   it("standard tier shows $6.99 monthly price by default", () => {
     const { container } = render(<PricingSection />);
 
-    expect(container.textContent).toContain("$6.99");
+    expect(container.textContent).toContain("299");
   });
 
   it("all CTA links point to /register", () => {
@@ -145,7 +145,7 @@ describe("PricingSection", () => {
     fireEvent.click(toggle);
 
     // Should now show yearly price for Standard
-    expect(container.textContent).toContain("$59.99");
+    expect(container.textContent).toContain("2,999");
   });
 
   it("renders features for each tier", () => {
