@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 
-// ── Legacy FeastQR Routers (retained for compatibility) ──────────────
+// ── Foundation Routers (retained for compatibility) ──────────────────
 import { authRouter } from "./routers/auth";
 import { menusRouter } from "./routers/menus";
 import { languagesRouter } from "./routers/languages";
@@ -34,16 +34,19 @@ import { marketplaceRouter } from "./routers/marketplace";
 import { messagesRouter } from "./routers/messages";
 import { eventReviewsRouter } from "./routers/eventReviews";
 import { timelineRouter } from "./routers/timeline";
+import { orgAnalyticsRouter } from "./routers/orgAnalytics";
+import { portfolioRouter } from "./routers/portfolio";
+import { calendarRouter } from "./routers/calendar";
 
 /**
  * Diyafa — Primary Router
  *
- * 31 routers total:
- * - 19 legacy FeastQR routers (retained, gradually evolving)
- * - 12 new Diyafa org-scoped routers
+ * 34 routers total:
+ * - 19 foundation routers (retained, gradually evolving)
+ * - 15 new Diyafa org-scoped routers
  */
 export const appRouter = createTRPCRouter({
-  // ── Legacy (FeastQR) ─────────────────────────────────────────────
+  // ── Foundation ─────────────────────────────────────────────────────
   menus: menusRouter,
   auth: authRouter,
   languages: languagesRouter,
@@ -77,6 +80,9 @@ export const appRouter = createTRPCRouter({
   messages: messagesRouter,
   eventReviews: eventReviewsRouter,
   timeline: timelineRouter,
+  orgAnalytics: orgAnalyticsRouter,
+  portfolio: portfolioRouter,
+  calendar: calendarRouter,
 });
 
 // export type definition of API
