@@ -171,9 +171,36 @@ npx prisma generate     # Generate Prisma client
 - Webhook signature verification
 - IP hashing with daily rotation
 
+## tRPC Routers (17)
+```
+auth, organizations, events, quotes, finances, clients, cateringMenus,
+staffScheduling, equipment, marketplace, messages, eventReviews,
+timeline, orgAnalytics, portfolio, calendar, orgThemes
+```
+
+## Dashboard Routes (16)
+```
+/dashboard              — Overview (KPIs, events, quotes, revenue)
+/dashboard/calendar     — Calendar view with event pills, date blocking
+/dashboard/events       — Event lifecycle management (12-state pipeline)
+/dashboard/quotes       — Quote creation, versioning, acceptance flow
+/dashboard/clients      — Client CRM (segments, history, CSV export)
+/dashboard/messages     — Split-panel messaging center
+/dashboard/catering     — Catering menus, items, packages
+/dashboard/staff        — Staff scheduling and attendance
+/dashboard/equipment    — Equipment inventory and allocations
+/dashboard/kitchen      — Prep task board and timeline
+/dashboard/finances     — Revenue, payments, milestones, invoicing
+/dashboard/analytics    — Revenue charts, KPIs, trends
+/dashboard/reviews      — Review management and responses
+/dashboard/portfolio    — Photo gallery management
+/dashboard/settings     — Organization profile and preferences
+/dashboard/billing      — Subscription plans and usage
+```
+
 ## Testing
-- Vitest + RTL + jsdom
-- All routers must have comprehensive test coverage
+- Vitest + RTL + jsdom, 1100+ tests across 28+ test files
+- All 17 routers have comprehensive test coverage
 - Test factories in src/__tests__/utils/factories.ts
 
 ## Common Issues

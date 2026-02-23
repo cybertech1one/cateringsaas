@@ -855,15 +855,57 @@ model CateringItems {
   imageUrl           String?                @map("image_url")
   sortOrder          Int                    @default(0) @map("sort_order")
   isAvailable        Boolean                @default(true) @map("is_available")
+
+  // Inventory tracking
+  availableQuantity  Int?                   @map("available_quantity")
+  lowStockThreshold  Int                    @default(10) @map("low_stock_threshold")
+  reservedQuantity   Int                    @default(0) @map("reserved_quantity")
+
   createdAt          DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   category           CateringCategories     @relation(fields: [cateringCategoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   cateringMenu       CateringMenus          @relation(fields: [cateringMenuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   packageItems       CateringPackageItems[]
   quoteItems         QuoteItems[]
+  inventoryReservations InventoryReservations[]
 
   @@index([cateringCategoryId], map: "idx_catering_items_category_id")
   @@index([cateringMenuId], map: "idx_catering_items_menu_id")
   @@map("catering_items")
+  @@schema("public")
+}
+
+/// Inventory reservations tied to confirmed events
+model InventoryReservations {
+  id        String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  eventId   String        @map("event_id") @db.Uuid
+  itemId    String        @map("item_id") @db.Uuid
+  quantity  Int
+  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  event     Events        @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  item      CateringItems @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([eventId, itemId], map: "uq_inventory_reservation_event_item")
+  @@index([eventId], map: "idx_inventory_reservations_event_id")
+  @@index([itemId], map: "idx_inventory_reservations_item_id")
+  @@map("inventory_reservations")
+  @@schema("public")
+}
+
+/// Stock change audit log
+model StockLogs {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  itemId    String   @map("item_id") @db.Uuid
+  orgId     String   @map("org_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  oldQty    Int      @map("old_qty")
+  newQty    Int      @map("new_qty")
+  reason    String   @db.VarChar(50)
+  note      String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([itemId], map: "idx_stock_logs_item_id")
+  @@index([orgId], map: "idx_stock_logs_org_id")
+  @@map("stock_logs")
   @@schema("public")
 }
 
@@ -989,6 +1031,7 @@ model Events {
   eventDays            EventDays[]
   prepTasks            PrepTasks[]
   deliveryPlans        DeliveryPlans?
+  inventoryReservations InventoryReservations[]
 
   @@index([orgId], map: "idx_events_org_id")
   @@index([clientId], map: "idx_events_client_id")

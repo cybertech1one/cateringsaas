@@ -58,7 +58,7 @@ export const MenuItem = memo(function MenuItem({ menu }: MenuItemProps) {
           <span
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm backdrop-blur-sm ${
               menu.isPublished
-                ? "bg-emerald-500/90 text-white"
+                ? "bg-sage/90 text-white"
                 : "bg-muted/90 text-muted-foreground"
             }`}
           >

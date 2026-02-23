@@ -33,6 +33,14 @@ vi.mock("~/server/db", () => ({
       update: vi.fn(),
       delete: vi.fn(),
     },
+    cateringPackages: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
     organizations: {
       findUnique: vi.fn(),
     },
@@ -53,7 +61,7 @@ vi.mock("~/server/logger", () => ({
 
 import { db } from "~/server/db";
 import { cateringMenusRouter } from "../api/routers/cateringMenus";
-import { createMenu, createCategory, createDish, resetFactoryCounter } from "~/__tests__/utils/factories";
+import { createMenu, createCategory, createDish, createDishVariant, resetFactoryCounter } from "~/__tests__/utils/factories";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -65,6 +73,8 @@ const MEMBER_ID = "00000000-0000-4000-a000-000000000050";
 const MENU_ID = "00000000-0000-4000-a000-000000000700";
 const CATEGORY_ID = "00000000-0000-4000-a000-000000000701";
 const ITEM_ID = "00000000-0000-4000-a000-000000000702";
+const PACKAGE_ID = "00000000-0000-4000-a000-000000000800";
+const OTHER_ORG_ID = "00000000-0000-4000-a000-000000000999";
 
 function createOrgCaller(role: string = "staff") {
   return cateringMenusRouter.createCaller({
@@ -106,6 +116,7 @@ describe("cateringMenusRouter", () => {
   const mockMenus = vi.mocked(db.cateringMenus);
   const mockCategories = vi.mocked(db.cateringCategories);
   const mockItems = vi.mocked(db.cateringItems);
+  const mockPackages = vi.mocked(db.cateringPackages);
   const mockOrgs = vi.mocked(db.organizations);
   const mockMembers = vi.mocked(db.orgMembers);
 
@@ -691,6 +702,425 @@ describe("cateringMenusRouter", () => {
       await expect(
         caller.duplicate({ menuId: MENU_ID, newName: "A" }),
       ).rejects.toThrow();
+    });
+  });
+
+  // =========================================================================
+  // listPackages
+  // =========================================================================
+
+  describe("listPackages", () => {
+    it("should list all packages for a menu owned by org", async () => {
+      mockMenus.findFirst.mockResolvedValue({ id: MENU_ID } as never);
+      const pkg = createDishVariant({ cateringMenuId: MENU_ID });
+      mockPackages.findMany.mockResolvedValue([pkg] as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.listPackages({ menuId: MENU_ID });
+
+      expect(result).toHaveLength(1);
+      expect(mockPackages.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { cateringMenuId: MENU_ID },
+          orderBy: { sortOrder: "asc" },
+        }),
+      );
+    });
+
+    it("should throw NOT_FOUND when menu does not belong to org", async () => {
+      mockMenus.findFirst.mockResolvedValue(null as never);
+
+      const caller = createOrgCaller();
+      await expect(
+        caller.listPackages({ menuId: MENU_ID }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+
+    it("should return empty array when no packages exist", async () => {
+      mockMenus.findFirst.mockResolvedValue({ id: MENU_ID } as never);
+      mockPackages.findMany.mockResolvedValue([] as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.listPackages({ menuId: MENU_ID });
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  // =========================================================================
+  // getPackage
+  // =========================================================================
+
+  describe("getPackage", () => {
+    it("should return a single package with items", async () => {
+      const pkg = createDishVariant({ id: PACKAGE_ID, cateringMenuId: MENU_ID });
+      mockPackages.findUnique.mockResolvedValue({
+        ...pkg,
+        cateringMenu: { orgId: ORG_ID },
+        packageItems: [],
+      } as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.getPackage({ packageId: PACKAGE_ID });
+
+      expect(result.id).toBe(PACKAGE_ID);
+    });
+
+    it("should throw NOT_FOUND when package belongs to another org (IDOR)", async () => {
+      const pkg = createDishVariant({ id: PACKAGE_ID });
+      mockPackages.findUnique.mockResolvedValue({
+        ...pkg,
+        cateringMenu: { orgId: OTHER_ORG_ID },
+        packageItems: [],
+      } as never);
+
+      const caller = createOrgCaller();
+      await expect(
+        caller.getPackage({ packageId: PACKAGE_ID }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+
+    it("should throw NOT_FOUND when package does not exist", async () => {
+      mockPackages.findUnique.mockResolvedValue(null as never);
+
+      const caller = createOrgCaller();
+      await expect(
+        caller.getPackage({ packageId: PACKAGE_ID }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+  });
+
+  // =========================================================================
+  // createPackage
+  // =========================================================================
+
+  describe("createPackage", () => {
+    it("should create package with auto-incremented sortOrder", async () => {
+      mockMenus.findFirst.mockResolvedValue({ id: MENU_ID } as never);
+      mockPackages.findFirst.mockResolvedValue({ sortOrder: 2 } as never);
+      const pkg = createDishVariant({ cateringMenuId: MENU_ID });
+      mockPackages.create.mockResolvedValue(pkg as never);
+
+      const caller = createManagerCaller();
+      await caller.createPackage({
+        menuId: MENU_ID,
+        name: "Gold Wedding Package",
+        pricePerPerson: 4500,
+        minGuests: 20,
+      });
+
+      expect(mockPackages.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            cateringMenuId: MENU_ID,
+            name: "Gold Wedding Package",
+            pricePerPerson: 4500,
+            minGuests: 20,
+            sortOrder: 3,
+          }),
+        }),
+      );
+    });
+
+    it("should set sortOrder to 1 when no packages exist yet", async () => {
+      mockMenus.findFirst.mockResolvedValue({ id: MENU_ID } as never);
+      mockPackages.findFirst.mockResolvedValue(null as never);
+      mockPackages.create.mockResolvedValue(createDishVariant() as never);
+
+      const caller = createManagerCaller();
+      await caller.createPackage({
+        menuId: MENU_ID,
+        name: "Silver Package",
+      });
+
+      expect(mockPackages.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ sortOrder: 1 }),
+        }),
+      );
+    });
+
+    it("should throw NOT_FOUND when menu does not belong to org (IDOR)", async () => {
+      mockMenus.findFirst.mockResolvedValue(null as never);
+
+      const caller = createManagerCaller();
+      await expect(
+        caller.createPackage({ menuId: MENU_ID, name: "Test Package" }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+
+    it("should reject name shorter than 2 characters", async () => {
+      const caller = createManagerCaller();
+      await expect(
+        caller.createPackage({ menuId: MENU_ID, name: "A" }),
+      ).rejects.toThrow();
+    });
+
+    it("should accept multi-language names", async () => {
+      mockMenus.findFirst.mockResolvedValue({ id: MENU_ID } as never);
+      mockPackages.findFirst.mockResolvedValue(null as never);
+      mockPackages.create.mockResolvedValue(createDishVariant() as never);
+
+      const caller = createManagerCaller();
+      await caller.createPackage({
+        menuId: MENU_ID,
+        name: "Premium Package",
+        nameAr: "\u0628\u0627\u0642\u0629 \u0645\u0645\u064a\u0632\u0629",
+        nameFr: "Forfait Premium",
+      });
+
+      expect(mockPackages.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            nameAr: "\u0628\u0627\u0642\u0629 \u0645\u0645\u064a\u0632\u0629",
+            nameFr: "Forfait Premium",
+          }),
+        }),
+      );
+    });
+
+    it("should reject unauthenticated access", async () => {
+      const caller = createUnauthCaller();
+      await expect(
+        caller.createPackage({ menuId: MENU_ID, name: "Test" }),
+      ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    });
+  });
+
+  // =========================================================================
+  // updatePackage
+  // =========================================================================
+
+  describe("updatePackage", () => {
+    it("should update package fields", async () => {
+      mockPackages.findUnique.mockResolvedValue({
+        id: PACKAGE_ID,
+        cateringMenu: { orgId: ORG_ID },
+      } as never);
+      mockPackages.update.mockResolvedValue({
+        id: PACKAGE_ID,
+        name: "Updated Package",
+      } as never);
+
+      const caller = createManagerCaller();
+      await caller.updatePackage({
+        packageId: PACKAGE_ID,
+        name: "Updated Package",
+        pricePerPerson: 6000,
+      });
+
+      expect(mockPackages.update).toHaveBeenCalledWith({
+        where: { id: PACKAGE_ID },
+        data: expect.objectContaining({
+          name: "Updated Package",
+          pricePerPerson: 6000,
+        }),
+      });
+    });
+
+    it("should throw NOT_FOUND when package belongs to another org (IDOR)", async () => {
+      mockPackages.findUnique.mockResolvedValue({
+        id: PACKAGE_ID,
+        cateringMenu: { orgId: OTHER_ORG_ID },
+      } as never);
+
+      const caller = createManagerCaller();
+      await expect(
+        caller.updatePackage({ packageId: PACKAGE_ID, name: "Hacked" }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+
+    it("should throw NOT_FOUND when package does not exist", async () => {
+      mockPackages.findUnique.mockResolvedValue(null as never);
+
+      const caller = createManagerCaller();
+      await expect(
+        caller.updatePackage({ packageId: PACKAGE_ID, name: "Test" }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+
+    it("should allow setting maxGuests to null", async () => {
+      mockPackages.findUnique.mockResolvedValue({
+        id: PACKAGE_ID,
+        cateringMenu: { orgId: ORG_ID },
+      } as never);
+      mockPackages.update.mockResolvedValue({ id: PACKAGE_ID } as never);
+
+      const caller = createManagerCaller();
+      await caller.updatePackage({
+        packageId: PACKAGE_ID,
+        maxGuests: null,
+      });
+
+      expect(mockPackages.update).toHaveBeenCalledWith({
+        where: { id: PACKAGE_ID },
+        data: expect.objectContaining({ maxGuests: null }),
+      });
+    });
+  });
+
+  // =========================================================================
+  // deletePackage
+  // =========================================================================
+
+  describe("deletePackage", () => {
+    it("should hard-delete package when owned by org", async () => {
+      mockPackages.findUnique.mockResolvedValue({
+        id: PACKAGE_ID,
+        cateringMenu: { orgId: ORG_ID },
+      } as never);
+      mockPackages.delete.mockResolvedValue({ id: PACKAGE_ID } as never);
+
+      const caller = createManagerCaller();
+      await caller.deletePackage({ packageId: PACKAGE_ID });
+
+      expect(mockPackages.delete).toHaveBeenCalledWith({
+        where: { id: PACKAGE_ID },
+      });
+    });
+
+    it("should throw NOT_FOUND when package belongs to another org (IDOR)", async () => {
+      mockPackages.findUnique.mockResolvedValue({
+        id: PACKAGE_ID,
+        cateringMenu: { orgId: OTHER_ORG_ID },
+      } as never);
+
+      const caller = createManagerCaller();
+      await expect(
+        caller.deletePackage({ packageId: PACKAGE_ID }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+
+    it("should throw NOT_FOUND when package does not exist", async () => {
+      mockPackages.findUnique.mockResolvedValue(null as never);
+
+      const caller = createManagerCaller();
+      await expect(
+        caller.deletePackage({ packageId: PACKAGE_ID }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+  });
+
+  // =========================================================================
+  // reorderPackages
+  // =========================================================================
+
+  describe("reorderPackages", () => {
+    it("should update sortOrder for multiple packages", async () => {
+      mockMenus.findFirst.mockResolvedValue({ id: MENU_ID } as never);
+      const pkg1 = createDishVariant({ id: PACKAGE_ID, sortOrder: 1 });
+      const pkg2Id = "00000000-0000-4000-a000-000000000801";
+      const pkg2 = createDishVariant({ id: pkg2Id, sortOrder: 0 });
+      mockPackages.update
+        .mockResolvedValueOnce({ ...pkg1, sortOrder: 0 } as never)
+        .mockResolvedValueOnce({ ...pkg2, sortOrder: 1 } as never);
+
+      const caller = createManagerCaller();
+      const result = await caller.reorderPackages({
+        menuId: MENU_ID,
+        packages: [
+          { id: PACKAGE_ID, sortOrder: 0 },
+          { id: pkg2Id, sortOrder: 1 },
+        ],
+      });
+
+      expect(result).toHaveLength(2);
+      expect(mockPackages.update).toHaveBeenCalledTimes(2);
+    });
+
+    it("should return empty array when packages list is empty", async () => {
+      mockMenus.findFirst.mockResolvedValue({ id: MENU_ID } as never);
+
+      const caller = createManagerCaller();
+      const result = await caller.reorderPackages({
+        menuId: MENU_ID,
+        packages: [],
+      });
+
+      expect(result).toEqual([]);
+      expect(mockPackages.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw NOT_FOUND when menu does not belong to org", async () => {
+      mockMenus.findFirst.mockResolvedValue(null as never);
+
+      const caller = createManagerCaller();
+      await expect(
+        caller.reorderPackages({
+          menuId: MENU_ID,
+          packages: [{ id: PACKAGE_ID, sortOrder: 0 }],
+        }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+  });
+
+  // =========================================================================
+  // togglePackageFeatured
+  // =========================================================================
+
+  describe("togglePackageFeatured", () => {
+    it("should toggle isFeatured from false to true", async () => {
+      mockPackages.findUnique.mockResolvedValue({
+        id: PACKAGE_ID,
+        isFeatured: false,
+        cateringMenu: { orgId: ORG_ID },
+      } as never);
+      mockPackages.update.mockResolvedValue({
+        id: PACKAGE_ID,
+        isFeatured: true,
+      } as never);
+
+      const caller = createManagerCaller();
+      const result = await caller.togglePackageFeatured({ packageId: PACKAGE_ID });
+
+      expect(result.isFeatured).toBe(true);
+      expect(mockPackages.update).toHaveBeenCalledWith({
+        where: { id: PACKAGE_ID },
+        data: { isFeatured: true },
+      });
+    });
+
+    it("should toggle isFeatured from true to false", async () => {
+      mockPackages.findUnique.mockResolvedValue({
+        id: PACKAGE_ID,
+        isFeatured: true,
+        cateringMenu: { orgId: ORG_ID },
+      } as never);
+      mockPackages.update.mockResolvedValue({
+        id: PACKAGE_ID,
+        isFeatured: false,
+      } as never);
+
+      const caller = createManagerCaller();
+      const result = await caller.togglePackageFeatured({ packageId: PACKAGE_ID });
+
+      expect(result.isFeatured).toBe(false);
+      expect(mockPackages.update).toHaveBeenCalledWith({
+        where: { id: PACKAGE_ID },
+        data: { isFeatured: false },
+      });
+    });
+
+    it("should throw NOT_FOUND when package belongs to another org (IDOR)", async () => {
+      mockPackages.findUnique.mockResolvedValue({
+        id: PACKAGE_ID,
+        isFeatured: false,
+        cateringMenu: { orgId: OTHER_ORG_ID },
+      } as never);
+
+      const caller = createManagerCaller();
+      await expect(
+        caller.togglePackageFeatured({ packageId: PACKAGE_ID }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+
+    it("should throw NOT_FOUND when package does not exist", async () => {
+      mockPackages.findUnique.mockResolvedValue(null as never);
+
+      const caller = createManagerCaller();
+      await expect(
+        caller.togglePackageFeatured({ packageId: PACKAGE_ID }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
     });
   });
 

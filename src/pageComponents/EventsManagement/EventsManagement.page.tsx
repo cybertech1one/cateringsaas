@@ -882,7 +882,7 @@ function EventDetailDialog({
                     </div>
                     <div className="rounded-lg border p-3 text-center">
                       <p className="text-xs text-muted-foreground">Balance Due</p>
-                      <p className="text-sm font-bold mt-0.5 text-amber-700">
+                      <p className="text-sm font-bold mt-0.5 text-gold">
                         {formatCurrency(event.balanceDue)}
                       </p>
                     </div>
@@ -908,7 +908,7 @@ function EventDetailDialog({
                         >
                           <div className="flex items-center gap-2">
                             {ms.status === "paid" ? (
-                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                              <CheckCircle2 className="h-3.5 w-3.5 text-sage" />
                             ) : (
                               <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                             )}

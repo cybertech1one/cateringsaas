@@ -69,30 +69,30 @@ function formatMonthLabel(isoMonth: string): string {
 // ---------------------------------------------------------------------------
 
 const MILESTONE_STATUS_STYLES: Record<string, { className: string; label: string }> = {
-  pending: { className: "bg-amber-100 text-amber-800 border-amber-200", label: "Pending" },
-  due: { className: "bg-orange-100 text-orange-800 border-orange-200", label: "Due" },
-  paid: { className: "bg-emerald-100 text-emerald-800 border-emerald-200", label: "Paid" },
-  overdue: { className: "bg-red-100 text-red-800 border-red-200", label: "Overdue" },
-  waived: { className: "bg-slate-100 text-slate-600 border-slate-200", label: "Waived" },
-  cancelled: { className: "bg-gray-100 text-gray-500 border-gray-200", label: "Cancelled" },
+  pending: { className: "bg-gold/10 text-gold border-gold/20", label: "Pending" },
+  due: { className: "bg-[hsl(var(--harissa))]/10 text-[hsl(var(--harissa))] border-[hsl(var(--harissa))]/20", label: "Due" },
+  paid: { className: "bg-sage/10 text-sage border-sage/20", label: "Paid" },
+  overdue: { className: "bg-destructive/10 text-destructive border-destructive/20", label: "Overdue" },
+  waived: { className: "bg-muted text-muted-foreground border-border", label: "Waived" },
+  cancelled: { className: "bg-muted text-muted-foreground/60 border-border", label: "Cancelled" },
 };
 
 const INVOICE_STATUS_STYLES: Record<string, { className: string; label: string }> = {
-  draft: { className: "bg-gray-100 text-gray-700 border-gray-200", label: "Draft" },
-  sent: { className: "bg-blue-100 text-blue-700 border-blue-200", label: "Sent" },
-  partial: { className: "bg-amber-100 text-amber-700 border-amber-200", label: "Partial" },
-  paid: { className: "bg-emerald-100 text-emerald-700 border-emerald-200", label: "Paid" },
-  overdue: { className: "bg-red-100 text-red-700 border-red-200", label: "Overdue" },
-  cancelled: { className: "bg-gray-100 text-gray-500 border-gray-200", label: "Cancelled" },
+  draft: { className: "bg-muted text-muted-foreground border-border", label: "Draft" },
+  sent: { className: "bg-[hsl(var(--majorelle-blue))]/10 text-[hsl(var(--majorelle-blue))] border-[hsl(var(--majorelle-blue))]/20", label: "Sent" },
+  partial: { className: "bg-[hsl(var(--saffron))]/10 text-[hsl(var(--saffron))] border-[hsl(var(--saffron))]/20", label: "Partial" },
+  paid: { className: "bg-sage/10 text-sage border-sage/20", label: "Paid" },
+  overdue: { className: "bg-destructive/10 text-destructive border-destructive/20", label: "Overdue" },
+  cancelled: { className: "bg-muted text-muted-foreground/60 border-border", label: "Cancelled" },
 };
 
 const PAYMENT_METHOD_META: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  cod: { label: "COD", icon: <Banknote className="h-3.5 w-3.5" />, color: "bg-amber-500" },
-  bank_transfer: { label: "Bank Transfer", icon: <Building2 className="h-3.5 w-3.5" />, color: "bg-blue-500" },
-  cmi: { label: "CMI", icon: <CreditCard className="h-3.5 w-3.5" />, color: "bg-indigo-500" },
-  check: { label: "Check", icon: <Receipt className="h-3.5 w-3.5" />, color: "bg-purple-500" },
-  mobile_money: { label: "Mobile Money", icon: <Smartphone className="h-3.5 w-3.5" />, color: "bg-green-500" },
-  cash: { label: "Cash", icon: <Wallet className="h-3.5 w-3.5" />, color: "bg-emerald-600" },
+  cod: { label: "COD", icon: <Banknote className="h-3.5 w-3.5" />, color: "bg-gold" },
+  bank_transfer: { label: "Bank Transfer", icon: <Building2 className="h-3.5 w-3.5" />, color: "bg-[hsl(var(--majorelle-blue))]" },
+  cmi: { label: "CMI", icon: <CreditCard className="h-3.5 w-3.5" />, color: "bg-[hsl(var(--chefchaouen))]" },
+  check: { label: "Check", icon: <Receipt className="h-3.5 w-3.5" />, color: "bg-[hsl(var(--saffron))]" },
+  mobile_money: { label: "Mobile Money", icon: <Smartphone className="h-3.5 w-3.5" />, color: "bg-[hsl(var(--mint-tea))]" },
+  cash: { label: "Cash", icon: <Wallet className="h-3.5 w-3.5" />, color: "bg-sage" },
 };
 
 const MILESTONE_TYPE_LABELS: Record<string, string> = {
@@ -245,12 +245,12 @@ function RevenueChart({
               >
                 {/* Tooltip */}
                 {isHovered && d.revenue > 0 && (
-                  <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10 bg-gray-900 text-white text-xs rounded-md px-2.5 py-1.5 whitespace-nowrap shadow-lg pointer-events-none">
+                  <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10 bg-foreground text-background text-xs rounded-md px-2.5 py-1.5 whitespace-nowrap shadow-lg pointer-events-none">
                     <div className="font-semibold">{formatCurrency(d.revenue)}</div>
-                    <div className="text-gray-300">
+                    <div className="opacity-70">
                       {d.eventCount} event{d.eventCount !== 1 ? "s" : ""}
                     </div>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900" />
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-foreground" />
                   </div>
                 )}
                 {/* Bar */}
@@ -314,13 +314,13 @@ function PaymentMethodDistribution({
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Stacked bar */}
-        <div className="h-6 w-full rounded-full overflow-hidden flex bg-gray-100">
+        <div className="h-6 w-full rounded-full overflow-hidden flex bg-muted">
           {data.methods.map((m) => {
             const meta = PAYMENT_METHOD_META[m.method];
             return (
               <div
                 key={m.method}
-                className={`${meta?.color ?? "bg-gray-400"} transition-all duration-300 first:rounded-l-full last:rounded-r-full`}
+                className={`${meta?.color ?? "bg-muted-foreground"} transition-all duration-300 first:rounded-l-full last:rounded-r-full`}
                 style={{ width: `${m.percentage}%` }}
                 title={`${meta?.label ?? m.method}: ${formatCurrency(m.amount)} (${m.percentage}%)`}
               />
@@ -334,7 +334,7 @@ function PaymentMethodDistribution({
             return (
               <div key={m.method} className="flex items-center gap-2 text-sm">
                 <div
-                  className={`h-3 w-3 rounded-full flex-shrink-0 ${meta?.color ?? "bg-gray-400"}`}
+                  className={`h-3 w-3 rounded-full flex-shrink-0 ${meta?.color ?? "bg-muted-foreground"}`}
                 />
                 <span className="flex items-center gap-1 text-muted-foreground">
                   {meta?.icon}
@@ -603,22 +603,22 @@ export default function FinancesDashboard() {
                 <div
                   className={`h-8 w-8 rounded-full flex items-center justify-center ${
                     revenue.overdueAmount > 0
-                      ? "bg-red-100"
-                      : "bg-gray-100"
+                      ? "bg-destructive/10"
+                      : "bg-muted"
                   }`}
                 >
                   <AlertCircle
                     className={`h-4 w-4 ${
                       revenue.overdueAmount > 0
-                        ? "text-red-600"
-                        : "text-gray-400"
+                        ? "text-destructive"
+                        : "text-muted-foreground"
                     }`}
                   />
                 </div>
               </div>
               <div
                 className={`text-2xl font-bold tabular-nums ${
-                  revenue.overdueAmount > 0 ? "text-red-700" : "text-gray-400"
+                  revenue.overdueAmount > 0 ? "text-destructive" : "text-muted-foreground"
                 }`}
               >
                 {formatCurrency(revenue.overdueAmount)}
@@ -721,7 +721,7 @@ export default function FinancesDashboard() {
               </div>
 
               {milestones.map((m) => {
-                const statusStyle = MILESTONE_STATUS_STYLES[String(m.status)] ?? { className: "bg-gray-100 text-gray-500", label: String(m.status) };
+                const statusStyle = MILESTONE_STATUS_STYLES[String(m.status)] ?? { className: "bg-muted text-muted-foreground", label: String(m.status) };
                 const typeLabel = MILESTONE_TYPE_LABELS[String(m.milestoneType)] ?? String(m.milestoneType);
                 const methodMeta = m.paymentMethod ? PAYMENT_METHOD_META[String(m.paymentMethod)] : null;
                 const isPending = String(m.status) === "pending" || String(m.status) === "due" || String(m.status) === "overdue";
@@ -730,7 +730,7 @@ export default function FinancesDashboard() {
                 return (
                   <Card
                     key={m.id}
-                    className={`transition-shadow hover:shadow-md ${isOverdue ? "border-red-200" : ""}`}
+                    className={`transition-shadow hover:shadow-md ${isOverdue ? "border-destructive/20" : ""}`}
                   >
                     <CardContent className="p-4">
                       {/* Mobile layout */}
@@ -884,7 +884,7 @@ export default function FinancesDashboard() {
 
               {invoices.map((inv) => {
                 const statusStyle =
-                  INVOICE_STATUS_STYLES[String(inv.status)] ?? { className: "bg-gray-100 text-gray-700", label: String(inv.status) };
+                  INVOICE_STATUS_STYLES[String(inv.status)] ?? { className: "bg-muted text-muted-foreground", label: String(inv.status) };
                 const isDraft = String(inv.status) === "draft";
                 const event = inv.event as {
                   id: string;

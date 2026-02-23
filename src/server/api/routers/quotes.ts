@@ -17,6 +17,10 @@ import {
   orgManagerProcedure,
 } from "~/server/api/trpc";
 import { rateLimit } from "~/server/rateLimit";
+import {
+  notifyQuoteSent,
+  notifyQuoteAccepted,
+} from "~/server/notifications/whatsappService";
 
 const quoteItemInput = z.object({
   sectionName: z.string(),
@@ -198,7 +202,17 @@ export const quotesRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const quote = await ctx.db.quotes.findFirst({
         where: { id: input.quoteId, orgId: ctx.orgId },
-        include: { event: { select: { id: true, status: true } } },
+        include: {
+          event: {
+            select: {
+              id: true,
+              status: true,
+              title: true,
+              guestCount: true,
+              customerPhone: true,
+            },
+          },
+        },
       });
       if (!quote) throw new TRPCError({ code: "NOT_FOUND" });
       if (quote.status !== "draft") {
@@ -216,6 +230,22 @@ export const quotesRouter = createTRPCRouter({
           where: { id: quote.event.id },
           data: { status: "quoted" },
         });
+      }
+
+      // Non-blocking WhatsApp notification to client
+      if (quote.event.customerPhone) {
+        const org = await ctx.db.organizations.findFirst({
+          where: { id: ctx.orgId },
+          select: { name: true },
+        });
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.diyafa.ma";
+        notifyQuoteSent(quote.event.customerPhone, {
+          orgName: org?.name ?? "Diyafa",
+          totalAmount: Number(quote.totalAmount),
+          guestCount: quote.event.guestCount,
+          eventTitle: quote.event.title ?? "Evenement",
+          quoteLink: `${appUrl}/quote/${quote.id}`,
+        }).catch(() => {});
       }
 
       return { success: true };
@@ -315,7 +345,17 @@ export const quotesRouter = createTRPCRouter({
 
       const quote = await ctx.db.quotes.findFirst({
         where: { id: input.quoteId },
-        include: { event: { select: { id: true, customerPhone: true, status: true } } },
+        include: {
+          event: {
+            select: {
+              id: true,
+              title: true,
+              customerPhone: true,
+              customerName: true,
+              status: true,
+            },
+          },
+        },
       });
 
       if (!quote || quote.event.customerPhone !== input.clientPhone) {
@@ -341,6 +381,22 @@ export const quotesRouter = createTRPCRouter({
           balanceDue: quote.totalAmount,
         },
       });
+
+      // Non-blocking WhatsApp notification to caterer
+      try {
+        const org = await ctx.db.organizations?.findFirst?.({
+          where: { id: quote.orgId },
+          select: { whatsappNumber: true, phone: true },
+        });
+        const orgWhatsApp = org?.whatsappNumber ?? org?.phone;
+        if (orgWhatsApp) {
+          notifyQuoteAccepted(orgWhatsApp, {
+            customerName: quote.event.customerName ?? "Client",
+            eventTitle: quote.event.title ?? "Evenement",
+            totalAmount: Number(quote.totalAmount),
+          }).catch(() => {});
+        }
+      } catch { /* notification failure should not block the mutation */ }
 
       return { success: true, message: "Quote accepted! Payment instructions will follow." };
     }),

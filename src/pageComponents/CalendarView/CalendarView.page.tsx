@@ -72,19 +72,19 @@ const DAYS_FULL = [
 const DAYS_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const STATUS_COLORS: Record<string, string> = {
-  inquiry: "bg-gray-100 text-gray-700 border-gray-200",
-  reviewed: "bg-slate-100 text-slate-700 border-slate-200",
-  quoted: "bg-blue-100 text-blue-700 border-blue-200",
-  accepted: "bg-green-100 text-green-700 border-green-200",
-  declined: "bg-red-100 text-red-700 border-red-200",
-  deposit_paid: "bg-lime-100 text-lime-700 border-lime-200",
-  confirmed: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  prep: "bg-amber-100 text-amber-700 border-amber-200",
-  setup: "bg-orange-100 text-orange-700 border-orange-200",
+  inquiry: "bg-muted text-muted-foreground border-border",
+  reviewed: "bg-[hsl(var(--chefchaouen))]/10 text-[hsl(var(--chefchaouen))] border-[hsl(var(--chefchaouen))]/20",
+  quoted: "bg-[hsl(var(--majorelle-blue))]/10 text-[hsl(var(--majorelle-blue))] border-[hsl(var(--majorelle-blue))]/20",
+  accepted: "bg-sage/10 text-sage border-sage/20",
+  declined: "bg-destructive/10 text-destructive border-destructive/20",
+  deposit_paid: "bg-[hsl(var(--mint-tea))]/10 text-[hsl(var(--mint-tea))] border-[hsl(var(--mint-tea))]/20",
+  confirmed: "bg-sage/15 text-sage border-sage/25",
+  prep: "bg-[hsl(var(--saffron))]/10 text-[hsl(var(--saffron))] border-[hsl(var(--saffron))]/20",
+  setup: "bg-[hsl(var(--harissa))]/10 text-[hsl(var(--harissa))] border-[hsl(var(--harissa))]/20",
   execution: "bg-primary/10 text-primary border-primary/20",
-  completed: "bg-teal-100 text-teal-700 border-teal-200",
-  settled: "bg-cyan-100 text-cyan-700 border-cyan-200",
-  cancelled: "bg-red-50 text-red-500 border-red-100",
+  completed: "bg-[hsl(var(--zellige-teal))]/10 text-[hsl(var(--zellige-teal))] border-[hsl(var(--zellige-teal))]/20",
+  settled: "bg-gold/10 text-gold border-gold/20",
+  cancelled: "bg-destructive/5 text-destructive/70 border-destructive/10",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -197,7 +197,7 @@ function EventPill({
   if (compact) {
     return (
       <div
-        className={`h-1.5 w-1.5 rounded-full ${(colors ?? "bg-gray-300").split(" ")[0] ?? "bg-gray-300"}`}
+        className={`h-1.5 w-1.5 rounded-full ${(colors ?? "bg-muted-foreground").split(" ")[0] ?? "bg-muted-foreground"}`}
         title={event.title}
       />
     );
@@ -631,7 +631,7 @@ export default function CalendarView() {
             </span>
             <span className="hidden sm:inline text-border">|</span>
             <span className="flex items-center gap-1.5">
-              <Ban className="h-3.5 w-3.5 text-red-400" />
+              <Ban className="h-3.5 w-3.5 text-destructive" />
               <strong className="text-foreground">
                 {monthStats.totalBlocked}
               </strong>{" "}
@@ -639,7 +639,7 @@ export default function CalendarView() {
             </span>
             <span className="hidden sm:inline text-border">|</span>
             <span className="flex items-center gap-1.5">
-              <CalendarCheck className="h-3.5 w-3.5 text-green-500" />
+              <CalendarCheck className="h-3.5 w-3.5 text-sage" />
               <strong className="text-foreground">
                 {monthStats.availableDays}
               </strong>{" "}
@@ -723,7 +723,7 @@ export default function CalendarView() {
                             isSelected
                               ? "border-primary ring-2 ring-primary/20 bg-primary/5"
                               : isBlocked
-                                ? "border-red-200 hover:border-red-300"
+                                ? "border-destructive/20 hover:border-destructive/30"
                                 : isToday
                                   ? "border-primary/30 bg-primary/5 hover:bg-primary/10"
                                   : isPast
@@ -762,7 +762,7 @@ export default function CalendarView() {
                             {day}
                           </span>
                           {isBlocked && (
-                            <Ban className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-red-400" />
+                            <Ban className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-destructive/60" />
                           )}
                         </div>
 
@@ -885,7 +885,7 @@ export default function CalendarView() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-sm flex items-center gap-2">
-                <CalendarOff className="h-4 w-4 text-red-400" />
+                <CalendarOff className="h-4 w-4 text-destructive" />
                 Upcoming Blocked Dates
               </h3>
               <Badge variant="secondary" className="text-xs">
@@ -898,10 +898,10 @@ export default function CalendarView() {
                 return (
                   <div
                     key={b.id}
-                    className="flex items-center justify-between gap-3 p-2.5 rounded-lg border bg-red-50/50 border-red-100"
+                    className="flex items-center justify-between gap-3 p-2.5 rounded-lg border bg-destructive/5 border-destructive/10"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-100 text-red-600 shrink-0">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-destructive/10 text-destructive shrink-0">
                         <Ban className="h-4 w-4" />
                       </div>
                       <div className="min-w-0">
@@ -929,7 +929,7 @@ export default function CalendarView() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="shrink-0 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-100"
+                      className="shrink-0 h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                       onClick={() => handleUnblock(b.id)}
                       disabled={unblockDateMutation.isLoading}
                       aria-label="Unblock date"
@@ -967,7 +967,7 @@ export default function CalendarView() {
             ))}
             <div className="flex items-center gap-1.5">
               <div
-                className="h-2.5 w-2.5 rounded-sm border border-red-200"
+                className="h-2.5 w-2.5 rounded-sm border border-destructive/20"
                 style={{
                   backgroundImage:
                     "repeating-linear-gradient(135deg, transparent, transparent 2px, #ef4444 2px, #ef4444 2.5px)",
@@ -988,7 +988,7 @@ export default function CalendarView() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Ban className="h-5 w-5 text-red-500" />
+              <Ban className="h-5 w-5 text-destructive" />
               Block Date{blockMode === "range" ? "s" : ""}
             </DialogTitle>
             <DialogDescription>
@@ -1217,16 +1217,16 @@ function DayDetailContent({
     <div className="space-y-4">
       {/* Blocked notice */}
       {blockedDate && (
-        <div className="rounded-lg bg-red-50 border border-red-200 p-3">
+        <div className="rounded-lg bg-destructive/5 border border-destructive/15 p-3">
           <div className="flex items-start gap-2">
-            <Ban className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
+            <Ban className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-red-700">
+              <p className="text-sm font-medium text-destructive">
                 Date is blocked
                 {blockedDate.isRecurring && (
                   <Badge
                     variant="outline"
-                    className="ml-2 text-[10px] border-red-200 text-red-500"
+                    className="ml-2 text-[10px] border-destructive/20 text-destructive/70"
                   >
                     <Repeat className="h-2.5 w-2.5 mr-0.5" />
                     Recurring
@@ -1234,7 +1234,7 @@ function DayDetailContent({
                 )}
               </p>
               {blockedDate.reason && (
-                <p className="text-xs text-red-600 mt-0.5">
+                <p className="text-xs text-destructive/80 mt-0.5">
                   {blockedDate.reason}
                 </p>
               )}
@@ -1243,7 +1243,7 @@ function DayDetailContent({
           <Button
             variant="outline"
             size="sm"
-            className="mt-2 w-full text-red-600 border-red-200 hover:bg-red-100"
+            className="mt-2 w-full text-destructive border-destructive/20 hover:bg-destructive/10"
             onClick={() => onUnblock(blockedDate.id)}
             disabled={isUnblocking}
           >
@@ -1287,7 +1287,7 @@ function DayDetailContent({
           <Button
             variant="outline"
             size="sm"
-            className="w-full gap-1.5 text-red-600 border-red-200 hover:bg-red-50"
+            className="w-full gap-1.5 text-destructive border-destructive/20 hover:bg-destructive/5"
             onClick={onBlockDate}
           >
             <Ban className="h-3.5 w-3.5" />

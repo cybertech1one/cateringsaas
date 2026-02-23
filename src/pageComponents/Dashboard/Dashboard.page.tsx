@@ -58,68 +58,68 @@ const EVENT_STATUS_STYLES: Record<
   { bg: string; text: string; label: string }
 > = {
   inquiry: {
-    bg: "bg-blue-100 dark:bg-blue-950/40",
-    text: "text-blue-700 dark:text-blue-300",
+    bg: "bg-[hsl(var(--majorelle-blue))]/10 dark:bg-[hsl(var(--majorelle-blue))]/20",
+    text: "text-[hsl(var(--majorelle-blue))] dark:text-[hsl(var(--majorelle-blue))]",
     label: "Inquiry",
   },
   reviewed: {
-    bg: "bg-sky-100 dark:bg-sky-950/40",
-    text: "text-sky-700 dark:text-sky-300",
+    bg: "bg-[hsl(var(--chefchaouen))]/10 dark:bg-[hsl(var(--chefchaouen))]/20",
+    text: "text-[hsl(var(--chefchaouen))] dark:text-[hsl(var(--chefchaouen))]",
     label: "Reviewed",
   },
   quoted: {
-    bg: "bg-violet-100 dark:bg-violet-950/40",
-    text: "text-violet-700 dark:text-violet-300",
+    bg: "bg-[hsl(var(--saffron))]/10 dark:bg-[hsl(var(--saffron))]/20",
+    text: "text-[hsl(var(--saffron))] dark:text-[hsl(var(--saffron))]",
     label: "Quoted",
   },
   accepted: {
-    bg: "bg-emerald-100 dark:bg-emerald-950/40",
-    text: "text-emerald-700 dark:text-emerald-300",
+    bg: "bg-sage/10 dark:bg-sage/20",
+    text: "text-sage dark:text-sage",
     label: "Accepted",
   },
   declined: {
-    bg: "bg-red-100 dark:bg-red-950/40",
-    text: "text-red-700 dark:text-red-300",
+    bg: "bg-destructive/10 dark:bg-destructive/20",
+    text: "text-destructive dark:text-destructive",
     label: "Declined",
   },
   deposit_paid: {
-    bg: "bg-teal-100 dark:bg-teal-950/40",
-    text: "text-teal-700 dark:text-teal-300",
+    bg: "bg-[hsl(var(--mint-tea))]/10 dark:bg-[hsl(var(--mint-tea))]/20",
+    text: "text-[hsl(var(--mint-tea))] dark:text-[hsl(var(--mint-tea))]",
     label: "Deposit Paid",
   },
   confirmed: {
-    bg: "bg-green-100 dark:bg-green-950/40",
-    text: "text-green-700 dark:text-green-300",
+    bg: "bg-sage/15 dark:bg-sage/25",
+    text: "text-sage dark:text-sage",
     label: "Confirmed",
   },
   prep: {
-    bg: "bg-amber-100 dark:bg-amber-950/40",
-    text: "text-amber-700 dark:text-amber-300",
+    bg: "bg-gold/10 dark:bg-gold/20",
+    text: "text-gold dark:text-gold",
     label: "In Prep",
   },
   setup: {
-    bg: "bg-orange-100 dark:bg-orange-950/40",
-    text: "text-orange-700 dark:text-orange-300",
+    bg: "bg-[hsl(var(--harissa))]/10 dark:bg-[hsl(var(--harissa))]/20",
+    text: "text-[hsl(var(--harissa))] dark:text-[hsl(var(--harissa))]",
     label: "Setup",
   },
   execution: {
-    bg: "bg-rose-100 dark:bg-rose-950/40",
-    text: "text-rose-700 dark:text-rose-300",
+    bg: "bg-primary/10 dark:bg-primary/20",
+    text: "text-primary dark:text-primary",
     label: "Live",
   },
   completed: {
-    bg: "bg-emerald-100 dark:bg-emerald-950/40",
-    text: "text-emerald-700 dark:text-emerald-300",
+    bg: "bg-[hsl(var(--zellige-teal))]/10 dark:bg-[hsl(var(--zellige-teal))]/20",
+    text: "text-[hsl(var(--zellige-teal))] dark:text-[hsl(var(--zellige-teal))]",
     label: "Completed",
   },
   settled: {
-    bg: "bg-gray-100 dark:bg-gray-800/40",
-    text: "text-gray-600 dark:text-gray-400",
+    bg: "bg-muted dark:bg-muted",
+    text: "text-muted-foreground dark:text-muted-foreground",
     label: "Settled",
   },
   cancelled: {
-    bg: "bg-red-100 dark:bg-red-950/40",
-    text: "text-red-700 dark:text-red-300",
+    bg: "bg-destructive/10 dark:bg-destructive/20",
+    text: "text-destructive dark:text-destructive",
     label: "Cancelled",
   },
 };
@@ -129,28 +129,28 @@ const QUOTE_STATUS_STYLES: Record<
   { bg: string; text: string; label: string }
 > = {
   draft: {
-    bg: "bg-gray-100 dark:bg-gray-800/40",
-    text: "text-gray-600 dark:text-gray-400",
+    bg: "bg-muted dark:bg-muted",
+    text: "text-muted-foreground dark:text-muted-foreground",
     label: "Draft",
   },
   sent: {
-    bg: "bg-blue-100 dark:bg-blue-950/40",
-    text: "text-blue-700 dark:text-blue-300",
+    bg: "bg-[hsl(var(--majorelle-blue))]/10 dark:bg-[hsl(var(--majorelle-blue))]/20",
+    text: "text-[hsl(var(--majorelle-blue))] dark:text-[hsl(var(--majorelle-blue))]",
     label: "Sent",
   },
   accepted: {
-    bg: "bg-emerald-100 dark:bg-emerald-950/40",
-    text: "text-emerald-700 dark:text-emerald-300",
+    bg: "bg-sage/10 dark:bg-sage/20",
+    text: "text-sage dark:text-sage",
     label: "Accepted",
   },
   rejected: {
-    bg: "bg-red-100 dark:bg-red-950/40",
-    text: "text-red-700 dark:text-red-300",
+    bg: "bg-destructive/10 dark:bg-destructive/20",
+    text: "text-destructive dark:text-destructive",
     label: "Rejected",
   },
   superseded: {
-    bg: "bg-gray-100 dark:bg-gray-800/40",
-    text: "text-gray-500 dark:text-gray-500",
+    bg: "bg-muted dark:bg-muted",
+    text: "text-muted-foreground/60 dark:text-muted-foreground/60",
     label: "Superseded",
   },
 };
@@ -350,7 +350,7 @@ export function DashboardPage() {
               revenueData?.monthOverMonthGrowth !== undefined &&
               revenueData.monthOverMonthGrowth !== 0 ? (
                 <span
-                  className={`inline-flex items-center gap-0.5 ${revenueData.monthOverMonthGrowth > 0 ? "text-emerald-600" : "text-red-500"}`}
+                  className={`inline-flex items-center gap-0.5 ${revenueData.monthOverMonthGrowth > 0 ? "text-sage" : "text-destructive"}`}
                 >
                   {revenueData.monthOverMonthGrowth > 0 ? (
                     <TrendingUp className="h-3 w-3" />
@@ -363,24 +363,24 @@ export function DashboardPage() {
                 "vs last month"
               )
             }
-            gradient="from-emerald-500/15 to-emerald-500/5"
-            iconColor="text-emerald-600"
+            gradient="from-sage/15 to-sage/5"
+            iconColor="text-sage"
           />
           <KPICard
             icon={FileText}
             label="Pending Quotes"
             value={pendingQuotesCount}
             detail={`${eventStats?.pendingInquiries ?? 0} new inquiries`}
-            gradient="from-violet-500/15 to-violet-500/5"
-            iconColor="text-violet-600"
+            gradient="from-[hsl(var(--saffron))]/15 to-[hsl(var(--saffron))]/5"
+            iconColor="text-[hsl(var(--saffron))]"
           />
           <KPICard
             icon={Users}
             label="Total Clients"
             value={clientSegments?.total ?? 0}
             detail={`${clientSegments?.vip ?? 0} VIP, ${clientSegments?.corporate ?? 0} corporate`}
-            gradient="from-amber-500/15 to-amber-500/5"
-            iconColor="text-amber-600"
+            gradient="from-gold/15 to-gold/5"
+            iconColor="text-gold"
           />
         </div>
 
@@ -409,8 +409,8 @@ export function DashboardPage() {
                 eventsData.events.map((event) => {
                   const statusStyle =
                     EVENT_STATUS_STYLES[event.status] ?? {
-                      bg: "bg-gray-100 dark:bg-gray-800/40",
-                      text: "text-gray-600 dark:text-gray-400",
+                      bg: "bg-muted dark:bg-muted",
+                      text: "text-muted-foreground dark:text-muted-foreground",
                       label: event.status,
                     };
                   const typeLabel =
@@ -495,7 +495,7 @@ export function DashboardPage() {
           <div className="flex flex-col rounded-2xl border border-border/50 bg-card">
             <div className="flex items-center justify-between border-b border-border/50 px-5 py-4">
               <div className="flex items-center gap-2">
-                <FileText className="h-4.5 w-4.5 text-violet-600" />
+                <FileText className="h-4.5 w-4.5 text-[hsl(var(--saffron))]" />
                 <h2 className="font-display text-base font-semibold tracking-tight">
                   Recent Quotes
                 </h2>
@@ -514,8 +514,8 @@ export function DashboardPage() {
                 quotesData.quotes.map((quote) => {
                   const qStyle =
                     QUOTE_STATUS_STYLES[quote.status] ?? {
-                      bg: "bg-gray-100 dark:bg-gray-800/40",
-                      text: "text-gray-600 dark:text-gray-400",
+                      bg: "bg-muted dark:bg-muted",
+                      text: "text-muted-foreground dark:text-muted-foreground",
                       label: quote.status,
                     };
                   return (
@@ -525,8 +525,8 @@ export function DashboardPage() {
                       className="group flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-muted/40"
                     >
                       {/* Version badge */}
-                      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-violet-500/8">
-                        <span className="text-xs font-bold text-violet-600">
+                      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--saffron))]/10">
+                        <span className="text-xs font-bold text-[hsl(var(--saffron))]">
                           v{quote.versionNumber}
                         </span>
                       </div>
@@ -595,31 +595,31 @@ export function DashboardPage() {
               icon={Calculator}
               title="New Quote"
               href="/dashboard/quotes"
-              color="text-violet-600 bg-violet-500/10"
+              color="text-[hsl(var(--saffron))] bg-[hsl(var(--saffron))]/10"
             />
             <QuickActionCard
               icon={Calendar}
               title="Calendar"
               href="/dashboard/calendar"
-              color="text-blue-600 bg-blue-500/10"
+              color="text-[hsl(var(--majorelle-blue))] bg-[hsl(var(--majorelle-blue))]/10"
             />
             <QuickActionCard
               icon={UserCircle}
               title="Clients"
               href="/dashboard/clients"
-              color="text-amber-600 bg-amber-500/10"
+              color="text-gold bg-gold/10"
             />
             <QuickActionCard
               icon={Wrench}
               title="Equipment"
               href="/dashboard/equipment"
-              color="text-teal-600 bg-teal-500/10"
+              color="text-[hsl(var(--zellige-teal))] bg-[hsl(var(--zellige-teal))]/10"
             />
             <QuickActionCard
               icon={Wallet}
               title="Finances"
               href="/dashboard/finances"
-              color="text-emerald-600 bg-emerald-500/10"
+              color="text-sage bg-sage/10"
             />
           </div>
         </div>
@@ -638,8 +638,8 @@ export function DashboardPage() {
                     {formatMAD(revenueData?.monthRevenue ?? 0)}
                   </p>
                 </div>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10">
-                  <TrendingUp className="h-4 w-4 text-emerald-600" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sage/10">
+                  <TrendingUp className="h-4 w-4 text-sage" />
                 </div>
               </div>
 
@@ -693,20 +693,20 @@ export function DashboardPage() {
                 <FinancialRow
                   label="Outstanding"
                   amount={revenueData?.pendingAmount ?? 0}
-                  color="text-amber-600"
-                  dotColor="bg-amber-500"
+                  color="text-gold"
+                  dotColor="bg-gold"
                 />
                 <FinancialRow
                   label="Overdue"
                   amount={revenueData?.overdueAmount ?? 0}
                   color={
                     (revenueData?.overdueAmount ?? 0) > 0
-                      ? "text-red-600"
+                      ? "text-destructive"
                       : "text-muted-foreground"
                   }
                   dotColor={
                     (revenueData?.overdueAmount ?? 0) > 0
-                      ? "bg-red-500"
+                      ? "bg-destructive"
                       : "bg-muted-foreground/30"
                   }
                 />

@@ -146,7 +146,7 @@ function ConversationListItem({
         "w-full text-left p-3 rounded-lg transition-all duration-150 border border-transparent",
         "hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
         isSelected && "bg-primary/8 border-primary/20 shadow-sm",
-        hasUnread && !isSelected && "bg-amber-50/60 dark:bg-amber-950/20",
+        hasUnread && !isSelected && "bg-gold/5 dark:bg-gold/10",
       )}
     >
       <div className="flex items-start gap-3">

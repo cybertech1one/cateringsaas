@@ -14,6 +14,7 @@ import {
   orgProcedure,
   orgManagerProcedure,
 } from "~/server/api/trpc";
+import { notifyPaymentReceived } from "~/server/notifications/whatsappService";
 
 // ──────────────────────────────────────────────
 // Router
@@ -178,6 +179,28 @@ export const financesRouter = createTRPCRouter({
           });
         }
       }
+
+      // Non-blocking WhatsApp payment confirmation to caterer
+      try {
+        const org = await ctx.db.organizations?.findFirst?.({
+          where: { id: ctx.orgId },
+          select: { whatsappNumber: true, phone: true },
+        });
+        const orgWhatsApp = org?.whatsappNumber ?? org?.phone;
+        if (orgWhatsApp) {
+          const event = await ctx.db.events?.findUnique?.({
+            where: { id: milestone.schedule.eventId },
+            select: { title: true, customerName: true },
+          });
+          notifyPaymentReceived(orgWhatsApp, {
+            customerName: event?.customerName ?? "Client",
+            eventTitle: event?.title ?? "Evenement",
+            amount: Number(milestone.amount),
+            milestoneLabel: milestone.label,
+            paymentMethod: input.paymentMethod,
+          }).catch(() => {});
+        }
+      } catch { /* notification failure should not block the mutation */ }
 
       return updated;
     }),

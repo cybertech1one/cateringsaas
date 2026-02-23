@@ -20,23 +20,17 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  ClipboardList,
-  BarChart3,
-  Calendar,
-  Users,
-  MapPin,
   Package,
-  DollarSign,
-  TrendingUp,
-  ChevronDown,
   ChevronUp,
-  Send,
-  Phone,
-  Mail,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
+  ChevronDown,
+  Star,
+  Layers,
+  Users,
+  Check,
+  X,
+  Leaf,
+  Wheat,
+  GripVertical,
 } from "lucide-react";
 import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
@@ -57,7 +51,7 @@ const CateringMenuEditor = dynamic(
 );
 
 // ---------------------------------------------------------------------------
-// Types
+// Types — derived from cateringMenus router return types
 // ---------------------------------------------------------------------------
 
 type CateringMenu = {
@@ -86,73 +80,91 @@ type CateringMenu = {
   };
 };
 
-type CateringInquiry = {
+type CateringMenuFull = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  eventType: string;
+  menuType: string;
+  isPublished: boolean;
+  isActive: boolean;
+  isFeatured: boolean;
+  minGuests: number;
+  maxGuests: number | null;
+  basePricePerPerson: number;
+  categories: CateringCategory[];
+  packages: CateringPackageFull[];
+};
+
+type CateringCategory = {
   id: string;
   cateringMenuId: string;
-  customerName: string;
-  customerEmail: string | null;
-  customerPhone: string | null;
-  eventType: string;
-  eventDate: Date;
-  guestCount: number;
-  status: string;
-  estimatedTotal: number | null;
-  specialRequests: string | null;
-  adminNotes: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  cateringMenu?: { id: string; name: string };
+  name: string;
+  nameAr: string | null;
+  nameFr: string | null;
+  description: string | null;
+  sortOrder: number;
+  isOptional: boolean;
+  maxSelections: number | null;
+  cateringItems: CateringItem[];
 };
 
-type InquiryStats = {
-  totalInquiries: number;
-  confirmedBookings: number;
-  totalRevenue: number;
-  avgGuestCount: number;
+type CateringItem = {
+  id: string;
+  cateringCategoryId: string;
+  cateringMenuId: string;
+  name: string;
+  nameAr: string | null;
+  nameFr: string | null;
+  description: string | null;
+  pricePerPerson: number | null;
+  pricePerUnit: number | null;
+  unitLabel: string | null;
+  isIncluded: boolean;
+  isOptional: boolean;
+  isAvailable: boolean;
+  isVegetarian: boolean;
+  isVegan: boolean;
+  isHalal: boolean;
+  isGlutenFree: boolean;
+  allergens: string[];
+  imageUrl: string | null;
+  sortOrder: number;
+};
+
+type CateringPackageFull = {
+  id: string;
+  cateringMenuId: string;
+  name: string;
+  nameAr: string | null;
+  nameFr: string | null;
+  description: string | null;
+  pricePerPerson: number;
+  minGuests: number;
+  maxGuests: number | null;
+  isFeatured: boolean;
+  sortOrder: number;
+  imageUrl: string | null;
+  includesText: string | null;
+  packageItems: {
+    id: string;
+    item: CateringItem;
+    category: { id: string; name: string };
+    isIncluded: boolean;
+  }[];
 };
 
 // ---------------------------------------------------------------------------
-// Status helpers
+// Helpers
 // ---------------------------------------------------------------------------
 
-const INQUIRY_STATUSES = [
-  "all",
-  "pending",
-  "reviewed",
-  "quoted",
-  "confirmed",
-  "deposit_paid",
-  "completed",
-  "cancelled",
-] as const;
-
-type InquiryStatus = (typeof INQUIRY_STATUSES)[number];
-
-function getStatusColor(status: string): string {
-  switch (status) {
-    case "pending":
-      return "bg-gold/10 text-gold dark:bg-gold/20 dark:text-gold";
-    case "reviewed":
-      return "bg-[hsl(var(--majorelle-blue))]/10 text-[hsl(var(--majorelle-blue))] dark:bg-[hsl(var(--majorelle-blue))]/20 dark:text-[hsl(var(--majorelle-blue))]";
-    case "quoted":
-      return "bg-[hsl(var(--saffron))]/10 text-[hsl(var(--saffron))] dark:bg-[hsl(var(--saffron))]/20 dark:text-[hsl(var(--saffron))]";
-    case "confirmed":
-      return "bg-sage/10 text-sage dark:bg-sage/20 dark:text-sage";
-    case "deposit_paid":
-      return "bg-[hsl(var(--mint-tea))]/10 text-[hsl(var(--mint-tea))] dark:bg-[hsl(var(--mint-tea))]/20 dark:text-[hsl(var(--mint-tea))]";
-    case "completed":
-      return "bg-muted text-muted-foreground dark:bg-muted dark:text-muted-foreground";
-    case "cancelled":
-      return "bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive";
-    default:
-      return "bg-muted text-muted-foreground";
-  }
-}
-
-function getEventTypeLabel(eventType: string, t: (key: string) => string): string {
+function getEventTypeLabel(
+  eventType: string,
+  t: (key: string) => string,
+): string {
   const key = `catering.eventTypes.${eventType}`;
   const translated = t(key);
-  // If translation not found, fall back to formatted event type
   if (translated === key) {
     return eventType
       .split("_")
@@ -163,241 +175,44 @@ function getEventTypeLabel(eventType: string, t: (key: string) => string): strin
 }
 
 // ---------------------------------------------------------------------------
-// Overview Card
+// Dietary Badges
 // ---------------------------------------------------------------------------
 
-function OverviewCard({
-  title,
-  value,
-  icon: Icon,
-  loading,
-  gradient,
-}: {
-  title: string;
-  value: number | string;
-  icon: React.ComponentType<{ className?: string }>;
-  loading?: boolean;
-  gradient?: string;
-}) {
-  return (
-    <div className="rounded-xl border border-border/50 bg-card p-4 transition-all duration-200 hover:border-border hover:shadow-card">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-muted-foreground">
-          {title}
-        </span>
-        <div
-          className={cn(
-            "flex h-8 w-8 items-center justify-center rounded-lg shadow-sm",
-            gradient ?? "bg-gradient-to-br from-primary/20 to-primary/5",
-          )}
-        >
-          <Icon className="h-4 w-4 text-primary" />
-        </div>
-      </div>
-      {loading ? (
-        <Skeleton className="mt-2 h-8 w-20" />
-      ) : (
-        <div className="mt-2 font-display text-2xl font-bold tracking-tight">
-          {value}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Inquiry Card
-// ---------------------------------------------------------------------------
-
-function InquiryCard({
-  inquiry,
-  onUpdateStatus,
-  isUpdating,
+function DietaryBadges({
+  item,
   t,
 }: {
-  inquiry: CateringInquiry;
-  onUpdateStatus: (id: string, status: string) => void;
-  isUpdating: boolean;
-  t: (key: string, opts?: Record<string, unknown>) => string;
+  item: CateringItem;
+  t: (key: string) => string;
 }) {
-  const [expanded, setExpanded] = useState(false);
-
-  const eventDate = new Date(inquiry.eventDate);
-  const isPast = eventDate < new Date();
-
   return (
-    <div className="rounded-xl border border-border/40 bg-card/60 p-4 transition-all duration-200 hover:border-border hover:shadow-sm">
-      {/* Header row */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="truncate font-semibold">{inquiry.customerName}</h3>
-            <span
-              className={cn(
-                "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                getStatusColor(inquiry.status),
-              )}
-            >
-              {t(`catering.statuses.${inquiry.status}`)}
-            </span>
-          </div>
-          {inquiry.cateringMenu && (
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {inquiry.cateringMenu.name}
-            </p>
-          )}
-        </div>
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          aria-label={expanded ? t("catering.collapse") : t("catering.expand")}
+    <div className="flex flex-wrap gap-1">
+      {item.isVegetarian && (
+        <Badge
+          variant="outline"
+          className="border-[hsl(var(--mint-tea))]/30 bg-[hsl(var(--mint-tea))]/10 text-[hsl(var(--mint-tea))] dark:border-[hsl(var(--mint-tea))]/40 dark:bg-[hsl(var(--mint-tea))]/20 dark:text-[hsl(var(--mint-tea))] px-1.5 py-0 text-xs"
         >
-          {expanded ? (
-            <ChevronUp className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
-        </button>
-      </div>
-
-      {/* Summary row */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <Calendar className="h-3.5 w-3.5" />
-          {eventDate.toLocaleDateString()}
-          {isPast && (
-            <span className="text-xs text-muted-foreground/60">
-              ({t("catering.past")})
-            </span>
-          )}
-        </span>
-        <span className="flex items-center gap-1">
-          <Users className="h-3.5 w-3.5" />
-          {inquiry.guestCount} {t("catering.guests")}
-        </span>
-        <span className="flex items-center gap-1">
-          <UtensilsCrossed className="h-3.5 w-3.5" />
-          {getEventTypeLabel(inquiry.eventType, t as (key: string) => string)}
-        </span>
-        {inquiry.estimatedTotal != null && inquiry.estimatedTotal > 0 && (
-          <span className="flex items-center gap-1 font-medium text-foreground">
-            <DollarSign className="h-3.5 w-3.5" />
-            {formatPrice(inquiry.estimatedTotal)}
-          </span>
-        )}
-      </div>
-
-      {/* Expanded details */}
-      {expanded && (
-        <div className="mt-4 space-y-3 border-t border-border/40 pt-4">
-          {/* Contact info */}
-          <div className="flex flex-wrap gap-4 text-sm">
-            {inquiry.customerEmail && (
-              <span className="flex items-center gap-1.5 text-muted-foreground">
-                <Mail className="h-3.5 w-3.5" />
-                {inquiry.customerEmail}
-              </span>
-            )}
-            {inquiry.customerPhone && (
-              <span className="flex items-center gap-1.5 text-muted-foreground">
-                <Phone className="h-3.5 w-3.5" />
-                {inquiry.customerPhone}
-              </span>
-            )}
-          </div>
-
-          {/* Notes */}
-          {inquiry.specialRequests && (
-            <div>
-              <p className="text-xs font-medium text-muted-foreground">
-                {t("catering.customerNotes")}
-              </p>
-              <p className="mt-1 text-sm">{inquiry.specialRequests}</p>
-            </div>
-          )}
-
-          {inquiry.adminNotes && (
-            <div>
-              <p className="text-xs font-medium text-muted-foreground">
-                {t("catering.adminNotes")}
-              </p>
-              <p className="mt-1 text-sm">{inquiry.adminNotes}</p>
-            </div>
-          )}
-
-          {/* Status update buttons */}
-          {inquiry.status !== "completed" && inquiry.status !== "cancelled" && (
-            <div className="flex flex-wrap gap-2 pt-1">
-              {inquiry.status === "pending" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isUpdating}
-                  onClick={() => onUpdateStatus(inquiry.id, "reviewed")}
-                >
-                  <Eye className="mr-1.5 h-3.5 w-3.5" />
-                  {t("catering.markReviewed")}
-                </Button>
-              )}
-              {(inquiry.status === "pending" ||
-                inquiry.status === "reviewed") && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isUpdating}
-                  onClick={() => onUpdateStatus(inquiry.id, "quoted")}
-                >
-                  <Send className="mr-1.5 h-3.5 w-3.5" />
-                  {t("catering.sendQuote")}
-                </Button>
-              )}
-              {inquiry.status === "quoted" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isUpdating}
-                  onClick={() => onUpdateStatus(inquiry.id, "confirmed")}
-                >
-                  <CheckCircle className="mr-1.5 h-3.5 w-3.5" />
-                  {t("catering.confirm")}
-                </Button>
-              )}
-              {inquiry.status === "confirmed" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isUpdating}
-                  onClick={() => onUpdateStatus(inquiry.id, "deposit_paid")}
-                >
-                  <DollarSign className="mr-1.5 h-3.5 w-3.5" />
-                  {t("catering.markDepositPaid")}
-                </Button>
-              )}
-              {(inquiry.status === "confirmed" ||
-                inquiry.status === "deposit_paid") && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isUpdating}
-                  onClick={() => onUpdateStatus(inquiry.id, "completed")}
-                >
-                  <CheckCircle className="mr-1.5 h-3.5 w-3.5" />
-                  {t("catering.markCompleted")}
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-destructive hover:text-destructive"
-                disabled={isUpdating}
-                onClick={() => onUpdateStatus(inquiry.id, "cancelled")}
-              >
-                <XCircle className="mr-1.5 h-3.5 w-3.5" />
-                {t("catering.cancel")}
-              </Button>
-            </div>
-          )}
-        </div>
+          <Leaf className="mr-0.5 h-3 w-3" />
+          {t("catering.dietary.vegetarian")}
+        </Badge>
+      )}
+      {item.isVegan && (
+        <Badge
+          variant="outline"
+          className="border-[hsl(var(--zellige-teal))]/30 bg-[hsl(var(--zellige-teal))]/10 text-[hsl(var(--zellige-teal))] dark:border-[hsl(var(--zellige-teal))]/40 dark:bg-[hsl(var(--zellige-teal))]/20 dark:text-[hsl(var(--zellige-teal))] px-1.5 py-0 text-xs"
+        >
+          <Leaf className="mr-0.5 h-3 w-3" />
+          {t("catering.dietary.vegan")}
+        </Badge>
+      )}
+      {item.isGlutenFree && (
+        <Badge
+          variant="outline"
+          className="border-[hsl(var(--saffron))]/30 bg-[hsl(var(--saffron))]/10 text-[hsl(var(--saffron))] dark:border-[hsl(var(--saffron))]/40 dark:bg-[hsl(var(--saffron))]/20 dark:text-[hsl(var(--saffron))] px-1.5 py-0 text-xs"
+        >
+          <Wheat className="mr-0.5 h-3 w-3" />
+          {t("catering.dietary.glutenFree")}
+        </Badge>
       )}
     </div>
   );
@@ -430,7 +245,10 @@ function CateringMenuCard({
           <h3 className="truncate font-semibold">{menu.name}</h3>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="text-xs">
-              {getEventTypeLabel(menu.eventType, t as (key: string) => string)}
+              {getEventTypeLabel(
+                menu.eventType,
+                t as (key: string) => string,
+              )}
             </Badge>
             <Badge
               variant={menu.isPublished ? "default" : "outline"}
@@ -440,6 +258,15 @@ function CateringMenuCard({
                 ? t("catering.published")
                 : t("catering.draft")}
             </Badge>
+            {menu.isFeatured && (
+              <Badge
+                variant="outline"
+                className="border-gold/40 bg-gold/10 text-gold text-xs"
+              >
+                <Star className="mr-0.5 h-3 w-3" />
+                {t("catering.featured")}
+              </Badge>
+            )}
           </div>
         </div>
       </div>
@@ -454,8 +281,8 @@ function CateringMenuCard({
       {/* Stats */}
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
         <span className="flex items-center gap-1">
-          <Package className="h-3.5 w-3.5" />
-          {menu._count.categories} {t("catering.categories")}
+          <Layers className="h-3.5 w-3.5" />
+          {menu._count.categories} {t("catering.categories.title")}
         </span>
         <span className="flex items-center gap-1">
           <UtensilsCrossed className="h-3.5 w-3.5" />
@@ -521,6 +348,509 @@ function CateringMenuCard({
 }
 
 // ---------------------------------------------------------------------------
+// Package Card (for the global Packages tab)
+// ---------------------------------------------------------------------------
+
+function PackageCard({
+  pkg,
+  menuName,
+  t,
+}: {
+  pkg: CateringPackageFull;
+  menuName: string;
+  t: (key: string, opts?: Record<string, unknown>) => string;
+}) {
+  return (
+    <div className="rounded-xl border border-border/40 bg-card/60 p-4 transition-all duration-200 hover:border-border hover:shadow-sm">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="truncate font-semibold">{pkg.name}</h3>
+            {pkg.isFeatured && (
+              <Badge
+                variant="outline"
+                className="border-gold/40 bg-gold/10 text-gold text-xs"
+              >
+                <Star className="mr-0.5 h-3 w-3" />
+                {t("catering.featured")}
+              </Badge>
+            )}
+          </div>
+          <p className="mt-0.5 text-xs text-muted-foreground">{menuName}</p>
+        </div>
+        <span className="shrink-0 text-lg font-bold text-primary">
+          {formatPrice(pkg.pricePerPerson)}
+          <span className="text-xs font-normal text-muted-foreground">
+            /{t("catering.person")}
+          </span>
+        </span>
+      </div>
+
+      {pkg.description && (
+        <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+          {pkg.description}
+        </p>
+      )}
+
+      {/* Guest range */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        <span className="flex items-center gap-1">
+          <Users className="h-3.5 w-3.5" />
+          {pkg.minGuests}
+          {pkg.maxGuests ? `–${pkg.maxGuests}` : "+"} {t("catering.guests")}
+        </span>
+        {pkg.packageItems.length > 0 && (
+          <span className="flex items-center gap-1">
+            <UtensilsCrossed className="h-3.5 w-3.5" />
+            {pkg.packageItems.length} {t("catering.items.title")}
+          </span>
+        )}
+      </div>
+
+      {/* Includes text */}
+      {pkg.includesText && (
+        <div className="mt-3">
+          <p className="text-xs font-medium text-muted-foreground">
+            {t("catering.inclusionsLabel")}
+          </p>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {pkg.includesText.split(",").map((tag, i) => (
+              <Badge
+                key={i}
+                variant="secondary"
+                className="bg-sage/10 text-sage text-xs"
+              >
+                {tag.trim()}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Global Items Tab — all items across all menus, grouped by menu+category
+// ---------------------------------------------------------------------------
+
+function GlobalItemsTab({
+  menus,
+  isLoading,
+  t,
+}: {
+  menus: CateringMenuFull[] | undefined;
+  isLoading: boolean;
+  t: (key: string, opts?: Record<string, unknown>) => string;
+}) {
+  const { toast } = useToast();
+
+  const toggleAvailMutation = api.cateringMenus.updateItem.useMutation({
+    onError: (err) => {
+      toast({
+        title: t("toast.error"),
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div
+            key={i}
+            className="space-y-2 rounded-xl border border-border/50 bg-card p-4"
+          >
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-4 w-64" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Collect all items with their menu/category context
+  const allItems: {
+    item: CateringItem;
+    menuName: string;
+    categoryName: string;
+  }[] = [];
+
+  if (menus) {
+    for (const menu of menus) {
+      for (const cat of menu.categories) {
+        for (const item of cat.cateringItems) {
+          allItems.push({
+            item,
+            menuName: menu.name,
+            categoryName: cat.name,
+          });
+        }
+      }
+    }
+  }
+
+  if (!allItems.length) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-8 text-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+          <UtensilsCrossed className="h-10 w-10 text-muted-foreground" />
+        </div>
+        <h2 className="mt-6 text-xl font-semibold">
+          {t("catering.noItemsGlobal")}
+        </h2>
+        <p className="mb-8 mt-2 max-w-md text-center text-sm font-normal leading-6 text-muted-foreground">
+          {t("catering.noItemsGlobalDescription")}
+        </p>
+      </div>
+    );
+  }
+
+  // Group by menu name, then category
+  const grouped = new Map<
+    string,
+    Map<string, { item: CateringItem; menuName: string; categoryName: string }[]>
+  >();
+  for (const entry of allItems) {
+    if (!grouped.has(entry.menuName)) {
+      grouped.set(entry.menuName, new Map());
+    }
+    const menuGroup = grouped.get(entry.menuName)!;
+    if (!menuGroup.has(entry.categoryName)) {
+      menuGroup.set(entry.categoryName, []);
+    }
+    menuGroup.get(entry.categoryName)!.push(entry);
+  }
+
+  return (
+    <div className="space-y-6">
+      <p className="text-sm text-muted-foreground">
+        {t("catering.allItemsDescription")}
+      </p>
+
+      {Array.from(grouped.entries()).map(([menuName, categories]) => (
+        <div key={menuName} className="space-y-3">
+          <h3 className="font-display text-lg font-semibold tracking-tight">
+            {menuName}
+          </h3>
+          {Array.from(categories.entries()).map(([catName, items]) => (
+            <div
+              key={catName}
+              className="rounded-xl border border-border/40 bg-card/60"
+            >
+              <div className="border-b border-border/30 px-4 py-3">
+                <h4 className="text-sm font-medium text-muted-foreground">
+                  {catName}{" "}
+                  <span className="text-xs">
+                    ({items.length} {t("catering.items.title")})
+                  </span>
+                </h4>
+              </div>
+              <div className="divide-y divide-border/30">
+                {items.map(({ item }) => (
+                  <div
+                    key={item.id}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3",
+                      !item.isAvailable && "opacity-50",
+                    )}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{item.name}</span>
+                        {item.pricePerPerson != null &&
+                          item.pricePerPerson > 0 && (
+                            <span className="text-sm font-semibold text-primary">
+                              {formatPrice(item.pricePerPerson)}
+                              <span className="text-xs font-normal text-muted-foreground">
+                                /{t("catering.items.pricePerPerson")}
+                              </span>
+                            </span>
+                          )}
+                        {item.pricePerUnit != null &&
+                          item.pricePerUnit > 0 && (
+                            <span className="text-sm font-semibold text-primary">
+                              {formatPrice(item.pricePerUnit)}
+                              {item.unitLabel && (
+                                <span className="text-xs font-normal text-muted-foreground">
+                                  /{item.unitLabel}
+                                </span>
+                              )}
+                            </span>
+                          )}
+                        {!item.isAvailable && (
+                          <Badge variant="outline" className="text-xs">
+                            {t("catering.unavailable")}
+                          </Badge>
+                        )}
+                        {item.isIncluded && (
+                          <Badge
+                            variant="outline"
+                            className="border-sage/40 bg-sage/10 text-sage text-xs"
+                          >
+                            {t("catering.included")}
+                          </Badge>
+                        )}
+                        {item.isOptional && (
+                          <Badge variant="outline" className="text-xs">
+                            {t("catering.optional")}
+                          </Badge>
+                        )}
+                      </div>
+                      {item.description && (
+                        <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
+                          {item.description}
+                        </p>
+                      )}
+                      <div className="mt-1">
+                        <DietaryBadges
+                          item={item}
+                          t={t as (key: string) => string}
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={toggleAvailMutation.isLoading}
+                      onClick={() =>
+                        toggleAvailMutation.mutate({
+                          itemId: item.id,
+                          isAvailable: !item.isAvailable,
+                        })
+                      }
+                      title={
+                        item.isAvailable
+                          ? t("catering.markUnavailable")
+                          : t("catering.markAvailable")
+                      }
+                    >
+                      {item.isAvailable ? (
+                        <Check className="h-3.5 w-3.5 text-sage" />
+                      ) : (
+                        <X className="h-3.5 w-3.5 text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Global Packages Tab — all packages across all menus
+// ---------------------------------------------------------------------------
+
+function GlobalPackagesTab({
+  menus,
+  isLoading,
+  t,
+}: {
+  menus: CateringMenuFull[] | undefined;
+  isLoading: boolean;
+  t: (key: string, opts?: Record<string, unknown>) => string;
+}) {
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div
+            key={i}
+            className="space-y-3 rounded-xl border border-border/50 bg-card p-4"
+          >
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-8 w-20" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  const allPackages: { pkg: CateringPackageFull; menuName: string }[] = [];
+  if (menus) {
+    for (const menu of menus) {
+      for (const pkg of menu.packages) {
+        allPackages.push({ pkg, menuName: menu.name });
+      }
+    }
+  }
+
+  if (!allPackages.length) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-8 text-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+          <Package className="h-10 w-10 text-muted-foreground" />
+        </div>
+        <h2 className="mt-6 text-xl font-semibold">
+          {t("catering.noPackagesGlobal")}
+        </h2>
+        <p className="mb-8 mt-2 max-w-md text-center text-sm font-normal leading-6 text-muted-foreground">
+          {t("catering.noPackagesGlobalDescription")}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        {t("catering.allPackagesDescription")}
+      </p>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {allPackages.map(({ pkg, menuName }) => (
+          <PackageCard key={pkg.id} pkg={pkg} menuName={menuName} t={t} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Global Categories Tab — all categories across all menus
+// ---------------------------------------------------------------------------
+
+function GlobalCategoriesTab({
+  menus,
+  isLoading,
+  t,
+}: {
+  menus: CateringMenuFull[] | undefined;
+  isLoading: boolean;
+  t: (key: string, opts?: Record<string, unknown>) => string;
+}) {
+  if (isLoading) {
+    return (
+      <div className="space-y-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="space-y-2 rounded-xl border border-border/50 bg-card p-4"
+          >
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  const allCategories: {
+    category: CateringCategory;
+    menuName: string;
+  }[] = [];
+  if (menus) {
+    for (const menu of menus) {
+      for (const cat of menu.categories) {
+        allCategories.push({ category: cat, menuName: menu.name });
+      }
+    }
+  }
+
+  if (!allCategories.length) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-8 text-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+          <Layers className="h-10 w-10 text-muted-foreground" />
+        </div>
+        <h2 className="mt-6 text-xl font-semibold">
+          {t("catering.noCategoriesGlobal")}
+        </h2>
+        <p className="mb-8 mt-2 max-w-md text-center text-sm font-normal leading-6 text-muted-foreground">
+          {t("catering.noCategoriesGlobalDescription")}
+        </p>
+      </div>
+    );
+  }
+
+  // Group by menu
+  const grouped = new Map<string, CateringCategory[]>();
+  for (const entry of allCategories) {
+    if (!grouped.has(entry.menuName)) {
+      grouped.set(entry.menuName, []);
+    }
+    grouped.get(entry.menuName)!.push(entry.category);
+  }
+
+  return (
+    <div className="space-y-6">
+      <p className="text-sm text-muted-foreground">
+        {t("catering.allCategoriesDescription")}
+      </p>
+
+      {Array.from(grouped.entries()).map(([menuName, categories]) => (
+        <div key={menuName} className="space-y-3">
+          <h3 className="font-display text-lg font-semibold tracking-tight">
+            {menuName}
+          </h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {categories
+              .sort((a, b) => a.sortOrder - b.sortOrder)
+              .map((cat) => (
+                <div
+                  key={cat.id}
+                  className="rounded-xl border border-border/40 bg-card/60 p-4 transition-all duration-200 hover:border-border hover:shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-semibold">{cat.name}</h4>
+                      {cat.nameAr && (
+                        <p
+                          className="mt-0.5 text-sm text-muted-foreground"
+                          dir="rtl"
+                        >
+                          {cat.nameAr}
+                        </p>
+                      )}
+                      {cat.nameFr && (
+                        <p className="mt-0.5 text-sm text-muted-foreground">
+                          {cat.nameFr}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1">
+                      {cat.isOptional && (
+                        <Badge variant="outline" className="text-xs">
+                          {t("catering.optional")}
+                        </Badge>
+                      )}
+                      <GripVertical className="h-4 w-4 text-muted-foreground/40" />
+                    </div>
+                  </div>
+                  {cat.description && (
+                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                      {cat.description}
+                    </p>
+                  )}
+                  <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+                    <UtensilsCrossed className="h-3.5 w-3.5" />
+                    <span>
+                      {cat.cateringItems.length} {t("catering.items.title")}
+                    </span>
+                    {cat.maxSelections != null && (
+                      <span className="text-xs">
+                        (max {cat.maxSelections})
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main Page Component
 // ---------------------------------------------------------------------------
 
@@ -533,7 +863,6 @@ export function CateringDashboardPage() {
   const [formDialogOpen, setFormDialogOpen] = useState(false);
   const [editingMenu, setEditingMenu] = useState<CateringMenu | null>(null);
   const [editorMenuId, setEditorMenuId] = useState<string | null>(null);
-  const [inquiryFilter, setInquiryFilter] = useState<InquiryStatus>("all");
 
   // ── Queries ────────────────────────────────────────────────
 
@@ -543,44 +872,34 @@ export function CateringDashboardPage() {
     refetch: refetchMenus,
   } = api.cateringMenus.list.useQuery({});
 
-  // TODO: api.catering.getInquiries does not exist. The Diyafa model uses
-  // api.events.list for event inquiries, but its return shape differs from
-  // the CateringInquiry type used here. Wire up once the shapes are aligned.
-  const {
-    data: inquiriesData,
-    isLoading: inquiriesLoading,
-    refetch: refetchInquiries,
-  } = api.events.list.useQuery(
-    {
-      status: inquiryFilter === "all"
-        ? undefined
-        : [inquiryFilter as "inquiry" | "reviewed" | "quoted" | "accepted" | "declined" | "deposit_paid" | "confirmed" | "prep" | "setup" | "execution" | "completed" | "settled" | "cancelled"],
-    },
-    { enabled: activeTab === "inquiries" || activeTab === "analytics" },
-  );
-  const inquiries = inquiriesData?.events as unknown as CateringInquiry[] | undefined;
+  // Fetch full menu details (with categories, items, packages) for the
+  // global Items/Packages/Categories tabs. We only enable this when one
+  // of those tabs is active to avoid unnecessary data fetching.
+  const needsFullData =
+    activeTab === "items" ||
+    activeTab === "packages" ||
+    activeTab === "categories";
 
-  // TODO: api.catering.getInquiryStats does not exist. Using api.events.getStats
-  // which returns a different shape (totalEvents, activeEvents, thisMonthEvents,
-  // pendingInquiries). Map fields as needed once the analytics tab is finalized.
-  const { data: statsRaw, isLoading: statsLoading } =
-    api.events.getStats.useQuery(
-      {},
-      { enabled: activeTab === "analytics" },
-    );
-  const stats: InquiryStats | undefined = statsRaw
-    ? {
-        totalInquiries: statsRaw.pendingInquiries,
-        confirmedBookings: statsRaw.activeEvents,
-        totalRevenue: 0, // TODO: wire up from orgAnalytics.getRevenueOverview
-        avgGuestCount: 0, // TODO: no direct equivalent endpoint
-      }
-    : undefined;
+  // We fetch each menu individually only when needed. We'll use the list
+  // of menu IDs to load them. For simplicity, we use a single getById for
+  // the first menu, but a better approach is to iterate. Since tRPC doesn't
+  // support dynamic arrays of queries easily, we'll use a different strategy:
+  // fetch all menus with their full tree via the list endpoint returning
+  // _count, then use individual getById calls.
+  //
+  // Actually, the simplest approach: we use the `list` results (which only
+  // have _count), and for the detail tabs we load each menu via getById.
+  // But that's N+1 queries. Instead, let me check if we can load all at once.
+  //
+  // The router doesn't have a "listWithDetails" endpoint, so we'll use the
+  // individual getById queries for the menus we have. For performance,
+  // we'll load only when the tab is active and cache the results.
+
+  // For the global tabs, we need full details. Let's query them individually.
+  // We'll use a wrapper component approach instead.
 
   // ── Mutations ──────────────────────────────────────────────
 
-  // api.catering.togglePublish does not exist. Using cateringMenus.update
-  // to toggle the isActive field instead.
   const togglePublishMutation = api.cateringMenus.update.useMutation({
     onSuccess: () => {
       toast({
@@ -615,26 +934,6 @@ export function CateringDashboardPage() {
     },
   });
 
-  // TODO: api.catering.updateInquiryStatus does not exist. Using
-  // api.events.updateStatus which has a different input shape
-  // ({ eventId, newStatus, reason? } instead of { id, status }).
-  const updateStatusMutation = api.events.updateStatus.useMutation({
-    onSuccess: () => {
-      toast({
-        title: t("catering.statusUpdated"),
-        description: t("catering.statusUpdatedDescription"),
-      });
-      void refetchInquiries();
-    },
-    onError: (err) => {
-      toast({
-        title: t("toast.error"),
-        description: err.message,
-        variant: "destructive",
-      });
-    },
-  });
-
   // ── Handlers ───────────────────────────────────────────────
 
   const handleCreate = useCallback(() => {
@@ -648,8 +947,9 @@ export function CateringDashboardPage() {
 
   const handleTogglePublish = useCallback(
     (id: string) => {
-      // Find the menu to determine current isActive state, then toggle it
-      const menu = menus?.find((m: { id: string }) => m.id === id) as CateringMenu | undefined;
+      const menu = menus?.find(
+        (m: { id: string }) => m.id === id,
+      ) as CateringMenu | undefined;
       togglePublishMutation.mutate({
         menuId: id,
         isPublished: menu ? !menu.isPublished : true,
@@ -667,20 +967,6 @@ export function CateringDashboardPage() {
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [deleteMutation.mutate, t],
-  );
-
-  const handleUpdateInquiryStatus = useCallback(
-    (id: string, status: string) => {
-      // TODO: The status values used in the UI (pending, reviewed, quoted, etc.)
-      // differ from the events router statuses (inquiry, quote_sent, confirmed, etc.).
-      // A proper mapping between the two status systems is needed.
-      updateStatusMutation.mutate({
-        eventId: id,
-        newStatus: status as "inquiry" | "reviewed" | "quoted" | "accepted" | "declined" | "deposit_paid" | "confirmed" | "prep" | "setup" | "execution" | "completed" | "settled" | "cancelled",
-      });
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [updateStatusMutation.mutate],
   );
 
   const handleFormClose = useCallback(() => {
@@ -721,7 +1007,7 @@ export function CateringDashboardPage() {
         {/* Page Header */}
         <DashboardPageHeader
           title={t("catering.title")}
-          description={t("catering.description")}
+          description={t("catering.subtitle")}
           icon={<UtensilsCrossed className="h-5 w-5" />}
           actions={
             <Button
@@ -736,11 +1022,7 @@ export function CateringDashboardPage() {
         />
 
         {/* Tabs */}
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="w-full"
-        >
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="h-auto gap-1 rounded-xl bg-muted/40 p-1">
             <TabsTrigger
               value="menus"
@@ -755,34 +1037,46 @@ export function CateringDashboardPage() {
               </span>
             </TabsTrigger>
             <TabsTrigger
-              value="inquiries"
+              value="items"
               className="gap-2 rounded-lg px-4 py-2.5 data-[state=active]:shadow-sm"
             >
-              <ClipboardList className="h-4 w-4" />
+              <UtensilsCrossed className="h-4 w-4" />
               <span className="hidden sm:inline">
-                {t("catering.tabs.inquiries")}
+                {t("catering.tabs.items")}
               </span>
               <span className="sm:hidden">
-                {t("catering.tabs.inquiriesShort")}
+                {t("catering.tabs.itemsShort")}
               </span>
             </TabsTrigger>
             <TabsTrigger
-              value="analytics"
+              value="packages"
               className="gap-2 rounded-lg px-4 py-2.5 data-[state=active]:shadow-sm"
             >
-              <BarChart3 className="h-4 w-4" />
+              <Package className="h-4 w-4" />
               <span className="hidden sm:inline">
-                {t("catering.tabs.analytics")}
+                {t("catering.tabs.packages")}
               </span>
               <span className="sm:hidden">
-                {t("catering.tabs.analyticsShort")}
+                {t("catering.tabs.packagesShort")}
+              </span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="categories"
+              className="gap-2 rounded-lg px-4 py-2.5 data-[state=active]:shadow-sm"
+            >
+              <Layers className="h-4 w-4" />
+              <span className="hidden sm:inline">
+                {t("catering.tabs.categories")}
+              </span>
+              <span className="sm:hidden">
+                {t("catering.tabs.categoriesShort")}
               </span>
             </TabsTrigger>
           </TabsList>
 
-          {/* ────────────────────────────────────────────────────── */}
-          {/* Tab 1: My Catering Menus                               */}
-          {/* ────────────────────────────────────────────────────── */}
+          {/* ───────────────────────────────────────────────────── */}
+          {/* Tab 1: My Catering Menus                              */}
+          {/* ───────────────────────────────────────────────────── */}
           <TabsContent value="menus" className="mt-6">
             {!menus?.length ? (
               <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-8 text-center">
@@ -814,178 +1108,58 @@ export function CateringDashboardPage() {
                     onTogglePublish={handleTogglePublish}
                     onDelete={handleDelete}
                     isToggling={togglePublishMutation.isLoading}
-                    t={
-                      t as (
-                        key: string,
-                        opts?: Record<string, unknown>,
-                      ) => string
-                    }
+                    t={t}
                   />
                 ))}
               </div>
             )}
           </TabsContent>
 
-          {/* ────────────────────────────────────────────────────── */}
-          {/* Tab 2: Inquiries                                       */}
-          {/* ────────────────────────────────────────────────────── */}
-          <TabsContent value="inquiries" className="mt-6 space-y-4">
-            {/* Status filter pills */}
-            <div className="flex flex-wrap gap-1.5">
-              {INQUIRY_STATUSES.map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setInquiryFilter(status)}
-                  className={cn(
-                    "rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200",
-                    inquiryFilter === status
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground",
-                  )}
-                >
-                  {status === "all"
-                    ? t("catering.filterAll")
-                    : t(`catering.statuses.${status}`)}
-                </button>
-              ))}
-            </div>
-
-            {/* Inquiries list */}
-            {inquiriesLoading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="rounded-xl border border-border/50 bg-card p-4 space-y-2"
-                  >
-                    <Skeleton className="h-5 w-40" />
-                    <Skeleton className="h-4 w-64" />
-                    <Skeleton className="h-4 w-48" />
-                  </div>
-                ))}
-              </div>
-            ) : !inquiries?.length ? (
-              <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-8 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                  <ClipboardList className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold">
-                  {t("catering.noInquiries")}
-                </h3>
-                <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-                  {t("catering.noInquiriesDescription")}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {inquiries.map((inquiry) => (
-                  <InquiryCard
-                    key={inquiry.id}
-                    inquiry={inquiry}
-                    onUpdateStatus={handleUpdateInquiryStatus}
-                    isUpdating={updateStatusMutation.isLoading}
-                    t={
-                      t as (
-                        key: string,
-                        opts?: Record<string, unknown>,
-                      ) => string
-                    }
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          {/* ────────────────────────────────────────────────────── */}
-          {/* Tab 3: Analytics                                       */}
-          {/* ────────────────────────────────────────────────────── */}
-          <TabsContent value="analytics" className="mt-6 space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <OverviewCard
-                title={t("catering.analytics.totalInquiries")}
-                value={stats?.totalInquiries ?? 0}
-                icon={ClipboardList}
-                loading={statsLoading}
-              />
-              <OverviewCard
-                title={t("catering.analytics.confirmedBookings")}
-                value={stats?.confirmedBookings ?? 0}
-                icon={CheckCircle}
-                loading={statsLoading}
-                gradient="bg-gradient-to-br from-green-500/20 to-green-500/5"
-              />
-              <OverviewCard
-                title={t("catering.analytics.totalRevenue")}
-                value={
-                  stats
-                    ? formatPrice(stats.totalRevenue)
-                    : "0.00"
-                }
-                icon={TrendingUp}
-                loading={statsLoading}
-                gradient="bg-gradient-to-br from-amber-500/20 to-amber-500/5"
-              />
-              <OverviewCard
-                title={t("catering.analytics.avgGuestCount")}
-                value={stats?.avgGuestCount ?? 0}
-                icon={Users}
-                loading={statsLoading}
-                gradient="bg-gradient-to-br from-blue-500/20 to-blue-500/5"
-              />
-            </div>
-
-            {/* Quick summary */}
-            <div className="rounded-xl border border-border/40 bg-card/60 p-6">
-              <h3 className="font-semibold">
-                {t("catering.analytics.recentActivity")}
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("catering.analytics.recentActivityDescription")}
-              </p>
-              {inquiriesLoading ? (
-                <div className="mt-4 space-y-2">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <Skeleton key={i} className="h-10 w-full" />
-                  ))}
-                </div>
-              ) : !inquiries?.length ? (
-                <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                  <AlertCircle className="h-4 w-4" />
-                  {t("catering.analytics.noRecentActivity")}
-                </div>
-              ) : (
-                <div className="mt-4 space-y-2">
-                  {inquiries.slice(0, 5).map((inquiry: CateringInquiry) => (
-                    <div
-                      key={inquiry.id}
-                      className="flex items-center justify-between rounded-lg bg-muted/30 px-3 py-2 text-sm"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="font-medium">
-                          {inquiry.customerName}
-                        </span>
-                        <span
-                          className={cn(
-                            "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                            getStatusColor(inquiry.status),
-                          )}
-                        >
-                          {t(`catering.statuses.${inquiry.status}`)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3 text-muted-foreground">
-                        <span>
-                          {inquiry.guestCount} {t("catering.guests")}
-                        </span>
-                        <span>
-                          {new Date(inquiry.eventDate).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          {/* ───────────────────────────────────────────────────── */}
+          {/* Tab 2: All Items                                      */}
+          {/* ───────────────────────────────────────────────────── */}
+          <TabsContent value="items" className="mt-6">
+            <MenusDetailLoader menus={menus} enabled={activeTab === "items"}>
+              {(fullMenus, loading) => (
+                <GlobalItemsTab menus={fullMenus} isLoading={loading} t={t} />
               )}
-            </div>
+            </MenusDetailLoader>
+          </TabsContent>
+
+          {/* ───────────────────────────────────────────────────── */}
+          {/* Tab 3: All Packages                                   */}
+          {/* ───────────────────────────────────────────────────── */}
+          <TabsContent value="packages" className="mt-6">
+            <MenusDetailLoader
+              menus={menus}
+              enabled={activeTab === "packages"}
+            >
+              {(fullMenus, loading) => (
+                <GlobalPackagesTab
+                  menus={fullMenus}
+                  isLoading={loading}
+                  t={t}
+                />
+              )}
+            </MenusDetailLoader>
+          </TabsContent>
+
+          {/* ───────────────────────────────────────────────────── */}
+          {/* Tab 4: All Categories                                 */}
+          {/* ───────────────────────────────────────────────────── */}
+          <TabsContent value="categories" className="mt-6">
+            <MenusDetailLoader
+              menus={menus}
+              enabled={activeTab === "categories"}
+            >
+              {(fullMenus, loading) => (
+                <GlobalCategoriesTab
+                  menus={fullMenus}
+                  isLoading={loading}
+                  t={t}
+                />
+              )}
+            </MenusDetailLoader>
           </TabsContent>
         </Tabs>
       </DashboardShell>
@@ -1001,4 +1175,91 @@ export function CateringDashboardPage() {
       />
     </main>
   );
+}
+
+// ---------------------------------------------------------------------------
+// MenusDetailLoader — fetches full menu details for each menu in the list.
+// Uses individual getById queries and combines the results.
+// ---------------------------------------------------------------------------
+
+function MenusDetailLoader({
+  menus,
+  enabled,
+  children,
+}: {
+  menus: CateringMenu[] | undefined;
+  enabled: boolean;
+  children: (
+    fullMenus: CateringMenuFull[] | undefined,
+    isLoading: boolean,
+  ) => React.ReactNode;
+}) {
+  // We need to call useQuery for each menu, but the number of menus is
+  // dynamic. To respect the rules of hooks, we always query the first menu
+  // ID (or skip). For multiple menus, we use a workaround: query only the
+  // first 10 menus maximum to keep the hook count stable.
+  //
+  // A cleaner solution would be to add a "listWithDetails" endpoint to the
+  // router, but for now this works with the existing API.
+
+  const menuIds = (menus ?? []).map((m) => m.id).slice(0, 10);
+
+  // We must always call hooks in the same order, so we create a fixed
+  // array of 10 possible queries.
+  const q0 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[0] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 0 },
+  );
+  const q1 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[1] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 1 },
+  );
+  const q2 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[2] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 2 },
+  );
+  const q3 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[3] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 3 },
+  );
+  const q4 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[4] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 4 },
+  );
+  const q5 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[5] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 5 },
+  );
+  const q6 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[6] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 6 },
+  );
+  const q7 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[7] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 7 },
+  );
+  const q8 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[8] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 8 },
+  );
+  const q9 = api.cateringMenus.getById.useQuery(
+    { menuId: menuIds[9] ?? "00000000-0000-0000-0000-000000000000" },
+    { enabled: enabled && menuIds.length > 9 },
+  );
+
+  const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
+  const activeQueries = queries.slice(0, menuIds.length);
+
+  const isLoading =
+    !enabled || activeQueries.some((q) => q.isLoading && q.fetchStatus !== "idle");
+
+  const fullMenus: CateringMenuFull[] = [];
+  for (let i = 0; i < menuIds.length; i++) {
+    const data = queries[i]?.data;
+    if (data) {
+      fullMenus.push(data as unknown as CateringMenuFull);
+    }
+  }
+
+  return <>{children(fullMenus.length > 0 ? fullMenus : undefined, isLoading)}</>;
 }

@@ -49,6 +49,13 @@ export const env = createEnv({
     VAPID_PRIVATE_KEY: z.string().optional().default(""),
     SENTRY_DSN: z.string().url().optional().or(z.literal("")),
     CRM_ENCRYPTION_KEY: z.string().optional().default(""),
+    // Email notifications (Resend)
+    RESEND_API_KEY: z.string().optional().default(""),
+    EMAIL_FROM_ADDRESS: z.string().optional().default("Diyafa <noreply@diyafa.ma>"),
+    // WhatsApp Business Cloud API (Meta)
+    WHATSAPP_API_TOKEN: z.string().optional().default(""),
+    WHATSAPP_PHONE_NUMBER_ID: z.string().optional().default(""),
+    WHATSAPP_VERIFY_TOKEN: z.string().optional().default(""),
   },
 
   /**
@@ -92,6 +99,11 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     SENTRY_DSN: process.env.SENTRY_DSN ?? "",
     CRM_ENCRYPTION_KEY: process.env.CRM_ENCRYPTION_KEY,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    EMAIL_FROM_ADDRESS: process.env.EMAIL_FROM_ADDRESS,
+    WHATSAPP_API_TOKEN: process.env.WHATSAPP_API_TOKEN,
+    WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID,
+    WHATSAPP_VERIFY_TOKEN: process.env.WHATSAPP_VERIFY_TOKEN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

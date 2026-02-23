@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { api } from "~/trpc/react";
 import { LoadingScreen } from "~/components/Loading";
 import { DashboardShell } from "~/pageComponents/Dashboard/molecules/Shell";
@@ -51,12 +51,6 @@ import {
   Users,
   Calendar,
   DollarSign,
-  Mail,
-  Phone,
-  Send,
-  CheckCircle,
-  XCircle,
-  Eye,
   AlertCircle,
 } from "lucide-react";
 
@@ -67,57 +61,78 @@ import {
 type CateringMenuFull = {
   id: string;
   name: string;
+  slug: string;
   description: string | null;
-  city: string | null;
   eventType: string;
+  menuType: string;
   isPublished: boolean;
-  minGuests: number | null;
+  isActive: boolean;
+  isFeatured: boolean;
+  minGuests: number;
   maxGuests: number | null;
-  basePricePerPerson: number | null;
-  leadTimeDays: number | null;
-  contactPhone: string | null;
-  contactEmail: string | null;
-  serviceDelivery: boolean;
-  serviceSetup: boolean;
-  serviceStaff: boolean;
-  serviceEquipment: boolean;
-  serviceCleanup: boolean;
-  themeColors: Record<string, string> | null;
-  themeFont: string | null;
-  themeLayout: string | null;
+  basePricePerPerson: number;
+  cuisineType: string | null;
+  dietaryTags: string[];
+  leadTimeDays: number;
+  serviceOptions: Record<string, boolean>;
   packages: CateringPackage[];
   categories: CateringCategory[];
-  inquiries: CateringInquiry[];
 };
 
 type CateringPackage = {
   id: string;
+  cateringMenuId: string;
   name: string;
+  nameAr: string | null;
+  nameFr: string | null;
   description: string | null;
   pricePerPerson: number;
+  minGuests: number;
+  maxGuests: number | null;
+  isFeatured: boolean;
   sortOrder: number;
-  itemIds: string[];
-  _count?: { items: number };
+  imageUrl: string | null;
+  includesText: string | null;
+  packageItems: {
+    id: string;
+    item: CateringItem;
+  }[];
 };
 
 type CateringCategory = {
   id: string;
+  cateringMenuId: string;
   name: string;
+  nameAr: string | null;
+  nameFr: string | null;
+  description: string | null;
   sortOrder: number;
-  items: CateringItem[];
+  isOptional: boolean;
+  maxSelections: number | null;
+  cateringItems: CateringItem[];
 };
 
 type CateringItem = {
   id: string;
+  cateringCategoryId: string;
+  cateringMenuId: string;
   name: string;
+  nameAr: string | null;
+  nameFr: string | null;
   description: string | null;
-  price: number;
+  pricePerPerson: number | null;
+  pricePerUnit: number | null;
+  unitLabel: string | null;
+  isIncluded: boolean;
+  isOptional: boolean;
   isAvailable: boolean;
-  isHalal: boolean;
   isVegetarian: boolean;
   isVegan: boolean;
+  isHalal: boolean;
   isGlutenFree: boolean;
-  categoryId: string;
+  allergens: string[];
+  imageUrl: string | null;
+  sortOrder: number;
 };
 
 type CateringInquiry = {
@@ -178,19 +193,19 @@ const EVENT_TYPES = [
 function getStatusColor(status: string): string {
   switch (status) {
     case "pending":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+      return "bg-gold/10 text-gold dark:bg-gold/20 dark:text-gold";
     case "reviewed":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      return "bg-[hsl(var(--majorelle-blue))]/10 text-[hsl(var(--majorelle-blue))] dark:bg-[hsl(var(--majorelle-blue))]/20 dark:text-[hsl(var(--majorelle-blue))]";
     case "quoted":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
+      return "bg-[hsl(var(--saffron))]/10 text-[hsl(var(--saffron))] dark:bg-[hsl(var(--saffron))]/20 dark:text-[hsl(var(--saffron))]";
     case "confirmed":
-      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+      return "bg-sage/10 text-sage dark:bg-sage/20 dark:text-sage";
     case "deposit_paid":
-      return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
+      return "bg-[hsl(var(--mint-tea))]/10 text-[hsl(var(--mint-tea))] dark:bg-[hsl(var(--mint-tea))]/20 dark:text-[hsl(var(--mint-tea))]";
     case "completed":
-      return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+      return "bg-muted text-muted-foreground dark:bg-muted dark:text-muted-foreground";
     case "cancelled":
-      return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      return "bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive";
     default:
       return "bg-muted text-muted-foreground";
   }
@@ -212,7 +227,7 @@ function DietaryBadges({
       {item.isHalal && (
         <Badge
           variant="outline"
-          className="border-green-300 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400 text-xs px-1.5 py-0"
+          className="border-sage/30 bg-sage/10 text-sage dark:border-sage/40 dark:bg-sage/20 dark:text-sage text-xs px-1.5 py-0"
         >
           {t("catering.dietary.halal")}
         </Badge>
@@ -220,7 +235,7 @@ function DietaryBadges({
       {item.isVegetarian && (
         <Badge
           variant="outline"
-          className="border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-400 text-xs px-1.5 py-0"
+          className="border-[hsl(var(--mint-tea))]/30 bg-[hsl(var(--mint-tea))]/10 text-[hsl(var(--mint-tea))] dark:border-[hsl(var(--mint-tea))]/40 dark:bg-[hsl(var(--mint-tea))]/20 dark:text-[hsl(var(--mint-tea))] text-xs px-1.5 py-0"
         >
           <Leaf className="mr-0.5 h-3 w-3" />
           {t("catering.dietary.vegetarian")}
@@ -229,7 +244,7 @@ function DietaryBadges({
       {item.isVegan && (
         <Badge
           variant="outline"
-          className="border-lime-300 bg-lime-50 text-lime-700 dark:border-lime-800 dark:bg-lime-950 dark:text-lime-400 text-xs px-1.5 py-0"
+          className="border-[hsl(var(--zellige-teal))]/30 bg-[hsl(var(--zellige-teal))]/10 text-[hsl(var(--zellige-teal))] dark:border-[hsl(var(--zellige-teal))]/40 dark:bg-[hsl(var(--zellige-teal))]/20 dark:text-[hsl(var(--zellige-teal))] text-xs px-1.5 py-0"
         >
           <Leaf className="mr-0.5 h-3 w-3" />
           {t("catering.dietary.vegan")}
@@ -238,7 +253,7 @@ function DietaryBadges({
       {item.isGlutenFree && (
         <Badge
           variant="outline"
-          className="border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-400 text-xs px-1.5 py-0"
+          className="border-[hsl(var(--saffron))]/30 bg-[hsl(var(--saffron))]/10 text-[hsl(var(--saffron))] dark:border-[hsl(var(--saffron))]/40 dark:bg-[hsl(var(--saffron))]/20 dark:text-[hsl(var(--saffron))] text-xs px-1.5 py-0"
         >
           <Wheat className="mr-0.5 h-3 w-3" />
           {t("catering.dietary.glutenFree")}
@@ -263,12 +278,11 @@ function DetailsTab({
   const { t: rawT } = useTranslation();
   const t = rawT as (key: string, opts?: Record<string, unknown>) => string;
 
+  const svcOpts = (menu.serviceOptions ?? {}) as Record<string, boolean>;
+
   const [name, setName] = useState(menu.name);
   const [description, setDescription] = useState(menu.description ?? "");
-  const [city, setCity] = useState(menu.city ?? "");
   const [eventType, setEventType] = useState(menu.eventType);
-  const [contactPhone, setContactPhone] = useState(menu.contactPhone ?? "");
-  const [contactEmail, setContactEmail] = useState(menu.contactEmail ?? "");
   const [minGuests, setMinGuests] = useState(menu.minGuests?.toString() ?? "");
   const [maxGuests, setMaxGuests] = useState(menu.maxGuests?.toString() ?? "");
   const [basePricePerPerson, setBasePricePerPerson] = useState(
@@ -279,13 +293,13 @@ function DetailsTab({
   const [leadTimeDays, setLeadTimeDays] = useState(
     menu.leadTimeDays?.toString() ?? "",
   );
-  const [serviceDelivery, setServiceDelivery] = useState(menu.serviceDelivery);
-  const [serviceSetup, setServiceSetup] = useState(menu.serviceSetup);
-  const [serviceStaff, setServiceStaff] = useState(menu.serviceStaff);
+  const [serviceDelivery, setServiceDelivery] = useState(svcOpts.delivery ?? false);
+  const [serviceSetup, setServiceSetup] = useState(svcOpts.setup ?? false);
+  const [serviceStaff, setServiceStaff] = useState(svcOpts.staffService ?? false);
   const [serviceEquipment, setServiceEquipment] = useState(
-    menu.serviceEquipment,
+    svcOpts.equipmentRental ?? false,
   );
-  const [serviceCleanup, setServiceCleanup] = useState(menu.serviceCleanup);
+  const [serviceCleanup, setServiceCleanup] = useState(svcOpts.cleanup ?? false);
 
   const updateMutation = api.cateringMenus.update.useMutation({
     onSuccess: () => {
@@ -306,7 +320,6 @@ function DetailsTab({
 
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    // cateringMenus.update takes flat fields with menuId, not nested { id, data }
     updateMutation.mutate({
       menuId: menu.id,
       name: name.trim(),
@@ -317,9 +330,6 @@ function DetailsTab({
         ? Math.round(parseFloat(basePricePerPerson) * 100)
         : undefined,
       eventType: eventType || undefined,
-      // TODO: city, contactPhone, contactEmail, leadTimeDays, and
-      // serviceOptions are not accepted by cateringMenus.update. These fields
-      // need to be added to the router or handled via a different endpoint.
     });
   }
 
@@ -345,55 +355,20 @@ function DetailsTab({
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="detail-city">{t("catering.form.city")}</Label>
-          <Input
-            id="detail-city"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>{t("catering.form.eventType")}</Label>
-          <Select value={eventType} onValueChange={setEventType}>
-            <SelectTrigger className="rounded-lg">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {EVENT_TYPES.map((type) => (
-                <SelectItem key={type} value={type}>
-                  {t(`catering.eventTypes.${type}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="detail-phone">
-            {t("catering.form.contactPhone")}
-          </Label>
-          <Input
-            id="detail-phone"
-            type="tel"
-            value={contactPhone}
-            onChange={(e) => setContactPhone(e.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="detail-email">
-            {t("catering.form.contactEmail")}
-          </Label>
-          <Input
-            id="detail-email"
-            type="email"
-            value={contactEmail}
-            onChange={(e) => setContactEmail(e.target.value)}
-          />
-        </div>
+      <div className="space-y-2">
+        <Label>{t("catering.form.eventType")}</Label>
+        <Select value={eventType} onValueChange={setEventType}>
+          <SelectTrigger className="max-w-xs rounded-lg">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {EVENT_TYPES.map((type) => (
+              <SelectItem key={type} value={type}>
+                {t(`catering.eventTypes.${type}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -516,37 +491,61 @@ function PackagesTab({
   const [pkgDescription, setPkgDescription] = useState("");
   const [pkgPrice, setPkgPrice] = useState("");
 
-  // TODO: Package CRUD endpoints (createPackage, updatePackage, deletePackage,
-  // reorderPackages) do not exist in any router. The cateringMenus router only
-  // handles menu-level and item-level operations. Package endpoints need to be
-  // added to the cateringMenus router before these mutations can work.
-  const createMutation = {
-    mutate: (_input: Record<string, unknown>) => {
-      toast({ title: "TODO: createPackage endpoint not yet implemented", variant: "destructive" as const });
+  const createMutation = api.cateringMenus.createPackage.useMutation({
+    onSuccess: () => {
+      toast({ title: t("catering.packageCreated") });
+      setDialogOpen(false);
+      onRefetch();
     },
-    isLoading: false,
-  };
+    onError: (err) => {
+      toast({
+        title: t("toast.error"),
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
 
-  const updateMutation = {
-    mutate: (_input: Record<string, unknown>) => {
-      toast({ title: "TODO: updatePackage endpoint not yet implemented", variant: "destructive" as const });
+  const updateMutation = api.cateringMenus.updatePackage.useMutation({
+    onSuccess: () => {
+      toast({ title: t("catering.packageUpdated") });
+      setDialogOpen(false);
+      setEditingPkg(null);
+      onRefetch();
     },
-    isLoading: false,
-  };
+    onError: (err) => {
+      toast({
+        title: t("toast.error"),
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
 
-  const deleteMutation = {
-    mutate: (_input: Record<string, unknown>) => {
-      toast({ title: "TODO: deletePackage endpoint not yet implemented", variant: "destructive" as const });
+  const deleteMutation = api.cateringMenus.deletePackage.useMutation({
+    onSuccess: () => {
+      toast({ title: t("catering.packageDeleted") });
+      onRefetch();
     },
-    isLoading: false,
-  };
+    onError: (err) => {
+      toast({
+        title: t("toast.error"),
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
 
-  const reorderMutation = {
-    mutate: (_input: Record<string, unknown>) => {
-      // TODO: reorderPackages endpoint not yet implemented
+  const reorderMutation = api.cateringMenus.reorderPackages.useMutation({
+    onSuccess: () => onRefetch(),
+    onError: (err) => {
+      toast({
+        title: t("toast.error"),
+        description: err.message,
+        variant: "destructive",
+      });
     },
-    isLoading: false,
-  };
+  });
 
   function openCreate() {
     setEditingPkg(null);
@@ -570,16 +569,14 @@ function PackagesTab({
 
     if (editingPkg) {
       updateMutation.mutate({
-        id: editingPkg.id,
-        data: {
-          name: pkgName.trim(),
-          description: pkgDescription.trim() || undefined,
-          pricePerPerson: priceInCents,
-        },
+        packageId: editingPkg.id,
+        name: pkgName.trim(),
+        description: pkgDescription.trim() || undefined,
+        pricePerPerson: priceInCents,
       });
     } else {
       createMutation.mutate({
-        cateringMenuId: menu.id,
+        menuId: menu.id,
         name: pkgName.trim(),
         description: pkgDescription.trim() || undefined,
         pricePerPerson: priceInCents,
@@ -603,8 +600,11 @@ function PackagesTab({
     });
 
     reorderMutation.mutate({
-      cateringMenuId: menu.id,
-      orderedIds: newOrder.sort((a, b) => a.sortOrder - b.sortOrder).map((p) => p.id),
+      menuId: menu.id,
+      packages: newOrder.sort((a, b) => a.sortOrder - b.sortOrder).map((p, i) => ({
+        id: p.id,
+        sortOrder: i,
+      })),
     });
   }
 
@@ -670,9 +670,9 @@ function PackagesTab({
                       {pkg.description}
                     </p>
                   )}
-                  {pkg._count && (
+                  {pkg.packageItems && pkg.packageItems.length > 0 && (
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {pkg._count.items} {t("catering.items.title")}
+                      {pkg.packageItems.length} {t("catering.items.title")}
                     </p>
                   )}
                 </div>
@@ -690,7 +690,7 @@ function PackagesTab({
                     className="text-destructive hover:text-destructive"
                     onClick={() => {
                       if (window.confirm(t("catering.deletePackageConfirm"))) {
-                        deleteMutation.mutate({ id: pkg.id });
+                        deleteMutation.mutate({ packageId: pkg.id });
                       }
                     }}
                   >
@@ -815,31 +815,51 @@ function ItemsTab({
   const [itemGlutenFree, setItemGlutenFree] = useState(false);
 
   // ── Category mutations ─────────────────────────────────────
-  // TODO: Category CRUD endpoints (createCategory, updateCategory,
-  // deleteCategory) do not exist in any router. The cateringMenus router
-  // groups items by category field on each item, not via a separate
-  // categories table. These endpoints need to be added.
 
-  const createCatMutation = {
-    mutate: (_input: Record<string, unknown>) => {
-      toast({ title: "TODO: createCategory endpoint not yet implemented", variant: "destructive" as const });
+  const createCatMutation = api.cateringMenus.addCategory.useMutation({
+    onSuccess: () => {
+      toast({ title: t("catering.categoryCreated") });
+      setCatDialogOpen(false);
+      onRefetch();
     },
-    isLoading: false,
-  };
+    onError: (err) => {
+      toast({
+        title: t("toast.error"),
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
 
-  const updateCatMutation = {
-    mutate: (_input: Record<string, unknown>) => {
-      toast({ title: "TODO: updateCategory endpoint not yet implemented", variant: "destructive" as const });
+  const updateCatMutation = api.cateringMenus.updateCategory.useMutation({
+    onSuccess: () => {
+      toast({ title: t("catering.categoryUpdated") });
+      setCatDialogOpen(false);
+      setEditingCat(null);
+      onRefetch();
     },
-    isLoading: false,
-  };
+    onError: (err) => {
+      toast({
+        title: t("toast.error"),
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
 
-  const deleteCatMutation = {
-    mutate: (_input: Record<string, unknown>) => {
-      toast({ title: "TODO: deleteCategory endpoint not yet implemented", variant: "destructive" as const });
+  const deleteCatMutation = api.cateringMenus.deleteCategory.useMutation({
+    onSuccess: () => {
+      toast({ title: t("catering.categoryDeleted") });
+      onRefetch();
     },
-    isLoading: false,
-  };
+    onError: (err) => {
+      toast({
+        title: t("toast.error"),
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   // ── Item mutations ─────────────────────────────────────────
 
@@ -919,12 +939,12 @@ function ItemsTab({
     e.preventDefault();
     if (editingCat) {
       updateCatMutation.mutate({
-        id: editingCat.id,
-        data: { name: catName.trim() },
+        categoryId: editingCat.id,
+        name: catName.trim(),
       });
     } else {
       createCatMutation.mutate({
-        cateringMenuId: menu.id,
+        menuId: menu.id,
         name: catName.trim(),
       });
     }
@@ -947,10 +967,10 @@ function ItemsTab({
 
   function openEditItem(item: CateringItem) {
     setEditingItem(item);
-    setItemCatId(item.categoryId);
+    setItemCatId(item.cateringCategoryId);
     setItemName(item.name);
     setItemDescription(item.description ?? "");
-    setItemPrice((item.price / 100).toFixed(2));
+    setItemPrice(((item.pricePerPerson ?? item.pricePerUnit ?? 0) / 100).toFixed(2));
     setItemHalal(item.isHalal);
     setItemVegetarian(item.isVegetarian);
     setItemVegan(item.isVegan);
@@ -1049,7 +1069,7 @@ function ItemsTab({
                       if (
                         window.confirm(t("catering.deleteCategoryConfirm"))
                       ) {
-                        deleteCatMutation.mutate({ id: cat.id });
+                        deleteCatMutation.mutate({ categoryId: cat.id });
                       }
                     }}
                   >
@@ -1059,13 +1079,13 @@ function ItemsTab({
               </div>
 
               {/* Items list */}
-              {!cat.items?.length ? (
+              {!cat.cateringItems?.length ? (
                 <div className="px-4 py-6 text-center text-sm text-muted-foreground">
                   {t("catering.noItems")}
                 </div>
               ) : (
                 <div className="divide-y divide-border/30">
-                  {cat.items.map((item) => (
+                  {cat.cateringItems.map((item) => (
                     <div
                       key={item.id}
                       className={cn(
@@ -1077,7 +1097,7 @@ function ItemsTab({
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{item.name}</span>
                           <span className="text-sm text-primary font-semibold">
-                            {formatPrice(item.price)}
+                            {formatPrice(item.pricePerPerson ?? item.pricePerUnit ?? 0)}
                           </span>
                         </div>
                         {item.description && (
@@ -1109,7 +1129,7 @@ function ItemsTab({
                           }
                         >
                           {item.isAvailable ? (
-                            <Check className="h-3.5 w-3.5 text-green-600" />
+                            <Check className="h-3.5 w-3.5 text-sage" />
                           ) : (
                             <X className="h-3.5 w-3.5 text-muted-foreground" />
                           )}
@@ -1335,20 +1355,13 @@ function ThemeTab({
   const { t: rawT } = useTranslation();
   const t = rawT as (key: string, opts?: Record<string, unknown>) => string;
 
-  const [primaryColor, setPrimaryColor] = useState(
-    menu.themeColors?.primary ?? "#f97316",
-  );
-  const [backgroundColor, setBackgroundColor] = useState(
-    menu.themeColors?.background ?? "#ffffff",
-  );
-  const [textColor, setTextColor] = useState(
-    menu.themeColors?.text ?? "#1a1a1a",
-  );
-  const [accentColor, setAccentColor] = useState(
-    menu.themeColors?.accent ?? "#fbbf24",
-  );
-  const [font, setFont] = useState(menu.themeFont ?? "sans-serif");
-  const [layout, setLayout] = useState(menu.themeLayout ?? "classic");
+  // Theme is org-level, not per-menu. Use defaults for initial state.
+  const [primaryColor, setPrimaryColor] = useState("#f97316");
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
+  const [textColor, setTextColor] = useState("#1a1a1a");
+  const [accentColor, setAccentColor] = useState("#fbbf24");
+  const [font, setFont] = useState("sans-serif");
+  const [layout, setLayout] = useState("classic");
 
   // Theme is managed at the org level via orgThemes router, not per-menu
   const saveMutation = api.orgThemes.upsert.useMutation({
@@ -1730,31 +1743,31 @@ export function CateringMenuEditor({ menuId, onBack }: CateringMenuEditorProps) 
         <div className="min-w-0 flex-1 rounded-xl border border-border/40 bg-card/30 p-6">
           {activeTab === "details" && (
             <DetailsTab
-              menu={menu as unknown as CateringMenuFull}
+              menu={menu as CateringMenuFull}
               onRefetch={handleRefetch}
             />
           )}
           {activeTab === "packages" && (
             <PackagesTab
-              menu={menu as unknown as CateringMenuFull}
+              menu={menu as CateringMenuFull}
               onRefetch={handleRefetch}
             />
           )}
           {activeTab === "items" && (
             <ItemsTab
-              menu={menu as unknown as CateringMenuFull}
+              menu={menu as CateringMenuFull}
               onRefetch={handleRefetch}
             />
           )}
           {activeTab === "theme" && (
             <ThemeTab
-              menu={menu as unknown as CateringMenuFull}
+              menu={menu as CateringMenuFull}
               onRefetch={handleRefetch}
             />
           )}
           {activeTab === "inquiries" && (
             <EditorInquiriesTab
-              inquiries={(menu as unknown as CateringMenuFull).inquiries ?? []}
+              inquiries={[]}
               t={
                 t as (
                   key: string,

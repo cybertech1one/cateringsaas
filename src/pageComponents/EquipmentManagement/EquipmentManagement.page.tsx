@@ -275,10 +275,10 @@ function EquipmentCard({
         <div className="flex items-center gap-2 mb-2">
           <Progress
             value={pct}
-            className={`h-2 flex-1 ${isLow ? "[&>div]:bg-orange-500" : ""}`}
+            className={`h-2 flex-1 ${isLow ? "[&>div]:bg-[hsl(var(--harissa))]" : ""}`}
           />
           <span
-            className={`text-xs font-medium tabular-nums ${isLow ? "text-orange-600" : ""}`}
+            className={`text-xs font-medium tabular-nums ${isLow ? "text-[hsl(var(--harissa))]" : ""}`}
           >
             {item.quantityAvailable}/{item.quantityTotal}
           </span>

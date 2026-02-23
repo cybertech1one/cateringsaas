@@ -196,7 +196,7 @@ function ClientCard({
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-sm truncate">{client.name}</h3>
               {isVip && (
-                <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500 shrink-0" />
+                <Star className="h-3.5 w-3.5 text-gold fill-gold shrink-0" />
               )}
             </div>
             <div className="flex flex-wrap gap-1 mt-1.5">
@@ -576,18 +576,18 @@ function EventHistoryTable({ events }: { events: ClientEvent[] }) {
     switch (status) {
       case "completed":
       case "settled":
-        return "bg-green-100 text-green-800";
+        return "bg-sage/10 text-sage";
       case "confirmed":
       case "deposit_paid":
-        return "bg-blue-100 text-blue-800";
+        return "bg-[hsl(var(--majorelle-blue))]/10 text-[hsl(var(--majorelle-blue))]";
       case "cancelled":
       case "declined":
-        return "bg-red-100 text-red-800";
+        return "bg-destructive/10 text-destructive";
       case "inquiry":
       case "reviewed":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-gold/10 text-gold";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-muted-foreground";
     }
   }
 
@@ -754,7 +754,7 @@ function ClientDetailDialog({
                 <div className="flex items-center gap-2">
                   <DialogTitle className="text-xl">{detail.name}</DialogTitle>
                   {isVip && (
-                    <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                    <Star className="h-4 w-4 text-gold fill-gold" />
                   )}
                 </div>
                 <Button

@@ -296,6 +296,9 @@ export function createDish(overrides?: Partial<CateringItems>): CateringItems {
     imageUrl: null,
     sortOrder: counter % 20,
     isAvailable: true,
+    availableQuantity: null,
+    lowStockThreshold: 10,
+    reservedQuantity: 0,
     createdAt: recentDate(15),
     ...overrides,
   };

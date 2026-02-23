@@ -47,7 +47,7 @@ const eventNavItems: readonly SidebarNavItem[] = [
 const operationsNavItems: readonly SidebarNavItem[] = [
   {
     title: <TranslatedText id="dashboardSidenav.menus" />,
-    href: "/dashboard/menus",
+    href: "/dashboard/catering",
     icon: "menu",
   },
   {

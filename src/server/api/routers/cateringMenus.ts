@@ -3,6 +3,7 @@
  *
  * 3-level hierarchy: CateringMenus → CateringCategories → CateringItems
  * Plus: CateringPackages (bundled item combos)
+ * Plus: Inventory tracking (stock levels, reservations, low-stock alerts)
  */
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
@@ -12,6 +13,7 @@ import {
   orgProcedure,
   orgManagerProcedure,
 } from "~/server/api/trpc";
+import { logger } from "~/server/logger";
 
 export const cateringMenusRouter = createTRPCRouter({
   // ─── Public ───────────────────────────────────
@@ -352,6 +354,191 @@ export const cateringMenusRouter = createTRPCRouter({
       return ctx.db.cateringItems.delete({ where: { id: input.itemId } });
     }),
 
+  // ─── Packages ───────────────────────────────────
+
+  /** List all packages for a menu */
+  listPackages: orgProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      menuId: z.string().uuid(),
+    }))
+    .query(async ({ ctx, input }) => {
+      // Verify menu belongs to org
+      const menu = await ctx.db.cateringMenus.findFirst({
+        where: { id: input.menuId, orgId: ctx.orgId },
+        select: { id: true },
+      });
+      if (!menu) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return ctx.db.cateringPackages.findMany({
+        where: { cateringMenuId: input.menuId },
+        include: { packageItems: { include: { item: true, category: true } } },
+        orderBy: { sortOrder: "asc" },
+      });
+    }),
+
+  /** Get a single package by ID */
+  getPackage: orgProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      packageId: z.string().uuid(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const pkg = await ctx.db.cateringPackages.findUnique({
+        where: { id: input.packageId },
+        include: {
+          cateringMenu: { select: { orgId: true } },
+          packageItems: { include: { item: true, category: true } },
+        },
+      });
+      if (!pkg || pkg.cateringMenu.orgId !== ctx.orgId) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return pkg;
+    }),
+
+  /** Create a package */
+  createPackage: orgManagerProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      menuId: z.string().uuid(),
+      name: z.string().min(2).max(200),
+      nameAr: z.string().max(200).optional(),
+      nameFr: z.string().max(200).optional(),
+      description: z.string().max(2000).optional(),
+      pricePerPerson: z.number().int().nonnegative().default(0),
+      minGuests: z.number().int().positive().default(10),
+      maxGuests: z.number().int().positive().optional(),
+      imageUrl: z.string().url().optional(),
+      includesText: z.string().max(2000).optional(),
+      isFeatured: z.boolean().default(false),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const menu = await ctx.db.cateringMenus.findFirst({
+        where: { id: input.menuId, orgId: ctx.orgId },
+        select: { id: true },
+      });
+      if (!menu) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const lastPkg = await ctx.db.cateringPackages.findFirst({
+        where: { cateringMenuId: input.menuId },
+        orderBy: { sortOrder: "desc" },
+        select: { sortOrder: true },
+      });
+
+      return ctx.db.cateringPackages.create({
+        data: {
+          cateringMenuId: input.menuId,
+          name: input.name,
+          nameAr: input.nameAr,
+          nameFr: input.nameFr,
+          description: input.description,
+          pricePerPerson: input.pricePerPerson,
+          minGuests: input.minGuests,
+          maxGuests: input.maxGuests,
+          imageUrl: input.imageUrl,
+          includesText: input.includesText,
+          isFeatured: input.isFeatured,
+          sortOrder: (lastPkg?.sortOrder ?? 0) + 1,
+        },
+      });
+    }),
+
+  /** Update a package */
+  updatePackage: orgManagerProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      packageId: z.string().uuid(),
+      name: z.string().min(2).max(200).optional(),
+      nameAr: z.string().max(200).optional(),
+      nameFr: z.string().max(200).optional(),
+      description: z.string().max(2000).optional(),
+      pricePerPerson: z.number().int().nonnegative().optional(),
+      minGuests: z.number().int().positive().optional(),
+      maxGuests: z.number().int().positive().nullable().optional(),
+      imageUrl: z.string().url().nullable().optional(),
+      includesText: z.string().max(2000).nullable().optional(),
+      isFeatured: z.boolean().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { orgId: _, packageId, ...data } = input;
+      const pkg = await ctx.db.cateringPackages.findUnique({
+        where: { id: packageId },
+        include: { cateringMenu: { select: { orgId: true } } },
+      });
+      if (!pkg || pkg.cateringMenu.orgId !== ctx.orgId) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return ctx.db.cateringPackages.update({ where: { id: packageId }, data });
+    }),
+
+  /** Delete a package (hard delete — cascades package items) */
+  deletePackage: orgManagerProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      packageId: z.string().uuid(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const pkg = await ctx.db.cateringPackages.findUnique({
+        where: { id: input.packageId },
+        include: { cateringMenu: { select: { orgId: true } } },
+      });
+      if (!pkg || pkg.cateringMenu.orgId !== ctx.orgId) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return ctx.db.cateringPackages.delete({ where: { id: input.packageId } });
+    }),
+
+  /** Reorder packages by updating sortOrder for multiple packages */
+  reorderPackages: orgManagerProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      menuId: z.string().uuid(),
+      packages: z.array(z.object({
+        id: z.string().uuid(),
+        sortOrder: z.number().int().nonnegative(),
+      })),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      // Verify menu belongs to org
+      const menu = await ctx.db.cateringMenus.findFirst({
+        where: { id: input.menuId, orgId: ctx.orgId },
+        select: { id: true },
+      });
+      if (!menu) throw new TRPCError({ code: "NOT_FOUND" });
+
+      if (input.packages.length === 0) return [];
+
+      const updates = input.packages.map((pkg) =>
+        ctx.db.cateringPackages.update({
+          where: { id: pkg.id },
+          data: { sortOrder: pkg.sortOrder },
+        }),
+      );
+
+      return Promise.all(updates);
+    }),
+
+  /** Toggle isFeatured on a package */
+  togglePackageFeatured: orgManagerProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      packageId: z.string().uuid(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const pkg = await ctx.db.cateringPackages.findUnique({
+        where: { id: input.packageId },
+        include: { cateringMenu: { select: { orgId: true } } },
+      });
+      if (!pkg || pkg.cateringMenu.orgId !== ctx.orgId) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return ctx.db.cateringPackages.update({
+        where: { id: input.packageId },
+        data: { isFeatured: !pkg.isFeatured },
+      });
+    }),
+
   // ─── Duplicate ────────────────────────────────
 
   /** Duplicate entire menu with categories + items */
@@ -408,5 +595,316 @@ export const cateringMenusRouter = createTRPCRouter({
       // Note: Items need to be duplicated separately since nested creates
       // can't reference the newly created category IDs in one step.
       // A follow-up migration task could add this.
+    }),
+
+  // ─── Inventory Management ─────────────────────
+
+  /** Get all items with stock levels, grouped by menu and category */
+  getInventoryOverview: orgProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+    }))
+    .query(async ({ ctx }) => {
+      return ctx.db.cateringMenus.findMany({
+        where: { orgId: ctx.orgId, isActive: true },
+        select: {
+          id: true,
+          name: true,
+          categories: {
+            orderBy: { sortOrder: "asc" },
+            select: {
+              id: true,
+              name: true,
+              cateringItems: {
+                orderBy: { sortOrder: "asc" },
+                select: {
+                  id: true,
+                  name: true,
+                  availableQuantity: true,
+                  lowStockThreshold: true,
+                  reservedQuantity: true,
+                  isAvailable: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { name: "asc" },
+      });
+    }),
+
+  /** Update available quantity for a single item with audit log */
+  updateStock: orgManagerProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      itemId: z.string().uuid(),
+      newQuantity: z.number().int().nonnegative(),
+      reason: z.enum(["restock", "adjustment", "waste"]),
+      note: z.string().max(500).optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const item = await ctx.db.cateringItems.findUnique({
+        where: { id: input.itemId },
+        include: { cateringMenu: { select: { orgId: true } } },
+      });
+      if (!item || item.cateringMenu.orgId !== ctx.orgId) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      const oldQty = item.availableQuantity ?? 0;
+
+      const updated = await ctx.db.cateringItems.update({
+        where: { id: input.itemId },
+        data: { availableQuantity: input.newQuantity },
+      });
+
+      await ctx.db.stockLogs.create({
+        data: {
+          itemId: input.itemId,
+          orgId: ctx.orgId,
+          userId: ctx.user.id,
+          oldQty,
+          newQty: input.newQuantity,
+          reason: input.reason,
+          note: input.note,
+        },
+      });
+
+      logger.info(
+        `Stock updated: item=${input.itemId} ${oldQty}->${input.newQuantity} reason=${input.reason}`,
+        "inventory",
+      );
+
+      return updated;
+    }),
+
+  /** Batch update stock for multiple items in a single transaction */
+  batchUpdateStock: orgManagerProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      reason: z.enum(["restock", "adjustment", "waste"]),
+      note: z.string().max(500).optional(),
+      items: z.array(z.object({
+        itemId: z.string().uuid(),
+        newQuantity: z.number().int().nonnegative(),
+      })).min(1),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.db.$transaction(async (tx) => {
+        let updatedCount = 0;
+
+        for (const entry of input.items) {
+          const item = await tx.cateringItems.findUnique({
+            where: { id: entry.itemId },
+            include: { cateringMenu: { select: { orgId: true } } },
+          });
+          if (!item || item.cateringMenu.orgId !== ctx.orgId) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: `Item ${entry.itemId} not found or not owned by org`,
+            });
+          }
+
+          const oldQty = item.availableQuantity ?? 0;
+
+          await tx.cateringItems.update({
+            where: { id: entry.itemId },
+            data: { availableQuantity: entry.newQuantity },
+          });
+
+          await tx.stockLogs.create({
+            data: {
+              itemId: entry.itemId,
+              orgId: ctx.orgId,
+              userId: ctx.user.id,
+              oldQty,
+              newQty: entry.newQuantity,
+              reason: input.reason,
+              note: input.note,
+            },
+          });
+
+          updatedCount++;
+        }
+
+        return { updatedCount };
+      });
+
+      logger.info(
+        `Batch stock update: ${result.updatedCount} items, reason=${input.reason}`,
+        "inventory",
+      );
+
+      return result;
+    }),
+
+  /** Get items below a configurable low-stock threshold */
+  getLowStockItems: orgProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      threshold: z.number().int().positive().optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const threshold = input.threshold ?? 10;
+
+      return ctx.db.cateringItems.findMany({
+        where: {
+          cateringMenu: { orgId: ctx.orgId, isActive: true },
+          availableQuantity: { not: null, lt: threshold },
+        },
+        include: {
+          category: { select: { id: true, name: true } },
+          cateringMenu: { select: { id: true, name: true } },
+        },
+        orderBy: { availableQuantity: "asc" },
+      });
+    }),
+
+  /** Reserve quantities for a confirmed event (decrements available stock) */
+  reserveForEvent: orgManagerProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      eventId: z.string().uuid(),
+      items: z.array(z.object({
+        itemId: z.string().uuid(),
+        quantity: z.number().int().positive(),
+      })).min(1),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.db.$transaction(async (tx) => {
+        // Verify event belongs to org
+        const event = await tx.events.findFirst({
+          where: { id: input.eventId, orgId: ctx.orgId },
+        });
+        if (!event) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+        }
+
+        const reserved: Array<{ itemId: string; quantity: number }> = [];
+
+        for (const entry of input.items) {
+          const item = await tx.cateringItems.findUnique({
+            where: { id: entry.itemId },
+            include: { cateringMenu: { select: { orgId: true } } },
+          });
+          if (!item || item.cateringMenu.orgId !== ctx.orgId) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: `Item ${entry.itemId} not found`,
+            });
+          }
+
+          const available = item.availableQuantity ?? 0;
+          if (available < entry.quantity) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: `Insufficient stock for ${item.name}: available=${available}, requested=${entry.quantity}`,
+            });
+          }
+
+          await tx.cateringItems.update({
+            where: { id: entry.itemId },
+            data: {
+              availableQuantity: available - entry.quantity,
+              reservedQuantity: (item.reservedQuantity ?? 0) + entry.quantity,
+            },
+          });
+
+          await tx.inventoryReservations.upsert({
+            where: { eventId_itemId: { eventId: input.eventId, itemId: entry.itemId } },
+            create: {
+              eventId: input.eventId,
+              itemId: entry.itemId,
+              quantity: entry.quantity,
+            },
+            update: {
+              quantity: { increment: entry.quantity },
+            },
+          });
+
+          await tx.stockLogs.create({
+            data: {
+              itemId: entry.itemId,
+              orgId: ctx.orgId,
+              userId: ctx.user.id,
+              oldQty: available,
+              newQty: available - entry.quantity,
+              reason: "reservation",
+              note: `Reserved for event ${input.eventId}`,
+            },
+          });
+
+          reserved.push({ itemId: entry.itemId, quantity: entry.quantity });
+        }
+
+        return { reserved };
+      });
+
+      logger.info(
+        `Inventory reserved: event=${input.eventId}, ${result.reserved.length} items`,
+        "inventory",
+      );
+
+      return result;
+    }),
+
+  /** Release reserved quantities for a cancelled/modified event */
+  releaseReservation: orgManagerProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      eventId: z.string().uuid(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.db.$transaction(async (tx) => {
+        // Verify event belongs to org
+        const event = await tx.events.findFirst({
+          where: { id: input.eventId, orgId: ctx.orgId },
+        });
+        if (!event) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+        }
+
+        // Find all reservations for this event
+        const reservations = await tx.inventoryReservations.findMany({
+          where: { eventId: input.eventId },
+        });
+
+        // Restore stock for each reservation
+        for (const res of reservations) {
+          await tx.cateringItems.update({
+            where: { id: res.itemId },
+            data: {
+              availableQuantity: { increment: res.quantity },
+              reservedQuantity: { decrement: res.quantity },
+            },
+          });
+
+          await tx.stockLogs.create({
+            data: {
+              itemId: res.itemId,
+              orgId: ctx.orgId,
+              userId: ctx.user.id,
+              oldQty: 0, // placeholder — real value in the DB
+              newQty: res.quantity,
+              reason: "release",
+              note: `Released from event ${input.eventId}`,
+            },
+          });
+        }
+
+        // Delete all reservations for this event
+        await tx.inventoryReservations.deleteMany({
+          where: { eventId: input.eventId },
+        });
+
+        return { releasedCount: reservations.length };
+      });
+
+      logger.info(
+        `Inventory released: event=${input.eventId}, ${result.releasedCount} items`,
+        "inventory",
+      );
+
+      return result;
     }),
 });

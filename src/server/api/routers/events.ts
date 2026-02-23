@@ -13,6 +13,8 @@
  */
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { Prisma } from "@prisma/client";
+import { randomUUID } from "crypto";
 import {
   createTRPCRouter,
   publicProcedure,
@@ -22,6 +24,10 @@ import {
   orgAdminProcedure,
 } from "~/server/api/trpc";
 import { rateLimit } from "~/server/rateLimit";
+import {
+  notifyNewInquiry,
+  confirmInquiryToClient,
+} from "~/server/notifications/whatsappService";
 
 // ──────────────────────────────────────────────
 // Event Status State Machine
@@ -86,6 +92,63 @@ const eventTypeEnum = z.enum([
   "diffa",
   "other",
 ]);
+
+// ──────────────────────────────────────────────
+// Event Templates (stored in Organization.settings JSON)
+// ──────────────────────────────────────────────
+
+/** Max number of templates per organization */
+const MAX_TEMPLATES_PER_ORG = 50;
+
+interface EventTemplate {
+  id: string;
+  name: string;
+  eventType: string;
+  defaultGuestCount: number;
+  defaultVenue?: string;
+  defaultMenuItems?: unknown[];
+  defaultEquipment?: unknown[];
+  defaultStaffCount?: number;
+  estimatedBudget: number;
+  notes?: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Extract templates array from org settings JSON */
+function getTemplatesFromSettings(settings: unknown): EventTemplate[] {
+  if (!settings || typeof settings !== "object") return [];
+  const s = settings as Record<string, unknown>;
+  if (!Array.isArray(s.eventTemplates)) return [];
+  return s.eventTemplates as EventTemplate[];
+}
+
+/** Persist templates array back into org settings JSON */
+function buildSettingsWithTemplates(
+  currentSettings: unknown,
+  templates: EventTemplate[],
+): Prisma.InputJsonValue {
+  const base =
+    currentSettings && typeof currentSettings === "object"
+      ? (currentSettings as Record<string, unknown>)
+      : {};
+  return { ...base, eventTemplates: templates } as unknown as Prisma.InputJsonValue;
+}
+
+const templateInputSchema = z.object({
+  orgId: z.string().uuid().optional(),
+  name: z.string().min(2).max(200),
+  eventType: eventTypeEnum,
+  defaultGuestCount: z.number().int().positive(),
+  defaultVenue: z.string().max(200).optional(),
+  defaultMenuItems: z.array(z.record(z.unknown())).optional(),
+  defaultEquipment: z.array(z.record(z.unknown())).optional(),
+  defaultStaffCount: z.number().int().positive().optional(),
+  estimatedBudget: z.number().int().nonnegative(),
+  notes: z.string().max(2000).optional(),
+  isDefault: z.boolean().optional(),
+});
 
 // ──────────────────────────────────────────────
 // Router
@@ -560,7 +623,7 @@ export const eventsRouter = createTRPCRouter({
       // Verify org exists and is active
       const org = await ctx.db.organizations.findFirst({
         where: { id: input.orgId, isActive: true },
-        select: { id: true, name: true },
+        select: { id: true, name: true, whatsappNumber: true, phone: true },
       });
 
       if (!org) {
@@ -594,8 +657,25 @@ export const eventsRouter = createTRPCRouter({
         },
       });
 
-      // TODO: Send WhatsApp notification to org
-      // TODO: Send email confirmation to client
+      // Non-blocking WhatsApp notifications (fire-and-forget)
+      const orgWhatsApp = org.whatsappNumber ?? org.phone;
+      if (orgWhatsApp) {
+        notifyNewInquiry(orgWhatsApp, {
+          customerName: input.customerName,
+          eventType: input.eventType,
+          guestCount: input.guestCount,
+          eventDate: input.eventDate,
+          customerPhone: input.customerPhone,
+          venueName: input.venueName,
+          venueCity: input.venueCity,
+        }).catch(() => {}); // swallow -- never block the main flow
+      }
+
+      confirmInquiryToClient(input.customerPhone, {
+        orgName: org.name,
+        eventType: input.eventType,
+        eventDate: input.eventDate,
+      }).catch(() => {}); // swallow -- never block the main flow
 
       return {
         eventId: event.id,
@@ -641,5 +721,301 @@ export const eventsRouter = createTRPCRouter({
       }
 
       return event;
+    }),
+
+  // ─── Event Templates ────────────────────────
+
+  /** List all event templates for the organization */
+  listTemplates: orgProcedure
+    .input(z.object({ orgId: z.string().uuid().optional() }))
+    .query(async ({ ctx }) => {
+      const org = await ctx.db.organizations.findUnique({
+        where: { id: ctx.orgId },
+        select: { settings: true },
+      });
+
+      return getTemplatesFromSettings(org?.settings);
+    }),
+
+  /** Get a single template by ID */
+  getTemplate: orgProcedure
+    .input(
+      z.object({
+        orgId: z.string().uuid().optional(),
+        templateId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const org = await ctx.db.organizations.findUnique({
+        where: { id: ctx.orgId },
+        select: { settings: true },
+      });
+
+      const templates = getTemplatesFromSettings(org?.settings);
+      const template = templates.find((t) => t.id === input.templateId);
+
+      if (!template) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Template not found",
+        });
+      }
+
+      return template;
+    }),
+
+  /** Create a new event template */
+  createTemplate: orgManagerProcedure
+    .input(templateInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const org = await ctx.db.organizations.findUnique({
+        where: { id: ctx.orgId },
+        select: { settings: true },
+      });
+
+      const templates = getTemplatesFromSettings(org?.settings);
+
+      // Enforce max templates limit
+      if (templates.length >= MAX_TEMPLATES_PER_ORG) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Maximum of ${MAX_TEMPLATES_PER_ORG} templates per organization`,
+        });
+      }
+
+      // Enforce unique name within org
+      if (templates.some((t) => t.name === input.name)) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "A template with this name already exists",
+        });
+      }
+
+      const now = new Date().toISOString();
+      const newTemplate: EventTemplate = {
+        id: randomUUID(),
+        name: input.name,
+        eventType: input.eventType,
+        defaultGuestCount: input.defaultGuestCount,
+        defaultVenue: input.defaultVenue,
+        defaultMenuItems: input.defaultMenuItems,
+        defaultEquipment: input.defaultEquipment,
+        defaultStaffCount: input.defaultStaffCount,
+        estimatedBudget: input.estimatedBudget,
+        notes: input.notes,
+        isDefault: input.isDefault ?? false,
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      // If this template is set as default, unset previous default for same event type
+      const updatedTemplates = newTemplate.isDefault
+        ? templates.map((t) =>
+            t.eventType === input.eventType && t.isDefault
+              ? { ...t, isDefault: false, updatedAt: now }
+              : t,
+          )
+        : [...templates];
+
+      updatedTemplates.push(newTemplate);
+
+      await ctx.db.organizations.update({
+        where: { id: ctx.orgId },
+        data: {
+          settings: buildSettingsWithTemplates(org?.settings, updatedTemplates),
+        },
+      });
+
+      return newTemplate;
+    }),
+
+  /** Update an existing template */
+  updateTemplate: orgManagerProcedure
+    .input(
+      z.object({
+        orgId: z.string().uuid().optional(),
+        templateId: z.string(),
+        name: z.string().min(2).max(200).optional(),
+        eventType: eventTypeEnum.optional(),
+        defaultGuestCount: z.number().int().positive().optional(),
+        defaultVenue: z.string().max(200).optional(),
+        defaultMenuItems: z.array(z.record(z.unknown())).optional(),
+        defaultEquipment: z.array(z.record(z.unknown())).optional(),
+        defaultStaffCount: z.number().int().positive().optional(),
+        estimatedBudget: z.number().int().nonnegative().optional(),
+        notes: z.string().max(2000).optional(),
+        isDefault: z.boolean().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const org = await ctx.db.organizations.findUnique({
+        where: { id: ctx.orgId },
+        select: { settings: true },
+      });
+
+      const templates = getTemplatesFromSettings(org?.settings);
+      const index = templates.findIndex((t) => t.id === input.templateId);
+
+      if (index === -1) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Template not found",
+        });
+      }
+
+      // Check for duplicate name (excluding the template being updated)
+      if (
+        input.name &&
+        templates.some((t) => t.name === input.name && t.id !== input.templateId)
+      ) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "A template with this name already exists",
+        });
+      }
+
+      const now = new Date().toISOString();
+      const { orgId: _orgId, templateId: _templateId, ...updates } = input;
+
+      const updatedTemplate: EventTemplate = {
+        ...templates[index]!,
+        ...Object.fromEntries(
+          Object.entries(updates).filter(([, v]) => v !== undefined),
+        ),
+        updatedAt: now,
+      };
+
+      const updatedTemplates = [...templates];
+      updatedTemplates[index] = updatedTemplate;
+
+      // If setting as default, unset other defaults for same event type
+      if (updatedTemplate.isDefault) {
+        for (let i = 0; i < updatedTemplates.length; i++) {
+          if (
+            i !== index &&
+            updatedTemplates[i]!.eventType === updatedTemplate.eventType &&
+            updatedTemplates[i]!.isDefault
+          ) {
+            updatedTemplates[i] = {
+              ...updatedTemplates[i]!,
+              isDefault: false,
+              updatedAt: now,
+            };
+          }
+        }
+      }
+
+      await ctx.db.organizations.update({
+        where: { id: ctx.orgId },
+        data: {
+          settings: buildSettingsWithTemplates(org?.settings, updatedTemplates),
+        },
+      });
+
+      return updatedTemplate;
+    }),
+
+  /** Delete an event template */
+  deleteTemplate: orgManagerProcedure
+    .input(
+      z.object({
+        orgId: z.string().uuid().optional(),
+        templateId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const org = await ctx.db.organizations.findUnique({
+        where: { id: ctx.orgId },
+        select: { settings: true },
+      });
+
+      const templates = getTemplatesFromSettings(org?.settings);
+      const index = templates.findIndex((t) => t.id === input.templateId);
+
+      if (index === -1) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Template not found",
+        });
+      }
+
+      const filtered = templates.filter((t) => t.id !== input.templateId);
+
+      await ctx.db.organizations.update({
+        where: { id: ctx.orgId },
+        data: {
+          settings: buildSettingsWithTemplates(org?.settings, filtered),
+        },
+      });
+
+      return { deleted: true };
+    }),
+
+  /** Create a new event pre-filled from a template */
+  createEventFromTemplate: orgManagerProcedure
+    .input(
+      z.object({
+        orgId: z.string().uuid().optional(),
+        templateId: z.string(),
+        // Required customer info
+        customerName: z.string().min(2).max(100),
+        customerPhone: z.string().min(8).max(30),
+        customerEmail: z.string().email().optional(),
+        eventDate: z.date(),
+        // Optional overrides (supersede template values)
+        title: z.string().min(2).max(200).optional(),
+        eventType: eventTypeEnum.optional(),
+        guestCount: z.number().int().positive().optional(),
+        venueName: z.string().optional(),
+        venueAddress: z.string().optional(),
+        venueCity: z.string().optional(),
+        specialRequests: z.string().optional(),
+        notes: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const org = await ctx.db.organizations.findUnique({
+        where: { id: ctx.orgId },
+        select: { settings: true },
+      });
+
+      const templates = getTemplatesFromSettings(org?.settings);
+      const template = templates.find((t) => t.id === input.templateId);
+
+      if (!template) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Template not found",
+        });
+      }
+
+      // Template provides defaults, input overrides take precedence
+      const eventType = (input.eventType ?? template.eventType) as z.infer<typeof eventTypeEnum>;
+      const title =
+        input.title ??
+        `${eventType.replace(/_/g, " ")} - ${input.customerName}`;
+
+      return ctx.db.events.create({
+        data: {
+          orgId: ctx.orgId,
+          title,
+          eventType,
+          eventDate: input.eventDate,
+          guestCount: input.guestCount ?? template.defaultGuestCount,
+          venueName: input.venueName ?? template.defaultVenue,
+          venueAddress: input.venueAddress,
+          venueCity: input.venueCity,
+          customerName: input.customerName,
+          customerPhone: input.customerPhone,
+          customerEmail: input.customerEmail,
+          specialRequests: input.specialRequests,
+          notes: input.notes ?? template.notes,
+          dietaryRequirements: [],
+          status: "inquiry",
+          totalAmount: 0,
+          depositAmount: 0,
+          balanceDue: 0,
+        },
+      });
     }),
 });

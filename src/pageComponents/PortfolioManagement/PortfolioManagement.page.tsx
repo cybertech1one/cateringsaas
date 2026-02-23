@@ -92,68 +92,68 @@ const EVENT_TYPE_CONFIG: Record<
 > = {
   wedding: {
     label: "Wedding",
-    color: "text-pink-700",
-    bgColor: "bg-pink-50 border-pink-200",
+    color: "text-[hsl(var(--rose-petal))]",
+    bgColor: "bg-[hsl(var(--rose-petal))]/10 border-[hsl(var(--rose-petal))]/20",
     icon: "ring",
   },
   corporate: {
     label: "Corporate",
-    color: "text-slate-700",
-    bgColor: "bg-slate-50 border-slate-200",
+    color: "text-[hsl(var(--chefchaouen))]",
+    bgColor: "bg-[hsl(var(--chefchaouen))]/10 border-[hsl(var(--chefchaouen))]/20",
     icon: "building",
   },
   ramadan_iftar: {
     label: "Ramadan Iftar",
-    color: "text-emerald-700",
-    bgColor: "bg-emerald-50 border-emerald-200",
+    color: "text-[hsl(var(--mint-tea))]",
+    bgColor: "bg-[hsl(var(--mint-tea))]/10 border-[hsl(var(--mint-tea))]/20",
     icon: "moon",
   },
   eid: {
     label: "Eid",
-    color: "text-yellow-700",
-    bgColor: "bg-yellow-50 border-yellow-200",
+    color: "text-gold",
+    bgColor: "bg-gold/10 border-gold/20",
     icon: "star",
   },
   birthday: {
     label: "Birthday",
-    color: "text-orange-700",
-    bgColor: "bg-orange-50 border-orange-200",
+    color: "text-[hsl(var(--harissa))]",
+    bgColor: "bg-[hsl(var(--harissa))]/10 border-[hsl(var(--harissa))]/20",
     icon: "cake",
   },
   engagement: {
     label: "Engagement",
-    color: "text-rose-700",
-    bgColor: "bg-rose-50 border-rose-200",
+    color: "text-terracotta",
+    bgColor: "bg-terracotta/10 border-terracotta/20",
     icon: "heart",
   },
   henna: {
     label: "Henna",
-    color: "text-amber-700",
-    bgColor: "bg-amber-50 border-amber-200",
+    color: "text-[hsl(var(--saffron))]",
+    bgColor: "bg-[hsl(var(--saffron))]/10 border-[hsl(var(--saffron))]/20",
     icon: "hand",
   },
   graduation: {
     label: "Graduation",
-    color: "text-indigo-700",
-    bgColor: "bg-indigo-50 border-indigo-200",
+    color: "text-[hsl(var(--majorelle-blue))]",
+    bgColor: "bg-[hsl(var(--majorelle-blue))]/10 border-[hsl(var(--majorelle-blue))]/20",
     icon: "cap",
   },
   diffa: {
     label: "Diffa",
-    color: "text-teal-700",
-    bgColor: "bg-teal-50 border-teal-200",
+    color: "text-[hsl(var(--zellige-teal))]",
+    bgColor: "bg-[hsl(var(--zellige-teal))]/10 border-[hsl(var(--zellige-teal))]/20",
     icon: "palace",
   },
   conference: {
     label: "Conference",
-    color: "text-blue-700",
-    bgColor: "bg-blue-50 border-blue-200",
+    color: "text-[hsl(var(--majorelle-blue))]",
+    bgColor: "bg-[hsl(var(--majorelle-blue))]/10 border-[hsl(var(--majorelle-blue))]/20",
     icon: "mic",
   },
   other: {
     label: "Other",
-    color: "text-gray-700",
-    bgColor: "bg-gray-50 border-gray-200",
+    color: "text-muted-foreground",
+    bgColor: "bg-muted border-border",
     icon: "calendar",
   },
 };
@@ -213,9 +213,9 @@ function formatEventType(type: string): string {
 }
 
 function getEventTypeStyle(type: string | null): { color: string; bgColor: string } {
-  if (!type) return { color: "text-gray-600", bgColor: "bg-gray-50 border-gray-200" };
+  if (!type) return { color: "text-muted-foreground", bgColor: "bg-muted border-border" };
   const config = EVENT_TYPE_CONFIG[type as EventType];
-  return config ?? { color: "text-gray-600", bgColor: "bg-gray-50 border-gray-200" };
+  return config ?? { color: "text-muted-foreground", bgColor: "bg-muted border-border" };
 }
 
 function formatDate(date: Date | string | null): string {
@@ -325,7 +325,7 @@ function EmptyState({ onUpload }: { onUpload: () => void }) {
       {/* Decorative background pattern */}
       <div className="relative mb-8">
         <div className="absolute inset-0 -m-6 rounded-full bg-gradient-to-br from-primary/10 via-gold/10 to-terracotta/10 blur-2xl" />
-        <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/50 shadow-sm">
+        <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-gold/10 border border-primary/15 shadow-sm">
           <Camera className="h-10 w-10 text-primary/70" />
         </div>
       </div>
@@ -345,7 +345,7 @@ function EmptyState({ onUpload }: { onUpload: () => void }) {
       <div className="flex flex-col sm:flex-row items-center gap-3">
         <Button
           onClick={onUpload}
-          className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md"
+          className="gap-2 bg-gradient-to-r from-primary to-terracotta hover:from-primary/90 hover:to-terracotta/90 text-white shadow-md"
           size="lg"
         >
           <Upload className="h-4 w-4" />
@@ -420,7 +420,7 @@ function PortfolioCard({
         {/* Top-left: Featured badge */}
         {image.isFeatured && (
           <div className="absolute top-2 left-2 z-10">
-            <Badge className="bg-amber-500/90 text-white text-[10px] gap-1 shadow-sm backdrop-blur-sm border-0">
+            <Badge className="bg-gold/90 text-white text-[10px] gap-1 shadow-sm backdrop-blur-sm border-0">
               <Star className="h-2.5 w-2.5 fill-current" />
               Featured
             </Badge>
@@ -445,7 +445,7 @@ function PortfolioCard({
                   className={cn(
                     "mr-2 h-4 w-4",
                     image.isFeatured
-                      ? "fill-amber-500 text-amber-500"
+                      ? "fill-gold text-gold"
                       : "text-muted-foreground",
                   )}
                 />
@@ -462,7 +462,7 @@ function PortfolioCard({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => onDelete(image)}
-                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                className="text-destructive focus:text-destructive focus:bg-destructive/5"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
@@ -482,8 +482,8 @@ function PortfolioCard({
             "absolute bottom-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200",
             "opacity-0 group-hover:opacity-100",
             image.isFeatured
-              ? "bg-amber-500 text-white shadow-md"
-              : "bg-white/80 text-muted-foreground hover:bg-amber-500 hover:text-white backdrop-blur-sm shadow-sm",
+              ? "bg-gold text-white shadow-md"
+              : "bg-white/80 text-muted-foreground hover:bg-gold hover:text-white backdrop-blur-sm shadow-sm",
           )}
           aria-label={image.isFeatured ? "Remove from featured" : "Add to featured"}
         >
@@ -1077,10 +1077,10 @@ export default function PortfolioManagement() {
       ) : isError ? (
         <Card className="p-8">
           <div className="flex flex-col items-center justify-center text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-3">
-              <X className="h-5 w-5 text-red-600" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 mb-3">
+              <X className="h-5 w-5 text-destructive" />
             </div>
-            <h3 className="font-semibold text-red-800">Failed to load portfolio</h3>
+            <h3 className="font-semibold text-destructive">Failed to load portfolio</h3>
             <p className="text-sm text-muted-foreground mt-1 max-w-sm">
               {error?.message || "An unexpected error occurred while loading your portfolio images."}
             </p>
@@ -1170,7 +1170,7 @@ export default function PortfolioManagement() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5 text-amber-600" />
+              <Upload className="h-5 w-5 text-primary" />
               Upload Portfolio Image
             </DialogTitle>
             <DialogDescription>
@@ -1267,10 +1267,10 @@ export default function PortfolioManagement() {
             </div>
 
             {/* Featured toggle */}
-            <div className="flex items-center justify-between rounded-lg border p-3 bg-amber-50/50">
+            <div className="flex items-center justify-between rounded-lg border p-3 bg-gold/5">
               <div className="space-y-0.5">
                 <Label className="text-sm font-medium flex items-center gap-1.5">
-                  <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                  <Star className="h-3.5 w-3.5 text-gold fill-gold" />
                   Featured Image
                 </Label>
                 <p className="text-[11px] text-muted-foreground">
@@ -1295,7 +1295,7 @@ export default function PortfolioManagement() {
             <Button
               onClick={handleSubmitUpload}
               disabled={!formData.imageUrl.trim() || addMutation.isLoading}
-              className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white"
+              className="gap-2 bg-gradient-to-r from-primary to-terracotta hover:from-primary/90 hover:to-terracotta/90 text-white"
             >
               {addMutation.isLoading ? (
                 <>
@@ -1329,7 +1329,7 @@ export default function PortfolioManagement() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Pencil className="h-5 w-5 text-amber-600" />
+              <Pencil className="h-5 w-5 text-primary" />
               Edit Image Details
             </DialogTitle>
             <DialogDescription>
@@ -1400,10 +1400,10 @@ export default function PortfolioManagement() {
             </div>
 
             {/* Featured toggle */}
-            <div className="flex items-center justify-between rounded-lg border p-3 bg-amber-50/50">
+            <div className="flex items-center justify-between rounded-lg border p-3 bg-gold/5">
               <div className="space-y-0.5">
                 <Label className="text-sm font-medium flex items-center gap-1.5">
-                  <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                  <Star className="h-3.5 w-3.5 text-gold fill-gold" />
                   Featured Image
                 </Label>
                 <p className="text-[11px] text-muted-foreground">
@@ -1417,18 +1417,18 @@ export default function PortfolioManagement() {
             </div>
 
             {/* Danger zone: Delete from edit dialog */}
-            <div className="rounded-lg border border-red-200 bg-red-50/50 p-3">
+            <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-red-800">Delete Image</p>
-                  <p className="text-[11px] text-red-600/70">
+                  <p className="text-sm font-medium text-destructive">Delete Image</p>
+                  <p className="text-[11px] text-destructive/70">
                     Permanently remove this image from your portfolio
                   </p>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-red-300 text-red-700 hover:bg-red-100 hover:text-red-800"
+                  className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => {
                     setEditDialogOpen(false);
                     // Small delay so edit dialog closes before delete opens
@@ -1455,7 +1455,7 @@ export default function PortfolioManagement() {
             <Button
               onClick={handleSubmitEdit}
               disabled={updateMutation.isLoading}
-              className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white"
+              className="gap-2 bg-gradient-to-r from-primary to-terracotta hover:from-primary/90 hover:to-terracotta/90 text-white"
             >
               {updateMutation.isLoading ? (
                 <>
@@ -1486,8 +1486,8 @@ export default function PortfolioManagement() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
-                <Trash2 className="h-4 w-4 text-red-600" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10">
+                <Trash2 className="h-4 w-4 text-destructive" />
               </div>
               Delete Portfolio Image
             </AlertDialogTitle>
@@ -1527,7 +1527,7 @@ export default function PortfolioManagement() {
             <AlertDialogAction
               onClick={handleConfirmDelete}
               disabled={removeMutation.isLoading}
-              className="bg-red-600 text-white hover:bg-red-700 focus:ring-red-600"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-destructive"
             >
               {removeMutation.isLoading ? (
                 <span className="flex items-center gap-2">
