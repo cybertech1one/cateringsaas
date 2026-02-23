@@ -392,4 +392,85 @@ export const financesRouter = createTRPCRouter({
 
       return results;
     }),
+
+  /** List all milestones across events (for finance dashboard) */
+  listAllMilestones: orgProcedure
+    .input(z.object({
+      orgId: z.string().uuid().optional(),
+      status: z.enum(["pending", "due", "paid", "overdue", "waived", "cancelled"]).optional(),
+      limit: z.number().int().min(1).max(100).default(50),
+      cursor: z.string().optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const milestones = await ctx.db.paymentMilestones.findMany({
+        where: {
+          schedule: { orgId: ctx.orgId },
+          ...(input.status ? { status: input.status } : {}),
+        },
+        orderBy: { dueDate: "asc" },
+        take: input.limit + 1,
+        ...(input.cursor ? { cursor: { id: input.cursor }, skip: 1 } : {}),
+        include: {
+          schedule: {
+            select: {
+              id: true,
+              totalAmount: true,
+              event: {
+                select: {
+                  id: true,
+                  title: true,
+                  customerName: true,
+                  eventDate: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      let nextCursor: string | undefined;
+      if (milestones.length > input.limit) {
+        const last = milestones.pop();
+        nextCursor = last?.id;
+      }
+
+      return { milestones, nextCursor };
+    }),
+
+  /** Payment method breakdown (for distribution chart) */
+  getPaymentMethodBreakdown: orgProcedure
+    .input(z.object({ orgId: z.string().uuid().optional() }))
+    .query(async ({ ctx }) => {
+      const milestones = await ctx.db.paymentMilestones.findMany({
+        where: {
+          schedule: { orgId: ctx.orgId },
+          status: "paid",
+          paymentMethod: { not: null },
+        },
+        select: {
+          paymentMethod: true,
+          amount: true,
+        },
+      });
+
+      const breakdown: Record<string, number> = {};
+      let total = 0;
+      for (const m of milestones) {
+        const method = m.paymentMethod ?? "unknown";
+        breakdown[method] = (breakdown[method] ?? 0) + m.amount;
+        total += m.amount;
+      }
+
+      return {
+        breakdown,
+        total,
+        methods: Object.entries(breakdown)
+          .map(([method, amount]) => ({
+            method,
+            amount,
+            percentage: total > 0 ? Math.round((amount / total) * 1000) / 10 : 0,
+          }))
+          .sort((a, b) => b.amount - a.amount),
+      };
+    }),
 });
