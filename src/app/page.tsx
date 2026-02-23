@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title:
     "Diyafa — Morocco's Premier Catering Platform | Weddings, Corporate Events & Celebrations",
   description:
-    "Diyafa is Morocco's leading catering platform. Manage catering menus, accept event bookings, coordinate staff and logistics with AI tools. Trusted by caterers in Casablanca, Marrakech, Rabat, Fes, Tangier & more. Free to start.",
+    "Diyafa is Morocco's leading catering management platform. Manage event bookings, build professional quotes, create catering menus, track payments, and coordinate staff. Trusted by caterers in Casablanca, Marrakech, Rabat, Fes, Tangier & more. Free to start.",
   alternates: {
     canonical: `${appUrl}/`,
   },
@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     "wedding catering Morocco",
     "corporate catering Morocco",
     "traiteur Maroc",
+    "traiteur mariage Maroc",
     "ضيافة المغرب",
     "catering management software",
     "event catering Casablanca",
@@ -25,12 +26,16 @@ export const metadata: Metadata = {
     "traiteur Casablanca",
     "Diyafa catering",
     "plateforme traiteur Maroc",
+    "best catering service Morocco",
+    "catering Rabat",
+    "traiteur Rabat",
+    "Ramadan iftar catering Morocco",
   ],
   openGraph: {
     title:
       "Diyafa — Morocco's Premier Catering Platform | Weddings, Events & Celebrations",
     description:
-      "Morocco's leading catering platform for weddings, corporate events & celebrations. Manage menus, bookings, and logistics. Trusted by caterers across Morocco.",
+      "Morocco's leading catering platform for weddings, corporate events & celebrations. Manage menus, quotes, bookings, staff, and payments. Trusted by caterers across Morocco.",
     type: "website",
     url: `${appUrl}/`,
     siteName: "Diyafa",
@@ -41,6 +46,7 @@ export const metadata: Metadata = {
     title: "Diyafa — Morocco's Premier Catering Platform",
     description:
       "Morocco's leading catering platform for weddings, corporate events & celebrations. AI-powered menu management and event logistics. Free to start.",
+    site: "@diyafa_ma",
   },
 };
 
@@ -54,7 +60,7 @@ function HomeJsonLd() {
         url: appUrl,
         name: "Diyafa",
         description:
-          "Morocco's leading zero-commission restaurant platform. QR digital menus, online ordering, delivery management, and AI-powered tools.",
+          "Morocco's premier catering management platform. Event bookings, professional quotes, catering menus, payment tracking, and staff coordination for caterers, restaurants, hotels, and venues.",
         publisher: { "@id": `${appUrl}/#organization` },
         potentialAction: {
           "@type": "SearchAction",
@@ -70,6 +76,7 @@ function HomeJsonLd() {
         "@type": "Organization",
         "@id": `${appUrl}/#organization`,
         name: "Diyafa",
+        alternateName: "ضيافة",
         url: appUrl,
         logo: {
           "@type": "ImageObject",
@@ -78,7 +85,7 @@ function HomeJsonLd() {
           height: 512,
         },
         description:
-          "Diyafa is an open-source SaaS platform that empowers restaurants in Morocco with QR digital menus, online ordering, delivery driver management, AI content generation, multilingual support (English, French, Arabic), analytics, and loyalty programs — all at zero commission.",
+          "Diyafa is Morocco's premier catering SaaS platform. It connects caterers, restaurants, hotels, and venues with clients planning weddings, corporate events, Ramadan iftars, and celebrations. Manage event bookings, build TVA-compliant quotes, create catering menus, track COD and milestone payments, schedule staff and equipment, and grow your catering business — all in English, French, and Arabic.",
         foundingDate: "2024",
         areaServed: {
           "@type": "Country",
@@ -95,7 +102,6 @@ function HomeJsonLd() {
           { "@type": "City", name: "Oujda" },
           { "@type": "City", name: "Kenitra" },
         ],
-        sameAs: [`${appUrl}/for-restaurants`, `${appUrl}/for-drivers`],
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "customer support",
@@ -108,7 +114,7 @@ function HomeJsonLd() {
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
         description:
-          "All-in-one restaurant platform: QR digital menus with 30+ templates, online ordering (dine-in, pickup, delivery), AI menu builder (import from photo/PDF), delivery driver network management, multi-language support (English, French, Arabic with RTL), real-time analytics, kitchen display system, loyalty stamp cards, WhatsApp order notifications, and revenue tracking — all at zero commission.",
+          "All-in-one catering management platform: event booking pipeline (inquiry to settlement), professional TVA-compliant quote builder, catering menu management with per-head and package pricing, COD and milestone payment tracking, staff scheduling and assignment, equipment inventory, portfolio gallery, analytics dashboard, multi-language support (English, French, Arabic with RTL), WhatsApp integration, and AI-powered tools.",
         offers: [
           {
             "@type": "Offer",
@@ -116,7 +122,7 @@ function HomeJsonLd() {
             price: "0",
             priceCurrency: "MAD",
             description:
-              "1 menu, 6 templates, basic analytics, QR codes, online ordering, WhatsApp notifications",
+              "1 organization, 3 menus, 5 events per month, basic quotes, analytics, WhatsApp integration",
           },
           {
             "@type": "Offer",
@@ -130,37 +136,25 @@ function HomeJsonLd() {
               billingDuration: "P1M",
             },
             description:
-              "Unlimited menus, 30+ templates, AI menu builder, delivery network, full analytics, priority support, staff management, promotions engine",
+              "Unlimited events, milestone payments, invoicing, full analytics, priority support, staff management, equipment tracking, portfolio gallery",
           },
         ],
         featureList: [
-          "QR Code Digital Menus (30+ templates)",
-          "Online Ordering (dine-in, pickup, delivery)",
-          "Zero Commission on All Orders",
-          "AI Menu Builder (import from photo or PDF)",
-          "AI Auto-Translation (English, French, Arabic)",
-          "Delivery Driver Network Management",
-          "Kitchen Display System (real-time KDS)",
-          "Revenue & Order Analytics Dashboard",
-          "Loyalty Stamp Card Programs",
-          "WhatsApp Order Notifications",
-          "Multi-Language Menus with RTL Arabic Support",
-          "Staff Management with Role-Based Access",
-          "Promotions, Coupons & Daily Specials",
-          "Restaurant Directory & SEO Profiles",
-          "Inventory & Stock Management",
-          "Menu Scheduling (weekly calendar)",
-          "PWA (Progressive Web App) Support",
-          "Social Sharing (WhatsApp, Facebook, X)",
-          "Allergen Filters & Dietary Tags",
-          "Print-Ready QR Templates (10 designs)",
+          "Event Management & Booking Pipeline (12-state lifecycle)",
+          "Professional Quote Builder (TVA-compliant, per-head/per-dish/package)",
+          "Catering Menu Management (packages, tiers, dietary options)",
+          "COD Payment Tracking & Milestone Deposits",
+          "Staff Scheduling & Assignment",
+          "Equipment & Inventory Tracking",
+          "Portfolio & Gallery Management",
+          "Revenue & Booking Analytics Dashboard",
+          "Multi-Language Support (English, French, Arabic with RTL)",
+          "WhatsApp Business Integration",
+          "AI-Powered Content Generation",
+          "Client CRM & Contact Management",
+          "Financial Reporting & Invoicing",
+          "Multi-Organization Management",
         ],
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.8",
-          reviewCount: "156",
-          bestRating: "5",
-        },
         screenshot: `${appUrl}/images/landing/hero-mockup.png`,
       },
       {
@@ -171,7 +165,7 @@ function HomeJsonLd() {
             name: "What is Diyafa?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Diyafa is Morocco's leading zero-commission restaurant technology platform. It provides QR digital menus, online ordering (dine-in, pickup, delivery), AI-powered menu import and translation, delivery driver management, analytics dashboards, and loyalty programs. Over 2000 restaurants across Casablanca, Marrakech, Rabat, and other Moroccan cities use Diyafa.",
+              text: "Diyafa is Morocco's premier catering management platform. It helps caterers, restaurants, hotels, and venues manage event bookings, build professional quotes, create catering menus, track payments (including COD), schedule staff, and grow their business. Available in English, French, and Arabic with full RTL support.",
             },
           },
           {
@@ -179,31 +173,31 @@ function HomeJsonLd() {
             name: "How much does Diyafa cost?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Diyafa offers a free plan with 1 menu, 6 templates, QR codes, basic analytics, and online ordering. The Pro plan at 299 MAD/month unlocks unlimited menus, 30+ templates, AI menu builder, delivery network management, full analytics, staff management, and priority support. Unlike Glovo (30% commission), Diyafa charges zero commission on all orders.",
+              text: "Diyafa offers a free plan with 1 organization, 3 menus, 5 events per month, basic quotes, and analytics. The Pro plan at 299 MAD/month unlocks unlimited events, milestone payments, invoicing, full analytics, staff management, equipment tracking, and priority support. No hidden fees, no commission on your revenue.",
             },
           },
           {
             "@type": "Question",
-            name: "How is Diyafa different from Glovo or Jumia Food?",
+            name: "What is the best catering service platform in Morocco?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Diyafa charges zero commission on orders (vs Glovo's 30%). Restaurants keep 100% of their revenue and manage their own delivery drivers directly. Diyafa also provides QR menus, AI content tools, and multilingual support (English, French, Arabic) — features not available on traditional delivery platforms.",
+              text: "Diyafa is Morocco's leading catering platform, purpose-built for the Moroccan market. Unlike generic CRM tools or WhatsApp/Excel workflows, Diyafa offers a complete event-to-settlement pipeline: inquiry management, TVA-compliant quote builder, catering menu management, COD payment tracking, staff scheduling, and portfolio showcase. It supports English, French, and Arabic with RTL.",
             },
           },
           {
             "@type": "Question",
-            name: "Does Diyafa support Arabic menus with RTL layout?",
+            name: "Does Diyafa support COD (Cash on Delivery) payments?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Diyafa fully supports English, French, and Arabic with proper right-to-left (RTL) layout, the Noto Sans Arabic font, and AI-powered auto-translation. Restaurants can offer their complete menu in all three languages simultaneously.",
+              text: "Yes. Diyafa is built for Morocco's payment landscape where 74% of transactions are cash. Track COD payments, milestone deposits, and bank transfers for every event. Mark payments as received, generate invoices, and maintain complete financial records.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I import my existing menu into Diyafa?",
+            name: "Does Diyafa support Arabic menus and RTL layout?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Diyafa's AI Menu Builder can import menus from photos or PDF files using Google Gemini, OpenAI GPT-4o, or Anthropic Claude. Simply upload an image of your menu and AI extracts all dishes, descriptions, categories, and prices into an editable format. You can review and edit before publishing.",
+              text: "Yes. Diyafa fully supports English, French, and Arabic with proper right-to-left (RTL) layout, the Noto Sans Arabic font, and AI-powered auto-translation. Your dashboard, quotes, menus, and client-facing pages all work seamlessly in Arabic.",
             },
           },
           {
@@ -211,15 +205,15 @@ function HomeJsonLd() {
             name: "Which cities does Diyafa serve in Morocco?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Diyafa operates in all major Moroccan cities including Casablanca (850+ restaurants), Marrakech (620+ restaurants), Rabat (420+ restaurants), Fes (380+ restaurants), Tangier (350+ restaurants), Agadir (280+ restaurants), Meknes (250+ restaurants), Oujda (180+ restaurants), and Kenitra (200+ restaurants). The platform works anywhere with an internet connection.",
+              text: "Diyafa operates across all major Moroccan cities including Casablanca, Marrakech, Rabat, Fes, Tangier, Agadir, Meknes, Oujda, and Kenitra. The platform works anywhere with an internet connection and is expanding to serve the entire MENA region.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I manage my own delivery drivers with Diyafa?",
+            name: "Can I manage wedding catering with Diyafa?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Diyafa's delivery network lets restaurants recruit, approve, and manage their own drivers directly. Features include smart auto-dispatch algorithms, driver location tracking, delivery zone management, and driver performance scoring. Drivers keep 100% of their delivery fees with zero platform commission.",
+              text: "Absolutely. Diyafa handles all types of catering events: weddings, corporate lunches, Ramadan iftars, birthday parties, conference catering, and more. Create customized per-head or package menus, generate professional quotes with TVA, track deposits and milestone payments, and coordinate staff and equipment for each event.",
             },
           },
         ],

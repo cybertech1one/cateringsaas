@@ -1,7 +1,7 @@
 # Morocco Catering & Food Service Market Intelligence Report
 
 **Date:** February 22, 2026
-**Purpose:** Actionable intelligence for building a catering SaaS platform within FeastQR
+**Purpose:** Actionable intelligence for building a catering SaaS platform within Diyafa
 **Research Depth:** Deep (40+ sources cross-referenced)
 **Confidence Level:** High on market structure and demographics, Medium on catering-specific financials
 
@@ -15,7 +15,7 @@
 4. [Payment and Logistics](#4-payment-and-logistics)
 5. [Technology Adoption](#5-technology-adoption)
 6. [Opportunity Assessment](#6-opportunity-assessment)
-7. [Strategic Recommendations for FeastQR](#7-strategic-recommendations-for-feastqr)
+7. [Strategic Recommendations for Diyafa](#7-strategic-recommendations-for-diyafa)
 
 ---
 
@@ -589,13 +589,13 @@ The Moroccan wedding is the **single largest driver** of the catering market. Ke
 
 ---
 
-## 7. Strategic Recommendations for FeastQR
+## 7. Strategic Recommendations for Diyafa
 
 ### 7.1 Product Vision
 
 **"The Glovo for catering" -- Morocco's first digital platform connecting event organizers with verified caterers.**
 
-Position FeastQR Catering as a two-sided marketplace + SaaS tool:
+Position Diyafa Catering as a two-sided marketplace + SaaS tool:
 1. **For customers:** Find, compare, book, and pay caterers for any event
 2. **For caterers:** Manage bookings, build menus, process payments, grow business
 
@@ -696,9 +696,9 @@ MARKETPLACE COMMISSION:
 - Waived for first 6 months to build supply
 ```
 
-### 7.6 Integration with Existing FeastQR
+### 7.6 Integration with Existing Diyafa
 
-The catering platform extends FeastQR's existing restaurant infrastructure:
+The catering platform extends Diyafa's existing restaurant infrastructure:
 
 | Existing Feature | Catering Extension |
 |-----------------|-------------------|
@@ -796,7 +796,7 @@ The catering platform extends FeastQR's existing restaurant infrastructure:
                    │          ● Party Maroc   │
                    │                         │
                    │                  ┌──────┐│
-                   │                  │FEASTQR││
+                   │                  │DIYAFA ││
                    │                  │TARGET ││
                    │                  │ZONE   ││
                    │                  └──────┘│
@@ -809,4 +809,4 @@ The catering platform extends FeastQR's existing restaurant infrastructure:
                     ─────────────────────────
 ```
 
-**The opportunity is clear: There is a massive gap where a digitally mature, catering-specific platform should exist in Morocco. FeastQR can fill this gap.**
+**The opportunity is clear: There is a massive gap where a digitally mature, catering-specific platform should exist in Morocco. Diyafa can fill this gap.**

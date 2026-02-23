@@ -16,6 +16,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { cn } from "~/utils/cn";
+import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
 // ---------------------------------------------------------------------------
 // Types inferred from the tRPC router return shapes
@@ -555,10 +556,11 @@ export default function MessagesCenter() {
     <div className="flex flex-col h-[calc(100vh-8rem)]">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-foreground">Messages</h1>
-        <p className="text-sm text-muted-foreground">
-          Communicate with clients about their events
-        </p>
+        <DashboardPageHeader
+          title="Messages"
+          description="Communicate with clients about their events"
+          icon={<MessageSquare className="h-5 w-5" />}
+        />
       </div>
 
       {/* Split panel container */}

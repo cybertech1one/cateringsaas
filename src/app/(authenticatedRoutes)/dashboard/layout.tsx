@@ -108,7 +108,7 @@ const systemNavItems: readonly SidebarNavItem[] = [
 function NavGroup({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="flex flex-col">
-      <span className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+      <span className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-primary/50">
         {label}
       </span>
       {children}
@@ -120,23 +120,23 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <KeyboardShortcutsProvider>
       <div className="flex w-full flex-1 flex-col gap-6 md:flex-row">
-        <aside className="flex flex-col gap-3 rounded-xl border border-border/40 bg-card/60 p-2.5 backdrop-blur-sm md:w-[220px] md:self-start md:sticky md:top-[88px]">
+        <aside className="flex flex-col gap-3 rounded-xl border border-border/40 bg-card/80 p-2.5 backdrop-blur-sm md:w-[220px] md:self-start md:sticky md:top-[88px] arch-card-top">
           <NavGroup label="Dashboard">
             <DashboardNav items={dashboardNavItems} />
           </NavGroup>
-          <div className="mx-2 border-t border-border/20" />
+          <div className="mx-2 gold-separator" />
           <NavGroup label="Events">
             <DashboardNav items={eventNavItems} />
           </NavGroup>
-          <div className="mx-2 border-t border-border/20" />
+          <div className="mx-2 gold-separator" />
           <NavGroup label="Operations">
             <DashboardNav items={operationsNavItems} />
           </NavGroup>
-          <div className="mx-2 border-t border-border/20" />
+          <div className="mx-2 gold-separator" />
           <NavGroup label="Business">
             <DashboardNav items={businessNavItems} />
           </NavGroup>
-          <div className="mx-2 border-t border-border/20" />
+          <div className="mx-2 gold-separator" />
           <DashboardNav items={systemNavItems} />
         </aside>
         <main className="flex-1">{children}</main>

@@ -63,6 +63,7 @@ import {
 } from "lucide-react";
 import { useToast } from "~/components/ui/use-toast";
 import { cn } from "~/utils/cn";
+import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -323,9 +324,9 @@ function EmptyState({ onUpload }: { onUpload: () => void }) {
     <div className="flex flex-col items-center justify-center py-20 px-6">
       {/* Decorative background pattern */}
       <div className="relative mb-8">
-        <div className="absolute inset-0 -m-6 rounded-full bg-gradient-to-br from-amber-100/60 via-orange-50/40 to-rose-100/60 blur-2xl" />
+        <div className="absolute inset-0 -m-6 rounded-full bg-gradient-to-br from-primary/10 via-gold/10 to-terracotta/10 blur-2xl" />
         <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/50 shadow-sm">
-          <Camera className="h-10 w-10 text-amber-600/70" />
+          <Camera className="h-10 w-10 text-primary/70" />
         </div>
       </div>
 
@@ -550,7 +551,7 @@ function FilterPill({
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200 border whitespace-nowrap",
         active
-          ? "bg-amber-600 text-white border-amber-600 shadow-sm shadow-amber-200/50"
+          ? "bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/20"
           : "bg-background text-muted-foreground border-border hover:bg-muted hover:text-foreground hover:border-muted-foreground/30",
       )}
     >
@@ -911,29 +912,20 @@ export default function PortfolioManagement() {
       {/* ----------------------------------------------------------------- */}
       {/* Header */}
       {/* ----------------------------------------------------------------- */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-sm">
-              <Camera className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Portfolio</h1>
-              <p className="text-sm text-muted-foreground">
-                Showcase your best catering work to attract new clients
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <Button
-          onClick={handleOpenUpload}
-          className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-sm shrink-0"
-        >
-          <Plus className="h-4 w-4" />
-          Upload Image
-        </Button>
-      </div>
+      <DashboardPageHeader
+        title="Portfolio"
+        description="Showcase your best catering work to attract new clients"
+        icon={<Camera className="h-5 w-5" />}
+        actions={
+          <Button
+            onClick={handleOpenUpload}
+            className="gap-2 shrink-0"
+          >
+            <Plus className="h-4 w-4" />
+            Upload Image
+          </Button>
+        }
+      />
 
       {/* ----------------------------------------------------------------- */}
       {/* Stats Row */}
@@ -945,20 +937,20 @@ export default function PortfolioManagement() {
           <StatCard
             label="Total Images"
             value={images.length}
-            icon={<ImageIcon className="h-5 w-5 text-amber-600" />}
-            accent="bg-amber-100"
+            icon={<ImageIcon className="h-5 w-5 text-primary" />}
+            accent="bg-primary/10"
           />
           <StatCard
             label="Featured"
             value={featuredCount}
-            icon={<Star className="h-5 w-5 text-orange-600 fill-orange-600" />}
-            accent="bg-orange-100"
+            icon={<Star className="h-5 w-5 text-gold fill-gold" />}
+            accent="bg-gold/10"
           />
           <StatCard
             label="Event Types"
             value={uniqueEventTypes.length}
-            icon={<Sparkles className="h-5 w-5 text-rose-600" />}
-            accent="bg-rose-100"
+            icon={<Sparkles className="h-5 w-5 text-terracotta" />}
+            accent="bg-terracotta/10"
           />
         </div>
       )}

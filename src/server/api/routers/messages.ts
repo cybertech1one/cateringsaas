@@ -15,6 +15,7 @@ import {
   orgProcedure,
   orgManagerProcedure,
 } from "~/server/api/trpc";
+import { rateLimit } from "~/server/rateLimit";
 
 export const messagesRouter = createTRPCRouter({
   /** List conversations for org (with latest message preview) */
@@ -199,6 +200,15 @@ export const messagesRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify conversation belongs to this org
+      const conversation = await ctx.db.conversations.findFirst({
+        where: { id: input.conversationId, orgId: ctx.orgId },
+        select: { id: true },
+      });
+      if (!conversation) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
       // Reset org unread count
       await ctx.db.conversations.update({
         where: { id: input.conversationId },
@@ -242,6 +252,19 @@ export const messagesRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Rate limit: 30 messages per phone per 10 minutes
+      const rl = rateLimit({
+        key: `clientMsg:${input.clientPhone}`,
+        limit: 30,
+        windowMs: 10 * 60 * 1000,
+      });
+      if (!rl.success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many messages. Please try again later.",
+        });
+      }
+
       // Verify conversation exists and phone matches
       const conversation = await ctx.db.conversations.findFirst({
         where: { id: input.conversationId, clientPhone: input.clientPhone },
@@ -285,6 +308,15 @@ export const messagesRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify conversation belongs to this org
+      const conversation = await ctx.db.conversations.findFirst({
+        where: { id: input.conversationId, orgId: ctx.orgId },
+        select: { id: true },
+      });
+      if (!conversation) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
       return ctx.db.conversations.update({
         where: { id: input.conversationId },
         data: { status: "archived" },

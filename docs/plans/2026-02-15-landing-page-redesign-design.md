@@ -1,7 +1,7 @@
 # Landing Page Redesign — "Digital Riad" Design
 
 ## Context
-FeastQR's landing page needs to compete with top-tier funded SaaS products. Current page is functional but not memorable.
+Diyafa's landing page needs to compete with top-tier funded SaaS products. Current page is functional but not memorable.
 
 ## Design Direction
 **"Digital Riad"** — Warm luxury with Moroccan-inspired palette meets modern SaaS polish. Animated hero mockup is the differentiator.

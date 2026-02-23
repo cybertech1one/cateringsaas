@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Transform every customer-facing surface of FeastQR from basic/generic to world-class — rebuilding the public menu from scratch with ordering, redesigning the explore page, adding a Linktree-style restaurant page, and fixing critical bugs.
+**Goal:** Transform every customer-facing surface of Diyafa from basic/generic to world-class — rebuilding the public menu from scratch with ordering, redesigning the explore page, adding a Linktree-style restaurant page, and fixing critical bugs.
 
 **Architecture:** The public menu (`/menu/[slug]`) is rebuilt as a new `PublicMenu` component that replaces `MainMenuView`. It uses CSS custom properties for theme colors/fonts (via the existing `themeToCSS` engine) combined with Tailwind for structure. The layout engine switches rendering between 6 layout modes based on the owner's theme config. Cart state, analytics hooks, and ordering logic are extracted from the dead `ThemedMenuView` code and integrated cleanly. The explore page is redesigned in-place. The Linktree page is a new route with new Prisma model.
 
@@ -180,10 +180,10 @@ import { type ThemeConfig, type Promotion } from "../types";
 
 function getSessionId(): string {
   if (typeof window === "undefined") return "";
-  let id = sessionStorage.getItem("feastqr_session");
+  let id = sessionStorage.getItem("diyafa_session");
   if (!id) {
     id = crypto.randomUUID();
-    sessionStorage.setItem("feastqr_session", id);
+    sessionStorage.setItem("diyafa_session", id);
   }
   return id;
 }
@@ -557,7 +557,7 @@ FeaturedCarousel (if featured dishes)
 CategoryNav (sticky)
 CategorySection × N (with dish cards)
 ReviewsSection
-Footer (powered by FeastQR)
+Footer (powered by Diyafa)
 ```
 
 **Step 1: Build CategorySection**
@@ -836,7 +836,7 @@ model RestaurantLinks {
   - Icon on left, title centered
   - Subtle border + glassmorphism background
   - Hover: scale(1.02) + glow
-- "Powered by FeastQR" footer link
+- "Powered by Diyafa" footer link
 - Share button (top-right) — copies `/r/[slug]` URL
 - QR code download button
 

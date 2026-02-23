@@ -6,7 +6,7 @@
 
 ## Vision
 
-Transform FeastQR's external-facing pages from a generic SaaS template into a distinctive, dual-audience experience that blends modern web design with subtle Moroccan visual identity. Attract both diners (exploring restaurants) and restaurant owners (building menus).
+Transform Diyafa's external-facing pages from a generic SaaS template into a distinctive, dual-audience experience that blends modern web design with subtle Moroccan visual identity. Attract both diners (exploring restaurants) and restaurant owners (building menus).
 
 ## Design Decisions
 
@@ -49,7 +49,7 @@ Existing tokens remain (ember, terracotta, gold, sage, cream, espresso). New add
 - Keep clean stat row design with colored icons
 
 **Features Section**:
-- Reframe as "Why FeastQR?" for both audiences
+- Reframe as "Why Diyafa?" for both audiences
 - Cards with arch-top borders (subtle CSS border-radius)
 - 3 diner cards + 3 owner cards
 

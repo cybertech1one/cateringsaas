@@ -1,4 +1,4 @@
-# Morocco Payment Gateway Research for FeastQR
+# Morocco Payment Gateway Research for Diyafa
 
 **Research Date**: February 14, 2026
 **Scope**: Payment integration options for a Next.js 14 + tRPC SaaS app targeting Moroccan restaurants
@@ -12,7 +12,7 @@
 2. [Market Context](#market-context)
 3. [CMI (Centre Monetique Interbancaire)](#1-cmi-centre-monetique-interbancaire)
 4. [Payzone Morocco](#2-payzone-morocco)
-5. [YouCan Pay](#3-youcan-pay-recommended-for-feastqr)
+5. [YouCan Pay](#3-youcan-pay-recommended-for-diyafa)
 6. [MarocPay (Mobile Wallet Interoperability)](#4-marocpay-mobile-wallet-interoperability)
 7. [Orange Money](#5-orange-money)
 8. [Cash on Delivery (COD)](#6-cash-on-delivery-cod)
@@ -20,7 +20,7 @@
 10. [Cash Collection Points (CashPlus, Wafacash)](#8-cash-collection-points-cashplus-wafacash)
 11. [Stripe / PayPal Status](#9-stripe--paypal-status)
 12. [Comparison Matrix](#comparison-matrix)
-13. [Recommended Integration Strategy](#recommended-integration-strategy-for-feastqr)
+13. [Recommended Integration Strategy](#recommended-integration-strategy-for-diyafa)
 14. [Implementation Plan](#implementation-plan)
 15. [Sources](#sources)
 
@@ -30,11 +30,11 @@
 
 Morocco's payment landscape is fragmented and cash-dominant. **84% of Moroccan consumers prefer cash on delivery**, and only 32% of card transactions are payments (vs. 68% ATM withdrawals). However, digital payments are growing rapidly: card payments grew 17% YoY in 2024, instant transfers processed 16.3 million transactions, and mobile wallet ownership jumped from 0.6% to 6.3% in one year.
 
-**Key findings for FeastQR:**
+**Key findings for Diyafa:**
 
 1. **Stripe is NOT available in Morocco** -- Moroccan merchants cannot open Stripe accounts. LemonSqueezy (which uses Stripe) will only work for international customers or through a foreign entity.
 2. **CMI is the dominant card processor** -- handles ~85 million transactions/year, but requires a Moroccan business entity and bank account.
-3. **YouCan Pay is the best fit for FeastQR** -- Moroccan-built, has a Node.js SDK with TypeScript support, supports MAD currency natively, has CashPlus integration, sandbox mode, and is designed for SaaS/e-commerce.
+3. **YouCan Pay is the best fit for Diyafa** -- Moroccan-built, has a Node.js SDK with TypeScript support, supports MAD currency natively, has CashPlus integration, sandbox mode, and is designed for SaaS/e-commerce.
 4. **COD is non-negotiable** -- 70-84% of e-commerce purchases use COD. Any Morocco-targeting app MUST support it.
 5. **Payzone has a REST API** but documentation is difficult to access and no npm package exists.
 6. **Chari's BaaS APIs are emerging** -- first VC-backed fintech with BAM payment license (October 2025), offering APIs for card issuance, KYC, and wallet processing. Worth monitoring.
@@ -96,10 +96,10 @@ const CmiClient = new cmi.default({
   storekey: 'YOUR_STOREKEY',           // Provided by CMI
   clientid: 'YOUR_CLIENTID',           // Provided by CMI
   oid: 'ORDER-12345',                  // Unique order ID
-  shopurl: 'https://feastqr.com',      // Your site URL
-  okUrl: 'https://feastqr.com/api/payments/cmi/success',
-  failUrl: 'https://feastqr.com/api/payments/cmi/fail',
-  callbackURL: 'https://feastqr.com/api/payments/cmi/callback',
+  shopurl: 'https://diyafa.ma',      // Your site URL
+  okUrl: 'https://diyafa.ma/api/payments/cmi/success',
+  failUrl: 'https://diyafa.ma/api/payments/cmi/fail',
+  callbackURL: 'https://diyafa.ma/api/payments/cmi/callback',
   email: 'restaurant@example.com',
   BillToName: 'Restaurant Name',
   amount: '199.00',                    // Amount in MAD
@@ -174,7 +174,7 @@ The callback response also includes a hash that MUST be verified server-side to 
 - Application through your bank (Attijariwafa, BMCE, CIH, etc.)
 - Approval timeline: 2-4 weeks typically
 
-### Limitations for FeastQR
+### Limitations for Diyafa
 
 - **No self-service signup** -- requires a Moroccan business entity
 - **Redirect-based flow only** -- no embedded/inline card form
@@ -224,9 +224,9 @@ Authorization: Basic base64(username:password)
     "email": "restaurant@example.com",
     "name": "Restaurant Name"
   },
-  "successUrl": "https://feastqr.com/payments/success",
-  "errorUrl": "https://feastqr.com/payments/error",
-  "callbackUrl": "https://feastqr.com/api/payments/payzone/webhook"
+  "successUrl": "https://diyafa.ma/payments/success",
+  "errorUrl": "https://diyafa.ma/payments/error",
+  "callbackUrl": "https://diyafa.ma/api/payments/payzone/webhook"
 }
 ```
 
@@ -251,7 +251,7 @@ Authorization: Basic base64(username:password)
 - Technical support: support@vpscorp.ma
 - Website: https://payzone.ma
 
-### Limitations for FeastQR
+### Limitations for Diyafa
 
 - **Developer portal was unreachable** during this research (timeout)
 - **No npm package** -- requires custom HTTP client wrapper
@@ -260,7 +260,7 @@ Authorization: Basic base64(username:password)
 
 ---
 
-## 3. YouCan Pay (RECOMMENDED for FeastQR)
+## 3. YouCan Pay (RECOMMENDED for Diyafa)
 
 **Confidence: HIGH** (official docs, working Node.js SDK, test environment)
 
@@ -276,7 +276,7 @@ YouCan Pay is a Moroccan-built payment gateway designed specifically for the Mor
 4. **Sandbox mode** -- full test environment with test cards
 5. **Webhook support** -- proper event-driven architecture
 6. **3D Secure** -- handled automatically
-7. **Multi-language** -- supports `en`, `fr`, `ar` (matches FeastQR's i18n)
+7. **Multi-language** -- supports `en`, `fr`, `ar` (matches Diyafa's i18n)
 8. **Self-service signup** -- no bank partnership required to start
 
 ### Installation
@@ -318,8 +318,8 @@ const token = await youCanPay.getToken({
   currency: 'MAD',                  // CurrencyCode.MAD
   customer_ip: '127.0.0.1',        // Customer's IP
   order_id: 'ORDER-12345',         // Your unique order ID
-  success_url: 'https://feastqr.com/payments/success',
-  error_url: 'https://feastqr.com/payments/error',
+  success_url: 'https://diyafa.ma/payments/success',
+  error_url: 'https://diyafa.ma/payments/error',
   customer: {
     name: 'Restaurant Owner',
     address: '123 Avenue Mohammed V',
@@ -340,8 +340,8 @@ const paymentUrl = await youCanPay.getPaymentUrl(
     currency: 'MAD',
     customer_ip: '127.0.0.1',
     order_id: 'ORDER-12345',
-    success_url: 'https://feastqr.com/payments/success',
-    error_url: 'https://feastqr.com/payments/error',
+    success_url: 'https://diyafa.ma/payments/success',
+    error_url: 'https://diyafa.ma/payments/error',
   },
   'fr' // Language: 'en' | 'fr' | 'ar'
 );
@@ -516,7 +516,7 @@ MarocPay is the **interoperable mobile payment system** activated by CMI under s
 - **8+ million wallet holders** in Morocco
 - Free M-wallet for consumers
 - Interoperable across all Moroccan banks
-- QR-code based payments (fits well with FeastQR's QR model)
+- QR-code based payments (fits well with Diyafa's QR model)
 
 ### How It Works (Merchant Side)
 
@@ -549,7 +549,7 @@ To accept MarocPay in a web app, you would need to:
 | Orange et moi | Orange Morocco |
 | Inwi Money | inwi |
 
-### Limitation for FeastQR
+### Limitation for Diyafa
 
 - No direct API integration possible
 - Operates through banking infrastructure only
@@ -755,7 +755,7 @@ Chari (YC S21) became the first VC-backed startup in Morocco to receive a Bank A
 
 Chari is packaging their technology into an **API-based BaaS platform** for third parties. However, as of February 2026, the public developer documentation is not yet available.
 
-### Why It Matters for FeastQR
+### Why It Matters for Diyafa
 
 - If/when Chari's APIs launch publicly, they could provide a one-stop solution for:
   - Online card payments
@@ -804,7 +804,7 @@ Monitor https://chari.ma for developer API announcements. Contact partnerships@c
 
 ### Stripe
 
-**Morocco is NOT supported.** Stripe operates in 46 countries as of December 2025 -- Morocco is not among them. LemonSqueezy (which FeastQR currently uses) relies on Stripe and therefore also does not support Moroccan merchant accounts.
+**Morocco is NOT supported.** Stripe operates in 46 countries as of December 2025 -- Morocco is not among them. LemonSqueezy (which Diyafa currently uses) relies on Stripe and therefore also does not support Moroccan merchant accounts.
 
 **Workaround**: Register a business entity in a Stripe-supported country (France, Spain, etc.) and use that as the merchant of record. This is legally complex and may not comply with Moroccan financial regulations.
 
@@ -817,7 +817,7 @@ Monitor https://chari.ma for developer API announcements. Contact partnerships@c
 - Cannot receive international payments
 - Withdrawal to Moroccan bank accounts has limitations
 
-**Verdict**: PayPal is not viable as a primary payment method for FeastQR in Morocco.
+**Verdict**: PayPal is not viable as a primary payment method for Diyafa in Morocco.
 
 ---
 
@@ -843,7 +843,7 @@ Monitor https://chari.ma for developer API announcements. Contact partnerships@c
 
 ---
 
-## Recommended Integration Strategy for FeastQR
+## Recommended Integration Strategy for Diyafa
 
 ### Phase 1: Immediate (Launch MVP)
 
@@ -882,7 +882,7 @@ Monitor https://chari.ma for developer API announcements. Contact partnerships@c
    - KYC built-in
 
 7. **MarocPay QR** -- For in-restaurant table payments
-   - QR code already central to FeastQR
+   - QR code already central to Diyafa
    - Wallet-based payment at table
 
 ---

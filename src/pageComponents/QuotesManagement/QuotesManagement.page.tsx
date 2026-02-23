@@ -46,6 +46,7 @@ import {
   Pencil,
   RotateCcw,
 } from "lucide-react";
+import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -137,13 +138,13 @@ const STATUS_CONFIG: Record<
   QuoteStatus,
   { label: string; className: string; icon: typeof FileText }
 > = {
-  draft: { label: "Draft", className: "bg-gray-100 text-gray-700", icon: FileText },
-  sent: { label: "Sent", className: "bg-blue-100 text-blue-700", icon: Send },
-  viewed: { label: "Viewed", className: "bg-amber-100 text-amber-700", icon: Eye },
-  accepted: { label: "Accepted", className: "bg-green-100 text-green-700", icon: CheckCircle },
-  rejected: { label: "Rejected", className: "bg-red-100 text-red-700", icon: XCircle },
-  expired: { label: "Expired", className: "bg-gray-100 text-gray-400", icon: Clock },
-  superseded: { label: "Superseded", className: "bg-gray-100 text-gray-400", icon: RotateCcw },
+  draft: { label: "Draft", className: "bg-muted text-muted-foreground", icon: FileText },
+  sent: { label: "Sent", className: "bg-[hsl(var(--majorelle-blue))]/10 text-[hsl(var(--majorelle-blue))]", icon: Send },
+  viewed: { label: "Viewed", className: "bg-gold/10 text-gold", icon: Eye },
+  accepted: { label: "Accepted", className: "bg-sage/10 text-sage", icon: CheckCircle },
+  rejected: { label: "Rejected", className: "bg-destructive/10 text-destructive", icon: XCircle },
+  expired: { label: "Expired", className: "bg-muted text-muted-foreground/60", icon: Clock },
+  superseded: { label: "Superseded", className: "bg-muted text-muted-foreground/60", icon: RotateCcw },
 };
 
 const STATUS_TABS: { value: string; label: string }[] = [
@@ -715,8 +716,8 @@ function QuoteCard({
         {/* Top row: event info + status */}
         <div className="flex items-start justify-between gap-3 mb-2">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted shrink-0">
-              <FileText className="h-5 w-5 text-muted-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 shrink-0">
+              <FileText className="h-5 w-5 text-primary" />
             </div>
             <div className="min-w-0">
               <h3 className="font-semibold text-sm truncate">
@@ -1153,27 +1154,27 @@ function QuoteDetailView({
         <CardContent>
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-gray-400" />
+              <div className="h-2 w-2 rounded-full bg-muted-foreground/40" />
               <span className="text-muted-foreground">Created</span>
               <span>{formatDateTime(typedQuote.createdAt)}</span>
             </div>
             {typedQuote.sentAt && (
               <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-blue-500" />
+                <div className="h-2 w-2 rounded-full bg-[hsl(var(--majorelle-blue))]" />
                 <span className="text-muted-foreground">Sent</span>
                 <span>{formatDateTime(typedQuote.sentAt)}</span>
               </div>
             )}
             {typedQuote.viewedAt && (
               <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-amber-500" />
+                <div className="h-2 w-2 rounded-full bg-gold" />
                 <span className="text-muted-foreground">Viewed</span>
                 <span>{formatDateTime(typedQuote.viewedAt)}</span>
               </div>
             )}
             {typedQuote.respondedAt && (
               <div className="flex items-center gap-3">
-                <div className={`h-2 w-2 rounded-full ${status === "accepted" ? "bg-green-500" : "bg-red-500"}`} />
+                <div className={`h-2 w-2 rounded-full ${status === "accepted" ? "bg-sage" : "bg-destructive"}`} />
                 <span className="text-muted-foreground">
                   {status === "accepted" ? "Accepted" : "Rejected"}
                 </span>
@@ -1182,7 +1183,7 @@ function QuoteDetailView({
             )}
             {typedQuote.expiredAt && (
               <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-gray-300" />
+                <div className="h-2 w-2 rounded-full bg-muted-foreground/30" />
                 <span className="text-muted-foreground">Expired</span>
                 <span>{formatDateTime(typedQuote.expiredAt)}</span>
               </div>
@@ -1263,18 +1264,17 @@ export default function QuotesManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Quotes</h1>
-          <p className="text-sm text-muted-foreground">
-            Create, send, and track versioned quotes for events
-          </p>
-        </div>
-        <Button className="gap-2" onClick={() => setCreateDialogOpen(true)}>
-          <Plus className="h-4 w-4" />
-          Create Quote
-        </Button>
-      </div>
+      <DashboardPageHeader
+        title="Quotes"
+        description="Create, send, and track versioned quotes for events"
+        icon={<FileText className="h-5 w-5" />}
+        actions={
+          <Button className="gap-2" onClick={() => setCreateDialogOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Create Quote
+          </Button>
+        }
+      />
 
       {/* Search */}
       <div className="flex gap-3">

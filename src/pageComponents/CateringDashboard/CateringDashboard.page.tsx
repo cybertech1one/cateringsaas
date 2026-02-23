@@ -38,6 +38,7 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
+import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
 const CateringMenuForm = dynamic(
   () =>
@@ -130,19 +131,19 @@ type InquiryStatus = (typeof INQUIRY_STATUSES)[number];
 function getStatusColor(status: string): string {
   switch (status) {
     case "pending":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+      return "bg-gold/10 text-gold dark:bg-gold/20 dark:text-gold";
     case "reviewed":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      return "bg-[hsl(var(--majorelle-blue))]/10 text-[hsl(var(--majorelle-blue))] dark:bg-[hsl(var(--majorelle-blue))]/20 dark:text-[hsl(var(--majorelle-blue))]";
     case "quoted":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
+      return "bg-[hsl(var(--saffron))]/10 text-[hsl(var(--saffron))] dark:bg-[hsl(var(--saffron))]/20 dark:text-[hsl(var(--saffron))]";
     case "confirmed":
-      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+      return "bg-sage/10 text-sage dark:bg-sage/20 dark:text-sage";
     case "deposit_paid":
-      return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
+      return "bg-[hsl(var(--mint-tea))]/10 text-[hsl(var(--mint-tea))] dark:bg-[hsl(var(--mint-tea))]/20 dark:text-[hsl(var(--mint-tea))]";
     case "completed":
-      return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+      return "bg-muted text-muted-foreground dark:bg-muted dark:text-muted-foreground";
     case "cancelled":
-      return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      return "bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive";
     default:
       return "bg-muted text-muted-foreground";
   }
@@ -718,29 +719,21 @@ export function CateringDashboardPage() {
     <main className="flex w-full flex-1 flex-col overflow-hidden">
       <DashboardShell>
         {/* Page Header */}
-        <div className="flex w-full flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-sm">
-              <UtensilsCrossed className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h1 className="font-display text-2xl font-bold tracking-tight">
-                {t("catering.title")}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                {t("catering.description")}
-              </p>
-            </div>
-          </div>
-          <Button
-            className="gap-2 rounded-full px-6 shadow-sm"
-            variant="default"
-            onClick={handleCreate}
-          >
-            <Plus className="h-4 w-4" />
-            {t("catering.createMenu")}
-          </Button>
-        </div>
+        <DashboardPageHeader
+          title={t("catering.title")}
+          description={t("catering.description")}
+          icon={<UtensilsCrossed className="h-5 w-5" />}
+          actions={
+            <Button
+              className="gap-2 rounded-full px-6 shadow-sm"
+              variant="default"
+              onClick={handleCreate}
+            >
+              <Plus className="h-4 w-4" />
+              {t("catering.createMenu")}
+            </Button>
+          }
+        />
 
         {/* Tabs */}
         <Tabs

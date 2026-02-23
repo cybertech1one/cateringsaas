@@ -15,66 +15,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/login`,
+      url: `${baseUrl}/explore`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/register`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
+      changeFrequency: "daily",
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/privacy-policy`,
       lastModified: new Date(),
       changeFrequency: "yearly",
-      priority: 0.3,
+      priority: 0.2,
     },
     {
       url: `${baseUrl}/terms-of-service`,
       lastModified: new Date(),
       changeFrequency: "yearly",
-      priority: 0.3,
+      priority: 0.2,
     },
     {
       url: `${baseUrl}/refund-policy`,
       lastModified: new Date(),
       changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/for-restaurants`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/for-drivers`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
+      priority: 0.2,
     },
   ];
 
-  // City-specific landing pages for SEO (sourced from shared moroccoCities data)
-  const cityPages: MetadataRoute.Sitemap = MOROCCO_CITIES.flatMap((city) => [
-    {
-      url: `${baseUrl}/for-drivers/${city.slug}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/for-restaurants/${city.slug}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    },
-  ]);
+  // City-specific explore pages for SEO
+  const cityPages: MetadataRoute.Sitemap = MOROCCO_CITIES.map((city) => ({
+    url: `${baseUrl}/explore/${city.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "daily" as const,
+    priority: 0.8,
+  }));
 
-  // Dynamic published organization pages
+  // Dynamic published caterer profile pages
   let orgPages: MetadataRoute.Sitemap = [];
 
   try {

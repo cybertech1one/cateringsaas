@@ -1,7 +1,7 @@
 # Morocco Food Delivery Market Intelligence Report
 
 **Date:** February 21, 2026
-**Purpose:** Actionable intelligence for building FeastQR's delivery network platform
+**Purpose:** Actionable intelligence for building Diyafa's delivery network platform
 **Research Depth:** Deep (50+ sources cross-referenced)
 **Confidence Level:** High on market structure, Medium on financial projections
 
@@ -16,7 +16,7 @@
 5. [Logistics & Operations](#5-logistics--operations)
 6. [Regulatory & Legal](#6-regulatory--legal)
 7. [Technology Stack Recommendations](#7-technology-stack-recommendations)
-8. [Strategic Recommendations for FeastQR](#8-strategic-recommendations-for-feastqr)
+8. [Strategic Recommendations for Diyafa](#8-strategic-recommendations-for-diyafa)
 
 ---
 
@@ -237,7 +237,7 @@ After expenses, many riders report net earnings below minimum wage. This was the
 | BNPL (Buy Now Pay Later) | 74% awareness, 39% willing to adopt | Emerging; Chari is local innovator |
 | Apple Pay / Google Pay | Launched 2023 | Early adoption; CIH Bank among first supporters |
 
-**Critical insight:** COD dominance (60-74%) means FeastQR MUST support cash-on-delivery as the primary payment method. Any platform that forces digital-only payments will lose the majority of the market.
+**Critical insight:** COD dominance (60-74%) means Diyafa MUST support cash-on-delivery as the primary payment method. Any platform that forces digital-only payments will lose the majority of the market.
 
 ### 3.2 Mobile Payment Providers
 
@@ -253,7 +253,7 @@ After expenses, many riders report net earnings below minimum wage. This was the
 
 ### 3.3 Payment Gateway Options
 
-| Gateway | Suitability for FeastQR | Notes |
+| Gateway | Suitability for Diyafa | Notes |
 |---------|------------------------|-------|
 | **CMI (Centre Monetique Interbancaire)** | Primary -- MUST integrate | Leading gateway; Visa/Mastercard/local cards; 3D Secure 2 mandatory; SHA512 authentication |
 | **Payzone** | Secondary | User-friendly; good for SMEs; supports mobile wallets |
@@ -299,7 +299,7 @@ Since 60-74% of orders will be COD, managing driver cash collection and settleme
 | VAT | Standard rate 20%; auto-entrepreneurs exempt below threshold |
 | Data localization | Processing of Moroccan payment data subject to BAM oversight |
 
-**Key consideration:** If FeastQR acts as a marketplace holding and disbursing funds, it may need payment institution licensing from BAM. Alternative: Partner with a licensed payment institution to handle the fund flow.
+**Key consideration:** If Diyafa acts as a marketplace holding and disbursing funds, it may need payment institution licensing from BAM. Alternative: Partner with a licensed payment institution to handle the fund flow.
 
 ---
 
@@ -481,7 +481,7 @@ If no driver accepts within 60 seconds, expand radius by 1km increments up to 8k
 - Separate hot/cold compartments
 - Waterproof exterior
 - Reflective strips for night visibility
-- Platform-branded (FeastQR branding opportunity)
+- Platform-branded (Diyafa branding opportunity)
 
 ### 5.5 Hot/Cold Chain Management
 
@@ -511,13 +511,13 @@ If no driver accepts within 60 seconds, expand radius by 1km increments up to 8k
 
 ### 6.1 Platform Regulations
 
-| Area | Regulation | Implication for FeastQR |
+| Area | Regulation | Implication for Diyafa |
 |------|-----------|------------------------|
 | Competition law | Competition Council actively enforcing | Cannot impose exclusivity on restaurants; commissions scrutinized |
 | Commission caps | Glovo settlement precedent: 30% maximum | Industry benchmark now set |
 | Platform transparency | Ranking/visibility criteria must be published | Algorithm transparency required |
 | Pricing | Cannot use predatory pricing | Minimum pricing floor exists |
-| Dominant position | Abuse of dominance actively prosecuted | If FeastQR gains >50% share, heightened scrutiny |
+| Dominant position | Abuse of dominance actively prosecuted | If Diyafa gains >50% share, heightened scrutiny |
 
 ### 6.2 Auto-Entrepreneur Status for Drivers
 
@@ -540,7 +540,7 @@ If no driver accepts within 60 seconds, expand radius by 1km increments up to 8k
 | TVA (VAT) on platform fees | 20% standard | Platform's commission income |
 | TVA on delivery fees | 20% | Delivery service charges |
 | Auto-entrepreneur IR | 0.5-1% | Driver's tax obligation |
-| Corporate tax (IS) for FeastQR | 20-31% (progressive) | On company profits |
+| Corporate tax (IS) for Diyafa | 20-31% (progressive) | On company profits |
 | VAT registration threshold | MAD 500,000 turnover | Below = exempt |
 | Digital VAT filing | Via SIMPL-TVA portal | Electronic filing mandatory |
 
@@ -557,7 +557,7 @@ If no driver accepts within 60 seconds, expand radius by 1km increments up to 8k
 | Penalties | MAD 10,000 - 600,000 fine and/or 3 months to 4 years imprisonment |
 | Record retention (KYC) | Minimum 10 years |
 
-**FeastQR data protection checklist:**
+**Diyafa data protection checklist:**
 - [ ] Register all data processing activities with CNDP
 - [ ] Obtain explicit consent for: location tracking, personal data, order history
 - [ ] Implement data minimization (collect only what is needed)
@@ -576,7 +576,7 @@ If no driver accepts within 60 seconds, expand radius by 1km increments up to 8k
 | HACCP | International standard | Recommended for all food businesses |
 | Dark kitchens | Currently unregulated gap | Risk area -- enforcement increasing in 2025 |
 
-**Key risk for delivery platforms:** Dark kitchens and online food sellers operating without ONSSA approval are a growing concern. FeastQR should:
+**Key risk for delivery platforms:** Dark kitchens and online food sellers operating without ONSSA approval are a growing concern. Diyafa should:
 - Require restaurant partners to provide ONSSA registration/approval
 - Include food safety disclaimers in terms of service
 - Implement temperature-related complaints tracking
@@ -676,7 +676,7 @@ Driver App --> MQTT/WebSocket --> Location Service --> Redis (cache)
 | Order matching | Real-time algorithm (proximity + availability + performance + vehicle type) |
 | Scaling | Containerized auto-scaling; processes 100K+ daily orders globally |
 
-**FeastQR advantage:** FeastQR already has a robust Next.js + tRPC + Supabase stack. Extending this with:
+**Diyafa advantage:** Diyafa already has a robust Next.js + tRPC + Supabase stack. Extending this with:
 - Supabase Realtime for live tracking (already available)
 - Supabase Edge Functions for driver matching
 - PostGIS for geospatial queries
@@ -684,7 +684,7 @@ Driver App --> MQTT/WebSocket --> Location Service --> Redis (cache)
 
 This avoids the need for a completely separate tech stack and leverages existing infrastructure.
 
-### 7.6 Recommended FeastQR Delivery Tech Stack
+### 7.6 Recommended Diyafa Delivery Tech Stack
 
 | Component | Technology | Rationale |
 |-----------|-----------|-----------|
@@ -706,7 +706,7 @@ This avoids the need for a completely separate tech stack and leverages existing
 
 ---
 
-## 8. Strategic Recommendations for FeastQR
+## 8. Strategic Recommendations for Diyafa
 
 ### 8.1 Market Entry Strategy
 
@@ -715,15 +715,15 @@ This avoids the need for a completely separate tech stack and leverages existing
 1. **Jumia Food exit (Dec 2023)** created a vacuum that local players are only partially filling
 2. **Glovo antitrust settlement (Jul 2025)** forced transparency and commission caps, leveling the playing field
 3. **Rider dissatisfaction with Glovo** (Sep 2025 strike) means a pool of 4,500 couriers open to alternatives
-4. **FeastQR already has 6,500+ restaurant relationships** (matching Glovo's partner count) through its existing menu platform
+4. **Diyafa already has 6,500+ restaurant relationships** (matching Glovo's partner count) through its existing menu platform
 5. **Competition Council is receptive** to new entrants that increase competition
 6. **Delivery Hero consolidation** may cause organizational disruption at Glovo
 
 ### 8.2 Competitive Positioning
 
-**FeastQR differentiators vs. Glovo:**
+**Diyafa differentiators vs. Glovo:**
 
-| Dimension | Glovo | FeastQR Opportunity |
+| Dimension | Glovo | Diyafa Opportunity |
 |-----------|-------|-------------------|
 | Commission rate | Capped at 30% | Offer 15-20% (undercut significantly) |
 | Driver base rate | 6 MAD/delivery | Offer 10-12 MAD/delivery |
@@ -741,7 +741,7 @@ This avoids the need for a completely separate tech stack and leverages existing
 |----------|------|-----------|-----------|
 | 1 | Casablanca | 3.7M | Largest market, highest order volume, most restaurants |
 | 2 | Rabat-Sale | 1.9M | Government/business center, high purchasing power |
-| 3 | Marrakech | 1.0M | Tourist + local demand; FeastQR likely has strong restaurant base |
+| 3 | Marrakech | 1.0M | Tourist + local demand; Diyafa likely has strong restaurant base |
 | 4 | Tangier | 1.1M | Growing economy, port city, young population |
 | 5 | Fes | 1.2M | Large city but complex medina logistics |
 | 6 | Agadir | 0.6M | Tourist destination, spread-out city |
@@ -757,7 +757,7 @@ This avoids the need for a completely separate tech stack and leverages existing
 | Surge delivery premium | 1.2-2.0x multiplier | Dynamic, capped at 2x |
 | Featured restaurant placement | 500-2000 MAD/month | Promoted listings |
 | Advertising | CPM-based | In-app restaurant ads |
-| Subscription (Pro restaurant) | Existing FeastQR tiers | Bundle delivery with menu platform |
+| Subscription (Pro restaurant) | Existing Diyafa tiers | Bundle delivery with menu platform |
 | Data insights | Premium | Restaurant analytics package |
 
 ### 8.5 Critical Success Factors
@@ -767,7 +767,7 @@ This avoids the need for a completely separate tech stack and leverages existing
 3. **Driver welfare as brand** -- Fair pay + insurance + scholarship differentiates from Glovo
 4. **Medina-optimized routing** -- Solve the old city navigation problem competitors struggle with
 5. **Ramadan readiness** -- Build for the extreme iftar demand spike from day one
-6. **Arabic-first UI** -- RTL support and Darija-friendly interface (FeastQR already has AR support)
+6. **Arabic-first UI** -- RTL support and Darija-friendly interface (Diyafa already has AR support)
 7. **Offline resilience** -- Driver app must work in spotty connectivity
 8. **30% lower commissions** -- The Glovo settlement number is now the ceiling; come in well under it
 

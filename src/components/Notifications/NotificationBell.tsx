@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 /**
  * NotificationBell — Stubbed out for Diyafa.
  *
- * The old FeastQR `api.notifications` router was removed. This renders
+ * The old `api.notifications` router was removed. This renders
  * a static bell icon with no dropdown or tRPC calls. Once a Diyafa
  * notifications router is implemented, this can be wired back up.
  */

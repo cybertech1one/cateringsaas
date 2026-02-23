@@ -39,6 +39,7 @@ import {
   CalendarPlus,
   Box,
 } from "lucide-react";
+import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
 // ──────────────────────────────────────────────
 // Types
@@ -113,28 +114,28 @@ const CONDITION_CONFIG: Record<
 > = {
   new_condition: {
     label: "New",
-    color: "text-emerald-700",
-    bgColor: "bg-emerald-100",
+    color: "text-sage",
+    bgColor: "bg-sage/10",
   },
   good: {
     label: "Good",
-    color: "text-green-700",
-    bgColor: "bg-green-50",
+    color: "text-[hsl(var(--mint-tea))]",
+    bgColor: "bg-[hsl(var(--mint-tea))]/10",
   },
   fair: {
     label: "Fair",
-    color: "text-amber-700",
-    bgColor: "bg-amber-50",
+    color: "text-gold",
+    bgColor: "bg-gold/10",
   },
   needs_repair: {
     label: "Needs Repair",
-    color: "text-orange-700",
-    bgColor: "bg-orange-100",
+    color: "text-[hsl(var(--harissa))]",
+    bgColor: "bg-[hsl(var(--harissa))]/10",
   },
   retired: {
     label: "Retired",
-    color: "text-gray-500",
-    bgColor: "bg-gray-100",
+    color: "text-muted-foreground",
+    bgColor: "bg-muted",
   },
 };
 
@@ -293,7 +294,7 @@ function EquipmentCard({
           </Badge>
           <div className="text-xs text-muted-foreground">
             {allocated > 0 && (
-              <span className="text-blue-600 font-medium">
+              <span className="text-[hsl(var(--majorelle-blue))] font-medium">
                 {allocated} allocated
               </span>
             )}
@@ -1079,18 +1080,17 @@ export default function EquipmentManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Equipment</h1>
-          <p className="text-sm text-muted-foreground">
-            Track inventory, allocations, and condition
-          </p>
-        </div>
-        <Button className="gap-2" onClick={handleAddNew}>
-          <Plus className="h-4 w-4" />
-          Add Equipment
-        </Button>
-      </div>
+      <DashboardPageHeader
+        title="Equipment"
+        description="Track inventory, allocations, and condition"
+        icon={<Package className="h-5 w-5" />}
+        actions={
+          <Button className="gap-2" onClick={handleAddNew}>
+            <Plus className="h-4 w-4" />
+            Add Equipment
+          </Button>
+        }
+      />
 
       {/* Stats */}
       {isLoading ? (
@@ -1101,36 +1101,36 @@ export default function EquipmentManagement() {
             label="Total Items"
             value={stats.total}
             icon={Box}
-            color="bg-blue-100 text-blue-700"
+            color="bg-primary/10 text-primary"
           />
           <StatCard
             label="Available Now"
             value={stats.available}
             icon={CheckCircle2}
-            color="bg-green-100 text-green-700"
+            color="bg-sage/10 text-sage"
           />
           <StatCard
             label="Allocated"
             value={stats.allocated}
             icon={Package}
-            color="bg-amber-100 text-amber-700"
+            color="bg-gold/10 text-gold"
           />
           <StatCard
             label="Needs Repair"
             value={stats.needsRepair}
             icon={Wrench}
-            color="bg-orange-100 text-orange-700"
+            color="bg-[hsl(var(--harissa))]/10 text-[hsl(var(--harissa))]"
           />
         </div>
       )}
 
       {/* Low Stock Alerts */}
       {lowStockItems.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="border-[hsl(var(--harissa))]/20 bg-[hsl(var(--harissa))]/5">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="h-4 w-4 text-orange-600" />
-              <span className="font-semibold text-sm text-orange-800">
+              <AlertTriangle className="h-4 w-4 text-[hsl(var(--harissa))]" />
+              <span className="font-semibold text-sm text-[hsl(var(--harissa))]">
                 Low Stock Alerts ({lowStockItems.length})
               </span>
             </div>
@@ -1139,7 +1139,7 @@ export default function EquipmentManagement() {
                 <Badge
                   key={item.id}
                   variant="outline"
-                  className="bg-orange-100 text-orange-700 border-orange-300 cursor-pointer hover:bg-orange-200"
+                  className="bg-[hsl(var(--harissa))]/10 text-[hsl(var(--harissa))] border-[hsl(var(--harissa))]/30 cursor-pointer hover:bg-[hsl(var(--harissa))]/20"
                   onClick={() => handleCardClick(item)}
                 >
                   {item.name} ({item.quantityAvailable}/{item.quantityTotal})

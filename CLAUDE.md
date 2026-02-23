@@ -176,7 +176,7 @@ npx prisma generate     # Generate Prisma client
 - All routers must have comprehensive test coverage
 - Test factories in src/__tests__/utils/factories.ts
 
-## Common Issues (inherited from FeastQR base)
+## Common Issues
 - NEVER run `pnpm install --force` - corrupts native module DLLs on Windows
 - Always `rm -rf .next` before build if seeing module errors
 - en/common.ts must NOT have type annotations (it's the type source)
@@ -191,5 +191,4 @@ npx prisma generate     # Generate Prisma client
 See `docs/progress/` for sprint-by-sprint progress documentation.
 
 ## Origin
-Forked from FeastQR (restaurant menu SaaS) and rebuilt for the catering domain.
 Separate codebase, separate database, separate deployment. No shared dependencies.

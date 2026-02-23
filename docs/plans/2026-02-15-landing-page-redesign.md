@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Transform the FeastQR landing page into a world-class "Digital Riad" design with animated hero mockup, asymmetric bento features, and warm luxury aesthetic.
+**Goal:** Transform the Diyafa landing page into a world-class "Digital Riad" design with animated hero mockup, asymmetric bento features, and warm luxury aesthetic.
 
 **Architecture:** Server component page (`LandingPage.page.tsx`) with one new client component (`HeroMockup.tsx`) for CSS-animated interactive preview. All other sections are server-rendered. Existing molecule components (FAQ, Pricing, Comparison, Footer) unchanged.
 

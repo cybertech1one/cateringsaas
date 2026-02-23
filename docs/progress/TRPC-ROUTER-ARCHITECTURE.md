@@ -1,9 +1,9 @@
 # Diyafa tRPC Router Architecture
 
-## Router Mapping: FeastQR → Diyafa
+## Router Mapping: Original → Diyafa
 
 ### Routers to KEEP & EVOLVE
-| FeastQR Router | Diyafa Router | Changes |
+| Original Router | Diyafa Router | Changes |
 |---------------|--------------|---------|
 | `auth` | `auth` | Add org context, role-based middleware |
 | `languages` | `languages` | Keep as-is |

@@ -22,25 +22,26 @@ export const env = createEnv({
       .default("development"),
     SUPABASE_SERVICE_KEY: z.string().min(1),
     DIRECT_URL: z.string().min(1),
-    LEMON_SQUEEZY_API_KEY: z.string().min(1).optional().default("placeholder")
+    // Legacy payment provider env vars (kept for webhook backward-compat)
+    PAYMENT_PROVIDER_API_KEY: z.string().min(1).optional().default("placeholder")
       .refine(
         (val) => !isDeployedProduction || val !== "placeholder",
-        "LEMON_SQUEEZY_API_KEY must be set in production",
+        "PAYMENT_PROVIDER_API_KEY must be set in production",
       ),
-    LEMONS_SQUEEZY_SIGNATURE_SECRET: z.string().min(1).optional().default("placeholder")
+    PAYMENT_PROVIDER_SIGNATURE_SECRET: z.string().min(1).optional().default("placeholder")
       .refine(
         (val) => !isDeployedProduction || val !== "placeholder",
-        "LEMONS_SQUEEZY_SIGNATURE_SECRET must be set in production",
+        "PAYMENT_PROVIDER_SIGNATURE_SECRET must be set in production",
       ),
-    LEMON_SQUEEZY_STORE_ID: z.string().min(1).optional().default("placeholder")
+    PAYMENT_PROVIDER_STORE_ID: z.string().min(1).optional().default("placeholder")
       .refine(
         (val) => !isDeployedProduction || val !== "placeholder",
-        "LEMON_SQUEEZY_STORE_ID must be set in production",
+        "PAYMENT_PROVIDER_STORE_ID must be set in production",
       ),
-    LEMON_SQUEEZY_SUBSCRIPTION_VARIANT_ID: z.string().min(1).optional().default("placeholder")
+    PAYMENT_PROVIDER_SUBSCRIPTION_VARIANT_ID: z.string().min(1).optional().default("placeholder")
       .refine(
         (val) => !isDeployedProduction || val !== "placeholder",
-        "LEMON_SQUEEZY_SUBSCRIPTION_VARIANT_ID must be set in production",
+        "PAYMENT_PROVIDER_SUBSCRIPTION_VARIANT_ID must be set in production",
       ),
     OPENAI_API_KEY: z.string().optional().default(""),
     ANTHROPIC_API_KEY: z.string().optional().default(""),
@@ -77,12 +78,12 @@ export const env = createEnv({
     SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY,
     NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
     NEXT_PUBLIC_UMAMI_URL: process.env.NEXT_PUBLIC_UMAMI_URL,
-    LEMONS_SQUEEZY_SIGNATURE_SECRET:
-      process.env.LEMONS_SQUEEZY_SIGNATURE_SECRET,
-    LEMON_SQUEEZY_API_KEY: process.env.LEMON_SQUEEZY_API_KEY,
-    LEMON_SQUEEZY_STORE_ID: process.env.LEMON_SQUEEZY_STORE_ID,
-    LEMON_SQUEEZY_SUBSCRIPTION_VARIANT_ID:
-      process.env.LEMON_SQUEEZY_SUBSCRIPTION_VARIANT_ID,
+    PAYMENT_PROVIDER_SIGNATURE_SECRET:
+      process.env.LEMONS_SQUEEZY_SIGNATURE_SECRET ?? process.env.PAYMENT_PROVIDER_SIGNATURE_SECRET,
+    PAYMENT_PROVIDER_API_KEY: process.env.LEMON_SQUEEZY_API_KEY ?? process.env.PAYMENT_PROVIDER_API_KEY,
+    PAYMENT_PROVIDER_STORE_ID: process.env.LEMON_SQUEEZY_STORE_ID ?? process.env.PAYMENT_PROVIDER_STORE_ID,
+    PAYMENT_PROVIDER_SUBSCRIPTION_VARIANT_ID:
+      process.env.LEMON_SQUEEZY_SUBSCRIPTION_VARIANT_ID ?? process.env.PAYMENT_PROVIDER_SUBSCRIPTION_VARIANT_ID,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
     GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,

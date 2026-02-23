@@ -5,13 +5,13 @@ import { env } from "~/env.mjs";
 import { rateLimit } from "~/server/rateLimit";
 import { supabase } from "~/server/supabase/supabaseClient";
 
-// Put this in your billing lib and just import the type instead
-type LemonsqueezySubscription = Awaited<
+// Internal type — kept compatible with the payment provider SDK
+type PaymentProviderSubscription = Awaited<
   ReturnType<typeof listAllSubscriptions>
 >["data"][number];
 
 export type SubscriptionStatus =
-  LemonsqueezySubscription["attributes"]["status"];
+  PaymentProviderSubscription["attributes"]["status"];
 
 const isError = (error: unknown): error is Error => {
   return error instanceof Error;
@@ -19,8 +19,7 @@ const isError = (error: unknown): error is Error => {
 
 export const runtime = "nodejs";
 
-// Add more events here if you want
-// https://docs.lemonsqueezy.com/api/webhooks#event-types
+// Webhook event types from the payment provider
 type EventName =
   | "order_created"
   | "order_refunded"
@@ -41,8 +40,7 @@ type Payload = {
     event_name: EventName;
     custom_data: { userId: string };
   };
-  // Possibly not accurate: it's missing the relationships field and any custom data you add
-  data: LemonsqueezySubscription;
+  data: PaymentProviderSubscription;
 };
 
 export const POST = async (request: NextRequest) => {
@@ -57,7 +55,7 @@ export const POST = async (request: NextRequest) => {
     const text = await request.text();
     const hmac = crypto.createHmac(
       "sha256",
-      env.LEMONS_SQUEEZY_SIGNATURE_SECRET,
+      env.PAYMENT_PROVIDER_SIGNATURE_SECRET,
     );
     const digest = Buffer.from(hmac.update(text).digest("hex"), "utf8");
     const signatureHeader = request.headers.get("x-signature");
@@ -99,8 +97,7 @@ export const POST = async (request: NextRequest) => {
       case "subscription_payment_success":
       case "subscription_payment_recovered":
       case "subscription_updated":
-        // Do something with the subscription here, like syncing to your database
-
+        // Sync subscription state to the database
         const { error } = await supabase()
           .from("subscriptions")
           .upsert({
@@ -122,7 +119,7 @@ export const POST = async (request: NextRequest) => {
         break;
       default:
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        throw new Error(`🤷‍♀️ Unhandled event: ${eventName ?? ""}`);
+        throw new Error(`Unhandled event: ${eventName ?? ""}`);
     }
   } catch (error: unknown) {
     if (isError(error)) {

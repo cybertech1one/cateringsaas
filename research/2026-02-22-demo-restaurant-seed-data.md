@@ -1,6 +1,6 @@
-# FeastQR Demo Restaurant Seed Data
+# Diyafa Demo Restaurant Seed Data
 
-> 10 realistic Moroccan restaurants across 9 cities for the FeastQR demo platform.
+> 10 realistic Moroccan restaurants across 9 cities for the Diyafa demo platform.
 > All dish names, prices (MAD), addresses, and phone numbers follow real Moroccan conventions.
 > Prices stored as integers (centimes): 5500 = 55.00 MAD.
 
@@ -694,7 +694,7 @@ All phone numbers follow the Morocco +212 format:
 
 ## Slug Convention
 
-Slugs follow the FeastQR pattern: `{name-kebab}-{city-kebab}-{random6digits}`
+Slugs follow the Diyafa pattern: `{name-kebab}-{city-kebab}-{random6digits}`
 - `la-sqala-casablanca-182736`
 - `le-comptoir-du-port-casablanca-293847`
 - `riad-jnane-mogador-marrakech-394958`

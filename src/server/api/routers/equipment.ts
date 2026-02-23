@@ -110,6 +110,13 @@ export const equipmentRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { orgId: _orgId, equipmentId, ...data } = input;
 
+      // Verify equipment belongs to this org
+      const existing = await ctx.db.equipment.findFirst({
+        where: { id: equipmentId, orgId: ctx.orgId },
+        select: { id: true },
+      });
+      if (!existing) throw new TRPCError({ code: "NOT_FOUND" });
+
       return ctx.db.equipment.update({
         where: { id: equipmentId },
         data,

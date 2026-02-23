@@ -21,6 +21,7 @@ import {
   orgManagerProcedure,
   orgAdminProcedure,
 } from "~/server/api/trpc";
+import { rateLimit } from "~/server/rateLimit";
 
 // ──────────────────────────────────────────────
 // Event Status State Machine
@@ -543,6 +544,19 @@ export const eventsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Rate limit: 5 inquiries per phone per hour
+      const rl = rateLimit({
+        key: `inquiry:${input.customerPhone}`,
+        limit: 5,
+        windowMs: 60 * 60 * 1000,
+      });
+      if (!rl.success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many inquiries. Please try again later.",
+        });
+      }
+
       // Verify org exists and is active
       const org = await ctx.db.organizations.findFirst({
         where: { id: input.orgId, isActive: true },

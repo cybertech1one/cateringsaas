@@ -3,7 +3,7 @@
 **Date:** February 22, 2026
 **Author:** Architect Agent
 **Status:** Proposed
-**Base:** Fork of FeastQR (menusaas) -- Next.js 14 + tRPC + Prisma + Supabase + Tailwind
+**Base:** Diyafa platform -- Next.js 14 + tRPC + Prisma + Supabase + Tailwind
 
 ---
 
@@ -22,7 +22,7 @@
 11. [AI Features](#11-ai-features)
 12. [Database Schema Design](#12-database-schema-design)
 13. [Analytics and Insights](#13-analytics-and-insights)
-14. [FeastQR Reuse Assessment](#14-feastqr-reuse-assessment)
+14. [Diyafa Reuse Assessment](#14-diyafa-reuse-assessment)
 15. [Implementation Roadmap](#15-implementation-roadmap)
 16. [Moroccan Market Specifics](#16-moroccan-market-specifics)
 17. [Risk Assessment](#17-risk-assessment)
@@ -31,7 +31,7 @@
 
 ## 1. Executive Summary
 
-CaterQR is a catering-specialized SaaS platform cloned from FeastQR's battle-tested Next.js 14 stack, purpose-built for the Moroccan and MENA catering market. It addresses a fundamentally different problem domain than restaurant menu ordering:
+CaterQR is a catering-specialized SaaS platform cloned from Diyafa's battle-tested Next.js 14 stack, purpose-built for the Moroccan and MENA catering market. It addresses a fundamentally different problem domain than restaurant menu ordering:
 
 **Restaurant ordering** = real-time, small transactions, individual customers, fixed menu.
 **Catering** = advance booking, large-scale events, negotiations, custom menus, milestone payments, logistics coordination.
@@ -167,7 +167,7 @@ Every table in the public schema includes a `user_id` column referencing `auth.u
 3. **Admin** has cross-tenant visibility via service role
 4. **Service role** (tRPC backend) bypasses RLS for cross-tenant operations (marketplace search, analytics)
 
-This is the same pattern FeastQR uses successfully with 30+ tables and 68+ RLS policies.
+This is the same pattern Diyafa uses successfully with 30+ tables and 68+ RLS policies.
 
 ### 4.3 Application Layer Architecture (tRPC Routers)
 
@@ -1299,7 +1299,7 @@ The caterer reviews and adjusts before sending.
 
 ### 11.4 Portfolio Photo Enhancement
 
-Using the existing AI Vision infrastructure from FeastQR:
+Using the existing AI Vision infrastructure from Diyafa:
 - Auto-enhance food photos (brightness, color, sharpness)
 - Generate descriptive captions
 - Suggest which photos to feature
@@ -1394,9 +1394,9 @@ interface DemandForecast {
      +-----------------+
 ```
 
-### 12.2 New Tables (Beyond Existing FeastQR Schema)
+### 12.2 New Tables (Beyond Existing Diyafa Schema)
 
-The existing FeastQR catering tables provide a solid foundation. Here is what we KEEP, EVOLVE, and ADD:
+The existing Diyafa catering tables provide a solid foundation. Here is what we KEEP, EVOLVE, and ADD:
 
 **KEEP AS-IS (7 tables already in schema):**
 - `catering_menus` -- Top-level catering menu
@@ -2010,7 +2010,7 @@ interface PlatformAnalytics {
 
 ---
 
-## 14. FeastQR Reuse Assessment
+## 14. Diyafa Reuse Assessment
 
 ### 14.1 Direct Reuse (No Modification)
 
@@ -2079,7 +2079,7 @@ interface PlatformAnalytics {
 
 | Week | Tasks | Deliverables |
 |------|-------|--------------|
-| 1 | Fork FeastQR, strip non-catering modules, rebrand to CaterQR | Clean codebase, new branding |
+| 1 | Fork Diyafa, strip non-catering modules, rebrand to CaterQR | Clean codebase, new branding |
 | 1 | Caterer profile setup flow (onboarding wizard) | Registration + profile page |
 | 2 | Evolve catering menus (packages, items, categories) [P] | Menu builder dashboard |
 | 2 | Public caterer page (`/caterer/[slug]`) [P] | SEO-ready caterer profiles |
@@ -2263,7 +2263,7 @@ PAYMENTS:
 
 AI:
   OpenAI / Anthropic / Gemini      # Menu suggestions, quote generation, photo enhancement
-  Existing FeastQR AI abstraction  # Multi-provider support
+  Existing Diyafa AI abstraction  # Multi-provider support
 
 COMMUNICATIONS:
   WhatsApp Business API            # Primary notification channel
@@ -2277,7 +2277,7 @@ DEPLOYMENT:
   Cloudflare R2                    # Image CDN (portfolio photos)
 
 MONITORING:
-  Existing FeastQR monitoring      # Health checks, error tracking
+  Existing Diyafa monitoring      # Health checks, error tracking
   Sentry                           # Error reporting
   PostHog                          # Product analytics
 ```

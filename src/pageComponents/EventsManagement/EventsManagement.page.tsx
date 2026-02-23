@@ -57,6 +57,7 @@ import {
 } from "lucide-react";
 import { useToast } from "~/components/ui/use-toast";
 import { cn } from "~/utils/cn";
+import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -136,35 +137,35 @@ const STATUS_CONFIG: Record<
   EventStatus,
   { label: string; color: string; bgColor: string; dotColor: string }
 > = {
-  inquiry: { label: "Inquiry", color: "text-blue-700", bgColor: "bg-blue-50 border-blue-200", dotColor: "bg-blue-500" },
-  reviewed: { label: "Reviewed", color: "text-sky-700", bgColor: "bg-sky-50 border-sky-200", dotColor: "bg-sky-500" },
-  quoted: { label: "Quoted", color: "text-amber-700", bgColor: "bg-amber-50 border-amber-200", dotColor: "bg-amber-500" },
-  accepted: { label: "Accepted", color: "text-emerald-700", bgColor: "bg-emerald-50 border-emerald-200", dotColor: "bg-emerald-500" },
-  declined: { label: "Declined", color: "text-red-700", bgColor: "bg-red-50 border-red-200", dotColor: "bg-red-500" },
-  deposit_paid: { label: "Deposit Paid", color: "text-teal-700", bgColor: "bg-teal-50 border-teal-200", dotColor: "bg-teal-500" },
-  confirmed: { label: "Confirmed", color: "text-green-700", bgColor: "bg-green-50 border-green-200", dotColor: "bg-green-500" },
-  prep: { label: "In Prep", color: "text-indigo-700", bgColor: "bg-indigo-50 border-indigo-200", dotColor: "bg-indigo-500" },
-  setup: { label: "Setup", color: "text-violet-700", bgColor: "bg-violet-50 border-violet-200", dotColor: "bg-violet-500" },
-  execution: { label: "Execution", color: "text-purple-700", bgColor: "bg-purple-50 border-purple-200", dotColor: "bg-purple-500" },
-  completed: { label: "Completed", color: "text-gray-700", bgColor: "bg-gray-50 border-gray-200", dotColor: "bg-gray-500" },
-  settled: { label: "Settled", color: "text-emerald-700", bgColor: "bg-emerald-50 border-emerald-200", dotColor: "bg-emerald-600" },
-  cancelled: { label: "Cancelled", color: "text-red-700", bgColor: "bg-red-50 border-red-200", dotColor: "bg-red-500" },
+  inquiry: { label: "Inquiry", color: "text-[hsl(var(--majorelle-blue))]", bgColor: "bg-[hsl(var(--majorelle-blue))]/8 border-[hsl(var(--majorelle-blue))]/20", dotColor: "bg-[hsl(var(--majorelle-blue))]" },
+  reviewed: { label: "Reviewed", color: "text-[hsl(var(--chefchaouen))]", bgColor: "bg-[hsl(var(--chefchaouen))]/8 border-[hsl(var(--chefchaouen))]/20", dotColor: "bg-[hsl(var(--chefchaouen))]" },
+  quoted: { label: "Quoted", color: "text-gold", bgColor: "bg-gold/8 border-gold/20", dotColor: "bg-gold" },
+  accepted: { label: "Accepted", color: "text-sage", bgColor: "bg-sage/8 border-sage/20", dotColor: "bg-sage" },
+  declined: { label: "Declined", color: "text-destructive", bgColor: "bg-destructive/8 border-destructive/20", dotColor: "bg-destructive" },
+  deposit_paid: { label: "Deposit Paid", color: "text-[hsl(var(--zellige-teal))]", bgColor: "bg-[hsl(var(--zellige-teal))]/8 border-[hsl(var(--zellige-teal))]/20", dotColor: "bg-[hsl(var(--zellige-teal))]" },
+  confirmed: { label: "Confirmed", color: "text-[hsl(var(--mint-tea))]", bgColor: "bg-[hsl(var(--mint-tea))]/8 border-[hsl(var(--mint-tea))]/20", dotColor: "bg-[hsl(var(--mint-tea))]" },
+  prep: { label: "In Prep", color: "text-[hsl(var(--saffron))]", bgColor: "bg-[hsl(var(--saffron))]/8 border-[hsl(var(--saffron))]/20", dotColor: "bg-[hsl(var(--saffron))]" },
+  setup: { label: "Setup", color: "text-terracotta", bgColor: "bg-terracotta/8 border-terracotta/20", dotColor: "bg-terracotta" },
+  execution: { label: "Execution", color: "text-primary", bgColor: "bg-primary/8 border-primary/20", dotColor: "bg-primary" },
+  completed: { label: "Completed", color: "text-muted-foreground", bgColor: "bg-muted border-border", dotColor: "bg-muted-foreground" },
+  settled: { label: "Settled", color: "text-sage", bgColor: "bg-sage/8 border-sage/20", dotColor: "bg-sage" },
+  cancelled: { label: "Cancelled", color: "text-destructive", bgColor: "bg-destructive/8 border-destructive/20", dotColor: "bg-destructive" },
 };
 
 /** Event type display */
 const EVENT_TYPE_CONFIG: Record<EventType, { label: string; icon: string; color: string }> = {
-  wedding: { label: "Wedding", icon: "ring", color: "bg-pink-100 text-pink-800" },
-  corporate: { label: "Corporate", icon: "building", color: "bg-slate-100 text-slate-800" },
-  ramadan_iftar: { label: "Ramadan Iftar", icon: "moon", color: "bg-emerald-100 text-emerald-800" },
-  eid: { label: "Eid", icon: "star", color: "bg-yellow-100 text-yellow-800" },
-  birthday: { label: "Birthday", icon: "cake", color: "bg-orange-100 text-orange-800" },
-  conference: { label: "Conference", icon: "mic", color: "bg-blue-100 text-blue-800" },
-  funeral: { label: "Funeral", icon: "flower", color: "bg-gray-100 text-gray-700" },
-  engagement: { label: "Engagement", icon: "heart", color: "bg-rose-100 text-rose-800" },
-  henna: { label: "Henna", icon: "hand", color: "bg-amber-100 text-amber-800" },
-  graduation: { label: "Graduation", icon: "cap", color: "bg-indigo-100 text-indigo-800" },
-  diffa: { label: "Diffa", icon: "palace", color: "bg-teal-100 text-teal-800" },
-  other: { label: "Other", icon: "calendar", color: "bg-gray-100 text-gray-800" },
+  wedding: { label: "Wedding", icon: "ring", color: "bg-[hsl(var(--rose-petal))]/10 text-[hsl(var(--rose-petal))]" },
+  corporate: { label: "Corporate", icon: "building", color: "bg-muted text-muted-foreground" },
+  ramadan_iftar: { label: "Ramadan Iftar", icon: "moon", color: "bg-[hsl(var(--mint-tea))]/10 text-[hsl(var(--mint-tea))]" },
+  eid: { label: "Eid", icon: "star", color: "bg-gold/10 text-gold" },
+  birthday: { label: "Birthday", icon: "cake", color: "bg-primary/10 text-primary" },
+  conference: { label: "Conference", icon: "mic", color: "bg-[hsl(var(--majorelle-blue))]/10 text-[hsl(var(--majorelle-blue))]" },
+  funeral: { label: "Funeral", icon: "flower", color: "bg-muted text-muted-foreground" },
+  engagement: { label: "Engagement", icon: "heart", color: "bg-[hsl(var(--rose-petal))]/10 text-[hsl(var(--rose-petal))]" },
+  henna: { label: "Henna", icon: "hand", color: "bg-[hsl(var(--saffron))]/10 text-[hsl(var(--saffron))]" },
+  graduation: { label: "Graduation", icon: "cap", color: "bg-[hsl(var(--chefchaouen))]/10 text-[hsl(var(--chefchaouen))]" },
+  diffa: { label: "Diffa", icon: "palace", color: "bg-[hsl(var(--zellige-teal))]/10 text-[hsl(var(--zellige-teal))]" },
+  other: { label: "Other", icon: "calendar", color: "bg-muted text-muted-foreground" },
 };
 
 /** Pipeline column definitions. Each maps to one or more statuses. */
@@ -289,29 +290,29 @@ function StatsBar() {
       label: "Total Events",
       value: stats?.totalEvents ?? 0,
       icon: CalendarDays,
-      color: "text-blue-600",
-      bg: "bg-blue-50",
+      color: "text-primary",
+      bg: "bg-primary/10",
     },
     {
       label: "New Inquiries",
       value: stats?.pendingInquiries ?? 0,
       icon: AlertTriangle,
-      color: "text-amber-600",
-      bg: "bg-amber-50",
+      color: "text-[hsl(var(--saffron))]",
+      bg: "bg-[hsl(var(--saffron))]/10",
     },
     {
       label: "Active",
       value: stats?.activeEvents ?? 0,
       icon: TrendingUp,
-      color: "text-green-600",
-      bg: "bg-green-50",
+      color: "text-sage",
+      bg: "bg-sage/10",
     },
     {
       label: "This Month",
       value: stats?.thisMonthEvents ?? 0,
       icon: Clock,
-      color: "text-purple-600",
-      bg: "bg-purple-50",
+      color: "text-[hsl(var(--majorelle-blue))]",
+      bg: "bg-[hsl(var(--majorelle-blue))]/10",
     },
   ];
 
@@ -348,12 +349,12 @@ function PipelineFunnel({ events }: { events: EventSummary[] }) {
   });
 
   const colors = [
-    "bg-blue-500",
-    "bg-amber-500",
-    "bg-emerald-500",
-    "bg-green-500",
-    "bg-purple-500",
-    "bg-gray-400",
+    "bg-primary",
+    "bg-gold",
+    "bg-terracotta",
+    "bg-sage",
+    "bg-[hsl(var(--majorelle-blue))]",
+    "bg-muted-foreground/40",
   ];
 
   return (
@@ -471,7 +472,7 @@ function PipelineEventCard({
             <span className="truncate">{event.customerName}</span>
           </div>
           {(event.totalAmount ?? 0) > 0 && (
-            <div className="flex items-center gap-1 font-medium text-emerald-700">
+            <div className="flex items-center gap-1 font-medium text-sage">
               <DollarSign className="h-3 w-3 shrink-0" />
               <span>{formatCurrency(event.totalAmount)}</span>
             </div>
@@ -635,7 +636,7 @@ function ListView({
               <StatusBadge status={event.status} />
             </div>
             {/* Value */}
-            <div className="text-sm font-medium text-emerald-700">
+            <div className="text-sm font-medium text-sage">
               {formatCurrency(event.totalAmount)}
             </div>
           </div>
@@ -676,7 +677,7 @@ function StatusTimeline({ currentStatus }: { currentStatus: string }) {
           <Progress
             value={getProgressPercent(currentStatus)}
             className="h-2"
-            indicatorClassName="bg-emerald-500"
+            indicatorClassName="bg-sage"
           />
           <div className="flex justify-between">
             {LIFECYCLE_STAGES.map((stage, i) => {
@@ -694,15 +695,15 @@ function StatusTimeline({ currentStatus }: { currentStatus: string }) {
                   <div
                     className={cn(
                       "h-3 w-3 rounded-full border-2 transition-colors",
-                      isPast && "bg-emerald-500 border-emerald-500",
-                      isCurrent && "bg-white border-emerald-500 ring-2 ring-emerald-200",
+                      isPast && "bg-sage border-sage",
+                      isCurrent && "bg-white border-sage ring-2 ring-sage/30",
                       !isPast && !isCurrent && "bg-muted border-muted-foreground/20"
                     )}
                   />
                   <span
                     className={cn(
                       "text-[9px] leading-tight text-center max-w-[50px]",
-                      isCurrent ? "font-semibold text-emerald-700" : "text-muted-foreground"
+                      isCurrent ? "font-semibold text-sage" : "text-muted-foreground"
                     )}
                   >
                     {STATUS_CONFIG[stage].label}
@@ -875,7 +876,7 @@ function EventDetailDialog({
                     </div>
                     <div className="rounded-lg border p-3 text-center">
                       <p className="text-xs text-muted-foreground">Deposit</p>
-                      <p className="text-sm font-bold mt-0.5 text-emerald-700">
+                      <p className="text-sm font-bold mt-0.5 text-sage">
                         {formatCurrency(event.depositAmount)}
                       </p>
                     </div>
@@ -1655,39 +1656,37 @@ export default function EventsManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Events</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage inquiries, bookings, and event execution pipeline
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* View toggle */}
-          <div className="flex items-center border rounded-lg p-0.5">
-            <Button
-              variant={viewMode === "pipeline" ? "secondary" : "ghost"}
-              size="sm"
-              className="h-7 px-2.5"
-              onClick={() => setViewMode("pipeline")}
-            >
-              <LayoutGrid className="h-3.5 w-3.5" />
-            </Button>
-            <Button
-              variant={viewMode === "list" ? "secondary" : "ghost"}
-              size="sm"
-              className="h-7 px-2.5"
-              onClick={() => setViewMode("list")}
-            >
-              <List className="h-3.5 w-3.5" />
+      <DashboardPageHeader
+        title="Events"
+        description="Manage inquiries, bookings, and event execution pipeline"
+        icon={<CalendarDays className="h-5 w-5" />}
+        actions={
+          <div className="flex items-center gap-2">
+            <div className="flex items-center border rounded-lg p-0.5">
+              <Button
+                variant={viewMode === "pipeline" ? "secondary" : "ghost"}
+                size="sm"
+                className="h-7 px-2.5"
+                onClick={() => setViewMode("pipeline")}
+              >
+                <LayoutGrid className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "secondary" : "ghost"}
+                size="sm"
+                className="h-7 px-2.5"
+                onClick={() => setViewMode("list")}
+              >
+                <List className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+            <Button className="gap-2" onClick={() => setCreateOpen(true)}>
+              <Plus className="h-4 w-4" />
+              New Event
             </Button>
           </div>
-          <Button className="gap-2" onClick={() => setCreateOpen(true)}>
-            <Plus className="h-4 w-4" />
-            New Event
-          </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Stats Bar */}
       <StatsBar />
@@ -1762,7 +1761,7 @@ export default function EventsManagement() {
       {/* Fetching indicator */}
       {isFetching && !isLoading && (
         <div className="fixed bottom-4 right-4 bg-background border shadow-lg rounded-full px-3 py-1.5 text-xs text-muted-foreground flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+          <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
           Updating...
         </div>
       )}

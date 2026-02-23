@@ -2,7 +2,7 @@
 
 **Start Date:** February 22, 2026
 **Status:** In Progress
-**Goal:** Transform FeastQR clone into Diyafa catering platform foundation
+**Goal:** Transform Diyafa clone into Diyafa catering platform foundation
 
 ---
 
@@ -18,7 +18,7 @@
 
 ### Repository Setup
 - [x] Created GitHub repo: github.com/cybertech1one/cateringsaas
-- [x] Cloned FeastQR codebase (standalone, no shared dependencies)
+- [x] Cloned Diyafa codebase (standalone, no shared dependencies)
 - [x] Created CLAUDE.md (project guide with constitutional principles)
 - [x] Created README.md (branded for Diyafa)
 - [x] Updated package.json (name: diyafa, version: 1.0.0)
@@ -26,9 +26,9 @@
 
 ### In Progress
 - [ ] Create .gitignore (exclude sensitive files)
-- [ ] Database backup of FeastQR (safety net)
-- [ ] Strip FeastQR-specific code (QR codes, KDS, loyalty, delivery)
-- [ ] Rebrand all UI references (FeastQR → Diyafa)
+- [ ] Database backup of Diyafa (safety net)
+- [ ] Strip Diyafa-specific code (QR codes, KDS, loyalty, delivery)
+- [ ] Rebrand all UI references (Diyafa → Diyafa)
 - [ ] Create organization/multi-tenant database schema
 - [ ] Set up org-based RLS policies
 - [ ] Create role hierarchy (super_admin, org_owner, admin, manager, staff)

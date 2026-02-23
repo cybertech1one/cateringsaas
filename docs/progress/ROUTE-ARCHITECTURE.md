@@ -1,9 +1,9 @@
 # Diyafa Route Architecture
 
-## Route Mapping: FeastQR → Diyafa
+## Route Mapping: Original → Diyafa
 
 ### Public Pages (Keep & Rebrand)
-| FeastQR Route | Diyafa Route | Status |
+| Original Route | Diyafa Route | Status |
 |---------------|-------------|--------|
 | `/` (Landing) | `/` (Landing - catering focused) | Rebrand |
 | `/login` | `/login` | Keep |
@@ -72,7 +72,7 @@
 | `/admin/moderation` | Content moderation (reviews, photos) |
 | `/admin/settings` | Platform settings, feature flags |
 
-### Routes to REMOVE (FeastQR-specific)
+### Routes to REMOVE (legacy)
 | Route | Reason |
 |-------|--------|
 | `/menu/create` | Replace with catering menu builder |

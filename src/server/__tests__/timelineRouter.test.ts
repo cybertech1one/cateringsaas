@@ -207,6 +207,7 @@ describe("timelineRouter", () => {
 
   describe("updateTask", () => {
     it("should update task details", async () => {
+      mockTasks.findFirst.mockResolvedValue({ id: TASK_ID } as never);
       mockTasks.update.mockResolvedValue({
         id: TASK_ID,
         name: "Updated task",
@@ -237,6 +238,7 @@ describe("timelineRouter", () => {
 
   describe("updateStatus", () => {
     it("should update task status to completed with endTime", async () => {
+      mockTasks.findFirst.mockResolvedValue({ id: TASK_ID } as never);
       mockTasks.update.mockResolvedValue({ id: TASK_ID, status: "completed" } as never);
 
       const caller = createOrgCaller();
@@ -254,6 +256,7 @@ describe("timelineRouter", () => {
     });
 
     it("should update status to in_progress without endTime", async () => {
+      mockTasks.findFirst.mockResolvedValue({ id: TASK_ID } as never);
       mockTasks.update.mockResolvedValue({ id: TASK_ID, status: "in_progress" } as never);
 
       const caller = createOrgCaller();
@@ -272,6 +275,7 @@ describe("timelineRouter", () => {
 
   describe("deleteTask", () => {
     it("should delete a task", async () => {
+      mockTasks.findFirst.mockResolvedValue({ id: TASK_ID } as never);
       mockTasks.delete.mockResolvedValue({ id: TASK_ID } as never);
 
       const caller = createManagerCaller();
@@ -336,6 +340,12 @@ describe("timelineRouter", () => {
 
   describe("reorder", () => {
     it("should update sort order for multiple tasks", async () => {
+      mockEvents.findFirst.mockResolvedValue({ id: EVENT_ID } as never);
+      mockTasks.findMany.mockResolvedValue([
+        { id: "00000000-0000-4000-a000-000000000501" },
+        { id: "00000000-0000-4000-a000-000000000502" },
+        { id: "00000000-0000-4000-a000-000000000503" },
+      ] as never);
       mockTasks.update.mockResolvedValue({} as never);
 
       const caller = createManagerCaller();
@@ -379,6 +389,151 @@ describe("timelineRouter", () => {
       const result = await caller.getDeliveryPlan({ eventId: EVENT_ID });
 
       expect(result).toBeNull();
+    });
+  });
+
+  // =========================================================================
+  // upsertDeliveryPlan
+  // =========================================================================
+
+  describe("upsertDeliveryPlan", () => {
+    it("should create a new delivery plan", async () => {
+      const plan = {
+        id: "plan-1",
+        eventId: EVENT_ID,
+        driverName: "Khalid",
+        driverPhone: "+212612345678",
+        vehicleType: "van",
+      };
+      mockDeliveryPlans.upsert.mockResolvedValue(plan as never);
+
+      const caller = createManagerCaller();
+      const result = await caller.upsertDeliveryPlan({
+        eventId: EVENT_ID,
+        driverName: "Khalid",
+        driverPhone: "+212612345678",
+        vehicleType: "van",
+      });
+
+      expect(result.driverName).toBe("Khalid");
+      expect(mockDeliveryPlans.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { eventId: EVENT_ID },
+          create: expect.objectContaining({
+            eventId: EVENT_ID,
+            driverName: "Khalid",
+            vehicleType: "van",
+          }),
+          update: expect.objectContaining({
+            driverName: "Khalid",
+            vehicleType: "van",
+          }),
+        }),
+      );
+    });
+
+    it("should update an existing delivery plan", async () => {
+      const updatedPlan = {
+        id: "plan-1",
+        eventId: EVENT_ID,
+        driverName: "Hassan",
+        vehicleType: "truck",
+      };
+      mockDeliveryPlans.upsert.mockResolvedValue(updatedPlan as never);
+
+      const caller = createManagerCaller();
+      const result = await caller.upsertDeliveryPlan({
+        eventId: EVENT_ID,
+        driverName: "Hassan",
+        vehicleType: "truck",
+      });
+
+      expect(result.driverName).toBe("Hassan");
+    });
+
+    it("should handle timing fields", async () => {
+      const departure = new Date("2026-06-15T08:00:00Z");
+      const arrival = new Date("2026-06-15T09:30:00Z");
+      const serviceStart = new Date("2026-06-15T10:00:00Z");
+      const serviceEnd = new Date("2026-06-15T14:00:00Z");
+
+      mockDeliveryPlans.upsert.mockResolvedValue({
+        id: "plan-1",
+        eventId: EVENT_ID,
+        departureTime: departure,
+        estimatedArrival: arrival,
+        serviceStartTime: serviceStart,
+        serviceEndTime: serviceEnd,
+      } as never);
+
+      const caller = createManagerCaller();
+      const result = await caller.upsertDeliveryPlan({
+        eventId: EVENT_ID,
+        departureTime: departure,
+        estimatedArrival: arrival,
+        serviceStartTime: serviceStart,
+        serviceEndTime: serviceEnd,
+      });
+
+      expect(mockDeliveryPlans.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          create: expect.objectContaining({
+            departureTime: departure,
+            estimatedArrival: arrival,
+          }),
+        }),
+      );
+    });
+
+    it("should handle JSON manifests and checklists", async () => {
+      const foodManifest = [{ item: "Couscous", quantity: 50 }];
+      const equipmentManifest = [{ item: "Chafing dish", quantity: 10 }];
+      const setupChecklist = [{ task: "Set up tables", done: false }];
+
+      mockDeliveryPlans.upsert.mockResolvedValue({ id: "plan-1", eventId: EVENT_ID } as never);
+
+      const caller = createManagerCaller();
+      await caller.upsertDeliveryPlan({
+        eventId: EVENT_ID,
+        foodManifest,
+        equipmentManifest,
+        setupChecklist,
+      });
+
+      expect(mockDeliveryPlans.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          create: expect.objectContaining({
+            eventId: EVENT_ID,
+            foodManifest,
+            equipmentManifest,
+            setupChecklist,
+          }),
+        }),
+      );
+    });
+
+    it("should reject unauthenticated access", async () => {
+      const caller = createUnauthCaller();
+      await expect(
+        caller.upsertDeliveryPlan({ eventId: EVENT_ID, driverName: "Test" }),
+      ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    });
+
+    it("should include notes in the delivery plan", async () => {
+      mockDeliveryPlans.upsert.mockResolvedValue({ id: "plan-1", eventId: EVENT_ID } as never);
+
+      const caller = createManagerCaller();
+      await caller.upsertDeliveryPlan({
+        eventId: EVENT_ID,
+        notes: "Use back entrance for loading",
+      });
+
+      expect(mockDeliveryPlans.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          create: expect.objectContaining({ notes: "Use back entrance for loading" }),
+          update: expect.objectContaining({ notes: "Use back entrance for loading" }),
+        }),
+      );
     });
   });
 

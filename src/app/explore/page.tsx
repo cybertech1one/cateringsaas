@@ -47,6 +47,13 @@ export const metadata: Metadata = {
     url: `${appUrl}/explore`,
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Find Caterers in Morocco | Diyafa Marketplace",
+    description:
+      "Browse top-rated caterers across Morocco for weddings, corporate events, Ramadan iftars & celebrations.",
+    site: "@diyafa_ma",
+  },
 };
 
 // ────────────────────────────────────────────────────────────────────
@@ -114,36 +121,92 @@ const HERO_CITIES = [
 // JSON-LD
 // ────────────────────────────────────────────────────────────────────
 
-function ExploreJsonLd() {
+function ExploreJsonLd({
+  caterers,
+}: {
+  caterers: {
+    id: string;
+    name: string;
+    slug: string;
+    city: string | null;
+    rating: unknown;
+    coverImageUrl: string | null;
+  }[];
+}) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "Find Caterers in Morocco",
-    description:
-      "Browse and discover the best caterers across Morocco for weddings, corporate events, and celebrations.",
-    url: `${appUrl}/explore`,
-    isPartOf: {
-      "@type": "WebSite",
-      name: "Diyafa",
-      url: appUrl,
-    },
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: appUrl,
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        name: "Find Caterers in Morocco",
+        description:
+          "Browse and discover the best caterers across Morocco for weddings, corporate events, and celebrations.",
+        url: `${appUrl}/explore`,
+        isPartOf: {
+          "@type": "WebSite",
+          name: "Diyafa",
+          url: appUrl,
         },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Explore Caterers",
-          item: `${appUrl}/explore`,
+        breadcrumb: {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Home",
+              item: appUrl,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Explore Caterers",
+              item: `${appUrl}/explore`,
+            },
+          ],
         },
-      ],
-    },
+      },
+      ...(caterers.length > 0
+        ? [
+            {
+              "@type": "ItemList",
+              name: "Featured Caterers in Morocco",
+              description:
+                "Top-rated catering services across Morocco for weddings, corporate events, and celebrations.",
+              numberOfItems: caterers.length,
+              itemListElement: caterers.map((caterer, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                item: {
+                  "@type": "FoodEstablishment",
+                  name: caterer.name,
+                  url: `${appUrl}/caterer/${caterer.slug}`,
+                  ...(caterer.city
+                    ? {
+                        address: {
+                          "@type": "PostalAddress",
+                          addressLocality: caterer.city,
+                          addressCountry: "MA",
+                        },
+                      }
+                    : {}),
+                  ...(caterer.coverImageUrl
+                    ? { image: caterer.coverImageUrl }
+                    : {}),
+                  ...(caterer.rating
+                    ? {
+                        aggregateRating: {
+                          "@type": "AggregateRating",
+                          ratingValue: formatRating(caterer.rating),
+                          bestRating: "5",
+                        },
+                      }
+                    : {}),
+                },
+              })),
+            },
+          ]
+        : []),
+    ],
   };
 
   return (
@@ -171,7 +234,7 @@ export default async function ExplorePage() {
 
   return (
     <>
-      <ExploreJsonLd />
+      <ExploreJsonLd caterers={featuredCaterers} />
       <Navbar />
 
       <main id="main-content" className="min-h-screen">

@@ -1,4 +1,4 @@
-# FeastQR Multi-Audience Platform — Design Document
+# Diyafa Multi-Audience Platform — Design Document
 
 **Date**: 2026-02-21
 **Status**: Proposed
@@ -6,7 +6,7 @@
 
 ## The Big Picture
 
-FeastQR is not just a menu builder. It's a **3-sided marketplace** connecting:
+Diyafa is not just a menu builder. It's a **3-sided marketplace** connecting:
 1. **Diners** — discover, browse, order food
 2. **Restaurant Owners** — build menus, manage orders, grow business
 3. **Delivery Drivers** — join a flexible delivery network, work directly with restaurants
@@ -97,7 +97,7 @@ No new route groups needed — just two new top-level pages.
 4. **How It Works (Owner)**: Create Menu → Generate QR → Customers Order → You Earn 100%
 5. **Delivery Network**: "Your delivery, your way" — Connect with local drivers, set your own fees, no middleman
 6. **Pricing**: Free/Pro/Enterprise cards (existing PricingSection)
-7. **Comparison Table**: FeastQR vs Glovo vs Done.ma vs Paper (existing ComparisonSection)
+7. **Comparison Table**: Diyafa vs Glovo vs Done.ma vs Paper (existing ComparisonSection)
 8. **Testimonials**: Restaurant owner quotes
 9. **FAQ**: Owner-specific questions
 10. **CTA**: "Create Your Free Menu" + "Book a Demo"
@@ -210,18 +210,18 @@ public/images/
 
 ```
 Traditional:  Restaurant → Platform (30% cut) → Driver → Customer
-FeastQR:      Restaurant → Driver (direct deal) → Customer
-              FeastQR = connector + tools, NOT middleman
+Diyafa:      Restaurant → Driver (direct deal) → Customer
+              Diyafa = connector + tools, NOT middleman
 ```
 
 ### How It Works
 
-1. **Drivers register** on FeastQR, create a profile (city, vehicle type, availability)
+1. **Drivers register** on Diyafa, create a profile (city, vehicle type, availability)
 2. **Restaurants browse** available drivers in their area
 3. **Restaurant hires** drivers directly — sets delivery fee, schedule, zone
 4. **Orders come in** → Restaurant assigns to their connected driver
 5. **Driver delivers** → Gets paid directly by restaurant (cash or transfer)
-6. **FeastQR charges**: Nothing for connecting. Revenue from Pro subscription only.
+6. **Diyafa charges**: Nothing for connecting. Revenue from Pro subscription only.
 
 ### What We Build (Backend - Future Sprint)
 

@@ -9,6 +9,7 @@
  * - Event type pages (weddings, corporate, Ramadan)
  */
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import {
   createTRPCRouter,
   publicProcedure,
@@ -210,6 +211,39 @@ export const marketplaceRouter = createTRPCRouter({
           isVerified: true,
         },
       });
+    }),
+
+  /** Get contact info for a caterer (for WhatsApp inquiry button) */
+  getContactInfo: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const org = await ctx.db.organizations.findUnique({
+        where: { slug: input.slug, isActive: true },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          phone: true,
+          whatsappNumber: true,
+          email: true,
+        },
+      });
+
+      if (!org) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Caterer not found",
+        });
+      }
+
+      return {
+        id: org.id,
+        name: org.name,
+        slug: org.slug,
+        phone: org.phone,
+        whatsappNumber: org.whatsappNumber,
+        email: org.email,
+      };
     }),
 
   /** Get homepage statistics */

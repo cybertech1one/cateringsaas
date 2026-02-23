@@ -1,7 +1,7 @@
 # Delivery Driver Network: Systems Architecture & Algorithms Research
 
 **Date:** 2026-02-21
-**Scope:** Technical architecture for building a food delivery driver network for FeastQR (Morocco)
+**Scope:** Technical architecture for building a food delivery driver network for Diyafa (Morocco)
 **Depth:** Deep / Exhaustive
 **Confidence:** High (primary sources: DoorDash Engineering, Uber Engineering, academic papers, production systems)
 
@@ -18,7 +18,7 @@
 7. [Driver Onboarding Pipeline](#7-driver-onboarding-pipeline)
 8. [Payment Settlement](#8-payment-settlement)
 9. [Database Schema](#9-database-schema)
-10. [Technology Recommendations for FeastQR](#10-technology-recommendations-for-feastqr)
+10. [Technology Recommendations for Diyafa](#10-technology-recommendations-for-diyafa)
 
 ---
 
@@ -122,7 +122,7 @@ Subject to:
   x_{ij} = 0 if driver j is unavailable
 ```
 
-Solved using Gurobi commercial solver. For FeastQR's scale in Morocco, open-source CBC or HiGHS solvers would suffice initially.
+Solved using Gurobi commercial solver. For Diyafa's scale in Morocco, open-source CBC or HiGHS solvers would suffice initially.
 
 ### 1.3 Batch Window Timing
 
@@ -282,7 +282,7 @@ function isRouteFeasible(orders, maxDetourRatio):
 | VROOM | Real-time multi-vehicle | Milliseconds for 100s of points | ~93% optimal |
 | LKH-3 | TSP/VRP heuristic | O(n^2.2) | ~98% optimal |
 
-**Recommendation for FeastQR:** Start with VROOM for real-time routing (open-source, millisecond responses, handles pickups and deliveries). Graduate to Google OR-Tools for more complex constraints.
+**Recommendation for Diyafa:** Start with VROOM for real-time routing (open-source, millisecond responses, handles pickups and deliveries). Graduate to Google OR-Tools for more complex constraints.
 
 ### 2.2 VROOM Integration Architecture
 
@@ -2082,7 +2082,7 @@ CREATE INDEX idx_fraud_alerts_active ON "FraudAlert" ("severity", "status")
 
 ---
 
-## 10. Technology Recommendations for FeastQR
+## 10. Technology Recommendations for Diyafa
 
 ### 10.1 Phased Implementation Plan
 
@@ -2178,8 +2178,8 @@ Phase 3 Monthly Costs:
 
 **Competitive landscape:**
 - Glovo: dominant player, 4,500 couriers, 6,500 partners, 38 cities.
-- FeastQR advantage: white-label delivery for restaurants (no Glovo commission on restaurant side).
-- Target initially: restaurants already on FeastQR who want their own delivery fleet.
+- Diyafa advantage: white-label delivery for restaurants (no Glovo commission on restaurant side).
+- Target initially: restaurants already on Diyafa who want their own delivery fleet.
 
 ---
 

@@ -25,6 +25,7 @@ vi.mock("~/server/db", () => ({
     },
     paymentMilestones: {
       createMany: vi.fn(),
+      findMany: vi.fn(),
       findUnique: vi.fn(),
       update: vi.fn(),
       aggregate: vi.fn(),
@@ -544,6 +545,173 @@ describe("financesRouter", () => {
       expect(result).toHaveLength(1);
       expect(result[0]!.revenue).toBe(25000);
       expect(result[0]!.eventCount).toBe(3);
+    });
+  });
+
+  // =========================================================================
+  // listAllMilestones
+  // =========================================================================
+
+  describe("listAllMilestones", () => {
+    it("should return paginated milestones with event info", async () => {
+      const milestones = [
+        {
+          id: MILESTONE_ID,
+          label: "Deposit (30%)",
+          amount: 30000,
+          status: "pending",
+          dueDate: new Date("2026-06-01"),
+          schedule: {
+            id: SCHEDULE_ID,
+            totalAmount: 100000,
+            event: {
+              id: EVENT_ID,
+              title: "Wedding Reception",
+              customerName: "Ahmed Tazi",
+              eventDate: new Date("2026-06-15"),
+            },
+          },
+        },
+      ];
+      mockMilestones.findMany.mockResolvedValue(milestones as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.listAllMilestones({});
+
+      expect(result.milestones).toHaveLength(1);
+      expect(result.milestones[0]!.schedule.event.title).toBe("Wedding Reception");
+      expect(result.nextCursor).toBeUndefined();
+    });
+
+    it("should filter by status", async () => {
+      mockMilestones.findMany.mockResolvedValue([] as never);
+
+      const caller = createOrgCaller();
+      await caller.listAllMilestones({ status: "paid" });
+
+      expect(mockMilestones.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            schedule: { orgId: ORG_ID },
+            status: "paid",
+          }),
+        }),
+      );
+    });
+
+    it("should handle cursor pagination", async () => {
+      const milestones = Array.from({ length: 3 }, (_, i) => ({
+        id: `m-${i}`,
+        label: `Milestone ${i}`,
+        schedule: {
+          id: SCHEDULE_ID,
+          totalAmount: 100000,
+          event: { id: EVENT_ID, title: "Test", customerName: "Test", eventDate: new Date() },
+        },
+      }));
+      mockMilestones.findMany.mockResolvedValue(milestones as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.listAllMilestones({ limit: 2 });
+
+      expect(result.milestones).toHaveLength(2);
+      expect(result.nextCursor).toBeDefined();
+    });
+
+    it("should return empty list when no milestones exist", async () => {
+      mockMilestones.findMany.mockResolvedValue([] as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.listAllMilestones({});
+
+      expect(result.milestones).toHaveLength(0);
+      expect(result.nextCursor).toBeUndefined();
+    });
+
+    it("should order by dueDate ascending", async () => {
+      mockMilestones.findMany.mockResolvedValue([] as never);
+
+      const caller = createOrgCaller();
+      await caller.listAllMilestones({});
+
+      expect(mockMilestones.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: { dueDate: "asc" },
+        }),
+      );
+    });
+  });
+
+  // =========================================================================
+  // getPaymentMethodBreakdown
+  // =========================================================================
+
+  describe("getPaymentMethodBreakdown", () => {
+    it("should return breakdown by payment method with percentages", async () => {
+      mockMilestones.findMany.mockResolvedValue([
+        { paymentMethod: "cod", amount: 60000 },
+        { paymentMethod: "cod", amount: 20000 },
+        { paymentMethod: "bank_transfer", amount: 15000 },
+        { paymentMethod: "cmi", amount: 5000 },
+      ] as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.getPaymentMethodBreakdown({});
+
+      expect(result.total).toBe(100000);
+      expect(result.breakdown.cod).toBe(80000);
+      expect(result.breakdown.bank_transfer).toBe(15000);
+      expect(result.breakdown.cmi).toBe(5000);
+
+      // Methods sorted by amount descending
+      expect(result.methods[0]!.method).toBe("cod");
+      expect(result.methods[0]!.amount).toBe(80000);
+      expect(result.methods[0]!.percentage).toBe(80);
+
+      expect(result.methods[1]!.method).toBe("bank_transfer");
+      expect(result.methods[1]!.percentage).toBe(15);
+
+      expect(result.methods[2]!.method).toBe("cmi");
+      expect(result.methods[2]!.percentage).toBe(5);
+    });
+
+    it("should return empty breakdown when no paid milestones", async () => {
+      mockMilestones.findMany.mockResolvedValue([] as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.getPaymentMethodBreakdown({});
+
+      expect(result.total).toBe(0);
+      expect(result.methods).toHaveLength(0);
+      expect(Object.keys(result.breakdown)).toHaveLength(0);
+    });
+
+    it("should only include paid milestones with non-null paymentMethod", async () => {
+      mockMilestones.findMany.mockResolvedValue([] as never);
+
+      const caller = createOrgCaller();
+      await caller.getPaymentMethodBreakdown({});
+
+      expect(mockMilestones.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: "paid",
+            paymentMethod: { not: null },
+          }),
+        }),
+      );
+    });
+
+    it("should handle single payment method", async () => {
+      mockMilestones.findMany.mockResolvedValue([
+        { paymentMethod: "cash", amount: 50000 },
+      ] as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.getPaymentMethodBreakdown({});
+
+      expect(result.methods).toHaveLength(1);
+      expect(result.methods[0]!.percentage).toBe(100);
     });
   });
 

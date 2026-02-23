@@ -3,7 +3,7 @@
 -- Moroccan catering platform test data
 -- ============================================================================
 
--- ── Test User (same as FeastQR) ──────────────────────────────────────────
+-- ── Test User ────────────────────────────────────────────────────────────
 -- User: random@gmail.com (already created by auth seed)
 
 -- ── Organization: Riad Al Baraka Catering ────────────────────────────────

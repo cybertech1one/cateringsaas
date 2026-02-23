@@ -17,6 +17,7 @@ import {
   orgProcedure,
   orgManagerProcedure,
 } from "~/server/api/trpc";
+import { rateLimit } from "~/server/rateLimit";
 
 export const eventReviewsRouter = createTRPCRouter({
   /** Public: Get published reviews for an org */
@@ -115,6 +116,22 @@ export const eventReviewsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Rate limit: 3 reviews per org per hour (per reviewer phone or name)
+      const rlKey = input.reviewerPhone
+        ? `review:${input.orgId}:${input.reviewerPhone}`
+        : `review:${input.orgId}:${input.reviewerName}`;
+      const rl = rateLimit({
+        key: rlKey,
+        limit: 3,
+        windowMs: 60 * 60 * 1000,
+      });
+      if (!rl.success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many review submissions. Please try again later.",
+        });
+      }
+
       // Check if event-linked review is verified (the event actually happened)
       let isVerified = false;
       if (input.eventId) {

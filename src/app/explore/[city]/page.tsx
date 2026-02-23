@@ -151,6 +151,12 @@ export async function generateMetadata({
       url: `${appUrl}/explore/${citySlug}`,
       type: "website",
     },
+    twitter: {
+      card: "summary_large_image",
+      title: `Caterers in ${cityName} | Diyafa`,
+      description: `Find the best wedding & corporate caterers in ${cityName}, Morocco. Compare ratings, menus, and prices.`,
+      site: "@diyafa_ma",
+    },
   };
 }
 

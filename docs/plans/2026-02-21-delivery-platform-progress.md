@@ -1,4 +1,4 @@
-# FeastQR Delivery Platform — Progress Report
+# Diyafa Delivery Platform — Progress Report
 **Date:** February 21, 2026
 **Branch:** feat/sprint3-customer-facing-redesign
 

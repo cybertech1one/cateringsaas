@@ -51,6 +51,7 @@ import {
 } from "lucide-react";
 import { useToast } from "~/components/ui/use-toast";
 import { cn } from "~/utils/cn";
+import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -107,17 +108,17 @@ const SORT_OPTIONS: { value: SortBy; label: string }[] = [
 ];
 
 const TAG_COLORS: Record<string, string> = {
-  vip: "bg-amber-100 text-amber-800 border-amber-300",
-  corporate: "bg-blue-100 text-blue-800 border-blue-300",
-  repeat: "bg-green-100 text-green-800 border-green-300",
-  new: "bg-purple-100 text-purple-800 border-purple-300",
-  wedding: "bg-pink-100 text-pink-800 border-pink-300",
-  ramadan: "bg-emerald-100 text-emerald-800 border-emerald-300",
-  government: "bg-slate-100 text-slate-800 border-slate-300",
-  nonprofit: "bg-teal-100 text-teal-800 border-teal-300",
+  vip: "bg-gold/10 text-gold border-gold/30",
+  corporate: "bg-[hsl(var(--majorelle-blue))]/10 text-[hsl(var(--majorelle-blue))] border-[hsl(var(--majorelle-blue))]/30",
+  repeat: "bg-sage/10 text-sage border-sage/30",
+  new: "bg-primary/10 text-primary border-primary/30",
+  wedding: "bg-[hsl(var(--rose-petal))]/10 text-[hsl(var(--rose-petal))] border-[hsl(var(--rose-petal))]/30",
+  ramadan: "bg-[hsl(var(--mint-tea))]/10 text-[hsl(var(--mint-tea))] border-[hsl(var(--mint-tea))]/30",
+  government: "bg-muted text-muted-foreground border-border",
+  nonprofit: "bg-[hsl(var(--zellige-teal))]/10 text-[hsl(var(--zellige-teal))] border-[hsl(var(--zellige-teal))]/30",
 };
 
-const DEFAULT_TAG_COLOR = "bg-gray-100 text-gray-800 border-gray-300";
+const DEFAULT_TAG_COLOR = "bg-muted text-muted-foreground border-border";
 
 function getTagColor(tag: string): string {
   const key = tag.toLowerCase().trim();
@@ -1160,34 +1161,32 @@ export default function ClientsManagement() {
       {/* ============================================================ */}
       {/* Header                                                       */}
       {/* ============================================================ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Clients</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage your client relationships, track event history, and
-            communicate effectively.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => void handleExportCSV()}
-            disabled={isExporting || totalClients === 0}
-          >
-            {isExporting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4" />
-            )}
-            Export CSV
-          </Button>
-          <Button className="gap-2" onClick={handleOpenAdd}>
-            <Plus className="h-4 w-4" />
-            Add Client
-          </Button>
-        </div>
-      </div>
+      <DashboardPageHeader
+        title="Clients"
+        description="Manage your client relationships, track event history, and communicate effectively."
+        icon={<Users className="h-5 w-5" />}
+        actions={
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => void handleExportCSV()}
+              disabled={isExporting || totalClients === 0}
+            >
+              {isExporting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              Export CSV
+            </Button>
+            <Button className="gap-2" onClick={handleOpenAdd}>
+              <Plus className="h-4 w-4" />
+              Add Client
+            </Button>
+          </div>
+        }
+      />
 
       {/* ============================================================ */}
       {/* Segment Cards                                                */}
@@ -1204,25 +1203,25 @@ export default function ClientsManagement() {
             label="VIP"
             value={segments.vip}
             icon={Star}
-            colorClass="text-amber-600"
+            colorClass="text-gold"
           />
           <SegmentCard
             label="Corporate"
             value={segments.corporate}
             icon={Building2}
-            colorClass="text-blue-600"
+            colorClass="text-[hsl(var(--majorelle-blue))]"
           />
           <SegmentCard
             label="Repeat"
             value={segments.repeat}
             icon={RefreshCcw}
-            colorClass="text-green-600"
+            colorClass="text-sage"
           />
           <SegmentCard
             label="New"
             value={segments.newClients}
             icon={Sparkles}
-            colorClass="text-purple-600"
+            colorClass="text-primary"
           />
         </div>
       )}

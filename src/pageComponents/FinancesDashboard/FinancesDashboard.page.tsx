@@ -40,6 +40,7 @@ import {
   Receipt,
   Wallet,
 } from "lucide-react";
+import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -181,7 +182,7 @@ function GrowthIndicator({ value }: { value: number }) {
   return (
     <span
       className={`inline-flex items-center gap-0.5 text-xs font-medium ${
-        isPositive ? "text-emerald-600" : "text-red-600"
+        isPositive ? "text-sage" : "text-destructive"
       }`}
     >
       {isPositive ? (
@@ -256,10 +257,10 @@ function RevenueChart({
                 <div
                   className={`w-full rounded-t transition-all duration-200 cursor-pointer ${
                     isHovered
-                      ? "bg-emerald-500"
+                      ? "bg-primary"
                       : d.revenue > 0
-                        ? "bg-emerald-400/80"
-                        : "bg-gray-200"
+                        ? "bg-primary/60"
+                        : "bg-muted"
                   }`}
                   style={{
                     height: `${Math.max(pct, d.revenue > 0 ? 4 : 2)}%`,
@@ -518,12 +519,11 @@ export default function FinancesDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Finances</h1>
-        <p className="text-sm text-muted-foreground">
-          Track revenue, payment milestones, and invoices
-        </p>
-      </div>
+      <DashboardPageHeader
+        title="Finances"
+        description="Track revenue, payment milestones, and invoices"
+        icon={<DollarSign className="h-5 w-5" />}
+      />
 
       {/* ── Revenue Overview Cards ───────────────────────────────────────── */}
       {revenueLoading ? (
@@ -537,11 +537,11 @@ export default function FinancesDashboard() {
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   Year Revenue
                 </span>
-                <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
-                  <DollarSign className="h-4 w-4 text-emerald-600" />
+                <div className="h-8 w-8 rounded-full bg-sage/15 flex items-center justify-center">
+                  <DollarSign className="h-4 w-4 text-sage" />
                 </div>
               </div>
-              <div className="text-2xl font-bold text-emerald-700 tabular-nums">
+              <div className="text-2xl font-bold text-sage tabular-nums">
                 {formatCurrency(revenue.totalRevenue)}
               </div>
               <div className="mt-1">
@@ -560,11 +560,11 @@ export default function FinancesDashboard() {
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   This Month
                 </span>
-                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <TrendingUp className="h-4 w-4 text-blue-600" />
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4 text-primary" />
                 </div>
               </div>
-              <div className="text-2xl font-bold text-blue-700 tabular-nums">
+              <div className="text-2xl font-bold text-primary tabular-nums">
                 {formatCurrency(revenue.monthRevenue)}
               </div>
               <div className="mt-1 text-xs text-muted-foreground">
@@ -580,11 +580,11 @@ export default function FinancesDashboard() {
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   Pending
                 </span>
-                <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center">
-                  <Clock className="h-4 w-4 text-amber-600" />
+                <div className="h-8 w-8 rounded-full bg-gold/15 flex items-center justify-center">
+                  <Clock className="h-4 w-4 text-gold" />
                 </div>
               </div>
-              <div className="text-2xl font-bold text-amber-700 tabular-nums">
+              <div className="text-2xl font-bold text-gold tabular-nums">
                 {formatCurrency(revenue.pendingAmount)}
               </div>
               <div className="mt-1 text-xs text-muted-foreground">
@@ -840,7 +840,7 @@ export default function FinancesDashboard() {
                               Mark Paid
                             </Button>
                           ) : String(m.status) === "paid" ? (
-                            <span className="text-xs text-emerald-600 inline-flex items-center gap-1">
+                            <span className="text-xs text-sage inline-flex items-center gap-1">
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               {m.paidAt ? formatDate(m.paidAt) : "Paid"}
                             </span>

@@ -288,7 +288,7 @@ const messages: Resources["common"] = {
   sidebar: {
     menu: "Menu",
     restaurant: "Restaurant",
-    QRMenu: "QR Menu",
+    QRMenu: "Menu Traiteur",
     edit: "Modifier",
     design: "Design",
     schedule: "Planification",
@@ -491,26 +491,26 @@ const messages: Resources["common"] = {
     editVariant: "Modifier la variante",
   },
   globalMetadata: {
-    title: "Menu en ligne pour votre restaurant",
+    title: "Diyafa — La plateforme de traiteur #1 au Maroc",
     description:
-      "Cr\u00e9ez et personnalisez vos menus en ligne et g\u00e9n\u00e9rez vos propres codes QR pour offrir \u00e0 vos clients confort et commande rapide.",
+      "G\u00e9rez vos \u00e9v\u00e9nements traiteur, cr\u00e9ez des devis professionnels, g\u00e9rez vos menus, suivez les paiements et coordonnez votre \u00e9quipe. La confiance des traiteurs \u00e0 Casablanca, Marrakech, Rabat et partout au Maroc.",
     keywords:
-      "menu, restaurant, en ligne, QR, commandes, restauration, restaurants, cuisine, gastronomie, Maroc",
-    category: "Restaurant",
+      "Diyafa,traiteur Maroc,plateforme traiteur,traiteur mariage,traiteur entreprise,gestion traiteur,\u00e9v\u00e9nement traiteur,\u0636\u064a\u0627\u0641\u0629",
+    category: "Plateforme Traiteur",
     openGraph: {
-      title: "Menu en ligne pour votre restaurant",
+      title: "Diyafa — La plateforme de traiteur #1 au Maroc",
       description:
-        "Cr\u00e9ez et personnalisez vos menus en ligne et g\u00e9n\u00e9rez vos propres codes QR pour offrir \u00e0 vos clients confort et commande rapide.",
+        "La premi\u00e8re plateforme traiteur au Maroc pour mariages, \u00e9v\u00e9nements d'entreprise et c\u00e9l\u00e9brations. G\u00e9rez menus, devis, r\u00e9servations et paiements.",
       type: "website",
       url: "https://www.diyafa.ma/",
       image: "https://www.diyafa.ma/og-image.png",
-      siteName: "Diyafa - la plateforme de traiteur #1 au Maroc",
+      siteName: "Diyafa",
       locale: "fr_FR",
     },
     twitter: {
-      title: "Menu en ligne pour votre restaurant",
+      title: "Diyafa — La plateforme de traiteur #1 au Maroc",
       description:
-        "Cr\u00e9ez et personnalisez vos menus en ligne et g\u00e9n\u00e9rez vos propres codes QR pour offrir \u00e0 vos clients confort et commande rapide.",
+        "La premi\u00e8re plateforme traiteur au Maroc pour mariages, \u00e9v\u00e9nements d'entreprise et c\u00e9l\u00e9brations. Gratuit pour commencer.",
     },
   },
   googleReviewGuideModal: {
@@ -873,7 +873,7 @@ const messages: Resources["common"] = {
       setupTime: "Temps de mise en place",
       ownCustomers: "Vos propres clients",
       languages: "Langues",
-      qrMenus: "Menus QR Code",
+      qrMenus: "Menus en ligne",
       analytics: "Analytique",
       onlineOrdering: "Commande en ligne",
       customBranding: "Image de marque",
@@ -949,7 +949,7 @@ const messages: Resources["common"] = {
   auth: {
     orContinueWith: "ou continuer avec",
     continueWithGoogle: "Continuer avec Google",
-    featurePillQrMenus: "Menus QR",
+    featurePillQrMenus: "Menus numériques",
     featurePillMultiLanguage: "Multilingue",
     featurePillAiPowered: "Propuls\u00e9 par IA",
   },
@@ -3020,8 +3020,8 @@ const messages: Resources["common"] = {
     features: {
       title: "Tout ce dont vous avez besoin pour réussir",
       subtitle: "Des outils puissants conçus spécifiquement pour les restaurants au Maroc et au-delà",
-      qrMenus: "Menus QR Code",
-      qrMenusDesc: "De beaux menus numériques accessibles via scan QR",
+      qrMenus: "Menus numériques",
+      qrMenusDesc: "De beaux menus traiteur pour vos événements",
       onlineOrdering: "Commande en ligne",
       onlineOrderingDesc: "Sur place, à emporter et livraison intégrés",
       deliveryNetwork: "Réseau de livraison",
@@ -3655,6 +3655,9 @@ const messages: Resources["common"] = {
       funeral: "Condol\u00e9ances",
       graduation: "Remise de dipl\u00f4mes",
       engagement: "Fian\u00e7ailles",
+      henna: "Soir\u00e9e Henn\u00e9",
+      diffa: "Diffa",
+      conference: "Conf\u00e9rence",
     },
     serviceOptions: {
       title: "Options de service",
@@ -3872,6 +3875,63 @@ const messages: Resources["common"] = {
       vegetarian: "V\u00e9g\u00e9tarien",
       vegan: "V\u00e9gane",
       glutenFree: "Sans gluten",
+    },
+    cateringDashboard: {
+      title: "Tableau de Bord Traiteur",
+      subtitle: "G\u00e9rez votre activit\u00e9 de traiteur",
+    },
+    events: {
+      title: "\u00c9v\u00e9nements",
+      pipeline: "Pipeline d'\u00e9v\u00e9nements",
+      upcoming: "\u00c9v\u00e9nements \u00e0 venir",
+    },
+    quotes: {
+      title: "Devis",
+      pending: "Devis en attente",
+    },
+    clients: {
+      title: "Clients",
+      vip: "Clients VIP",
+    },
+    equipment: {
+      title: "\u00c9quipement",
+    },
+    finances: {
+      title: "Finances",
+      revenue: "Chiffre d'affaires",
+      outstanding: "En cours",
+    },
+    calendar: {
+      title: "Calendrier",
+      blocked: "Dates bloqu\u00e9es",
+    },
+    portfolio: {
+      title: "Portfolio",
+    },
+    messages: {
+      title: "Messages",
+    },
+    eventStatus: {
+      inquiry: "Demande",
+      quoted: "Devis\u00e9",
+      accepted: "Accept\u00e9",
+      confirmed: "Confirm\u00e9",
+      completed: "Termin\u00e9",
+      cancelled: "Annul\u00e9",
+    },
+    cateringCommon: {
+      guests: "Invit\u00e9s",
+      amount: "Montant",
+      mad: "MAD",
+      noResults: "Aucun r\u00e9sultat trouv\u00e9",
+      loading: "Chargement...",
+      save: "Enregistrer",
+      cancel: "Annuler",
+      delete: "Supprimer",
+      edit: "Modifier",
+      create: "Cr\u00e9er",
+      export: "Exporter",
+      search: "Rechercher...",
     },
   },
 };

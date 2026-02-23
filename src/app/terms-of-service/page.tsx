@@ -3,9 +3,12 @@ import { type Metadata } from "next";
 import "./style.css";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
-  description: "Diyafa terms of service - rules and guidelines for using our platform.",
-  robots: { index: false },
+  title: "Terms of Service | Diyafa",
+  description:
+    "Diyafa terms of service — rules and guidelines for using Morocco's premier catering management platform.",
+  alternates: {
+    canonical: "https://www.diyafa.ma/terms-of-service",
+  },
 };
 
 const page = () => (

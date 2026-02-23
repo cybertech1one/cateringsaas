@@ -179,6 +179,13 @@ export const staffSchedulingRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify assignment belongs to this org
+      const assignment = await ctx.db.staffAssignments.findFirst({
+        where: { id: input.assignmentId, event: { orgId: ctx.orgId } },
+        select: { id: true },
+      });
+      if (!assignment) throw new TRPCError({ code: "NOT_FOUND" });
+
       return ctx.db.staffAssignments.update({
         where: { id: input.assignmentId },
         data: {
@@ -201,6 +208,13 @@ export const staffSchedulingRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify assignment belongs to this org
+      const assignment = await ctx.db.staffAssignments.findFirst({
+        where: { id: input.assignmentId, event: { orgId: ctx.orgId } },
+        select: { id: true },
+      });
+      if (!assignment) throw new TRPCError({ code: "NOT_FOUND" });
+
       return ctx.db.staffAssignments.update({
         where: { id: input.assignmentId },
         data: {
@@ -218,6 +232,13 @@ export const staffSchedulingRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify assignment belongs to this org
+      const assignment = await ctx.db.staffAssignments.findFirst({
+        where: { id: input.assignmentId, event: { orgId: ctx.orgId } },
+        select: { id: true },
+      });
+      if (!assignment) throw new TRPCError({ code: "NOT_FOUND" });
+
       return ctx.db.staffAssignments.update({
         where: { id: input.assignmentId },
         data: {
@@ -235,6 +256,13 @@ export const staffSchedulingRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify assignment belongs to this org
+      const assignment = await ctx.db.staffAssignments.findFirst({
+        where: { id: input.assignmentId, event: { orgId: ctx.orgId } },
+        select: { id: true },
+      });
+      if (!assignment) throw new TRPCError({ code: "NOT_FOUND" });
+
       return ctx.db.staffAssignments.delete({
         where: { id: input.assignmentId },
       });

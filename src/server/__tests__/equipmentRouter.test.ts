@@ -224,6 +224,7 @@ describe("equipmentRouter", () => {
 
   describe("update", () => {
     it("should update equipment details", async () => {
+      mockEquipment.findFirst.mockResolvedValue({ id: EQUIPMENT_ID } as never);
       mockEquipment.update.mockResolvedValue({
         id: EQUIPMENT_ID,
         name: "Updated Chafing Dish",

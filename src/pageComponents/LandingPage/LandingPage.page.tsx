@@ -39,53 +39,12 @@ const HeroIllustration = dynamic(
 
 const appUrl = getAppUrl();
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "SoftwareApplication",
-      name: "Diyafa",
-      applicationCategory: "BusinessApplication",
-      operatingSystem: "Web",
-      description:
-        "Morocco's premier catering management platform. Manage events, quotes, menus, payments, and staff for weddings, corporate events & celebrations.",
-      url: appUrl,
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "MAD",
-        description: "Free tier available. Pro at 299 MAD/month.",
-      },
-      featureList: [
-        "Event management & booking pipeline",
-        "Professional quote builder with TVA compliance",
-        "Catering menu management",
-        "Financial tracking (COD, milestones, invoices)",
-        "Staff & equipment scheduling",
-        "Multi-language support (EN/FR/AR)",
-        "Analytics & revenue dashboard",
-      ],
-    },
-    {
-      "@type": "Organization",
-      name: "Diyafa",
-      url: appUrl,
-      logo: `${appUrl}/images/logo.png`,
-      sameAs: [],
-    },
-  ],
-};
-
 export const LandingPage = async () => {
   const { t: _t } = await useServerTranslation();
   const t = _t as (key: string, opts?: Record<string, unknown>) => string;
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <Navbar />
       <main id="main-content">
         {/* ================================================================

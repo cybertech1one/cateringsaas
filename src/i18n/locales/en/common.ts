@@ -281,7 +281,7 @@ const messages = {
   sidebar: {
     menu: "Menu",
     restaurant: "Restaurant",
-    QRMenu: "QR Menu",
+    QRMenu: "Catering Menu",
     edit: "Edit",
     design: "Design",
     schedule: "Schedule",
@@ -485,26 +485,26 @@ const messages = {
     editVariant: "Edit Variant",
   },
   globalMetadata: {
-    title: "Online Menu for Your Restaurant",
+    title: "Diyafa — Morocco's Premier Catering Platform",
     description:
-      "Create and customize online menus and generate your own QR codes to provide customers with convenience and quick ordering.",
+      "Manage catering events, build professional quotes, create menus, track payments, and coordinate staff. Trusted by caterers in Casablanca, Marrakech, Rabat & across Morocco.",
     keywords:
-      "menu, restaurant, online, QR, orders, dining, restaurants, food, restaurant, dining",
-    category: "Restaurant",
+      "Diyafa,catering Morocco,traiteur Maroc,wedding catering,corporate catering,catering management,catering platform,event catering,traiteur mariage,ضيافة",
+    category: "Catering Platform",
     openGraph: {
-      title: "Online Menu for Your Restaurant",
+      title: "Diyafa — Morocco's Premier Catering Platform",
       description:
-        "Create and customize online menus and generate your own QR codes to provide customers with convenience and quick ordering.",
+        "Morocco's leading catering platform for weddings, corporate events & celebrations. Manage menus, quotes, bookings, staff, and payments.",
       type: "website",
       url: "https://www.diyafa.ma/",
       image: "https://www.diyafa.ma/og-image.png",
-      siteName: "Diyafa - Morocco's premier catering platform",
+      siteName: "Diyafa",
       locale: "en_US",
     },
     twitter: {
-      title: "Online Menu for Your Restaurant",
+      title: "Diyafa — Morocco's Premier Catering Platform",
       description:
-        "Create and customize online menus and generate your own QR codes to provide customers with convenience and quick ordering.",
+        "Morocco's leading catering platform for weddings, corporate events & celebrations. Manage menus, quotes, bookings, and payments. Free to start.",
     },
   },
   googleReviewGuideModal: {
@@ -939,7 +939,7 @@ const messages = {
   auth: {
     orContinueWith: "or continue with",
     continueWithGoogle: "Continue with Google",
-    featurePillQrMenus: "QR Menus",
+    featurePillQrMenus: "Digital Menus",
     featurePillMultiLanguage: "Multi-Language",
     featurePillAiPowered: "AI Powered",
   },
@@ -3002,8 +3002,8 @@ const messages = {
     features: {
       title: "Everything You Need to Succeed",
       subtitle: "Powerful tools designed specifically for restaurants in Morocco and beyond",
-      qrMenus: "QR Code Menus",
-      qrMenusDesc: "Beautiful digital menus accessible via QR code scan",
+      qrMenus: "Digital Menus",
+      qrMenusDesc: "Beautiful catering menus for your events",
       onlineOrdering: "Online Ordering",
       onlineOrderingDesc: "Dine-in, pickup, and delivery ordering built-in",
       deliveryNetwork: "Delivery Network",
@@ -3650,6 +3650,9 @@ const messages = {
       funeral: "Condolences",
       graduation: "Graduation",
       engagement: "Engagement",
+      henna: "Henna Night",
+      diffa: "Diffa",
+      conference: "Conference",
     },
     serviceOptions: {
       title: "Service Options",
@@ -3867,6 +3870,63 @@ const messages = {
       vegetarian: "Vegetarian",
       vegan: "Vegan",
       glutenFree: "Gluten-Free",
+    },
+    cateringDashboard: {
+      title: "Catering Dashboard",
+      subtitle: "Manage your catering business",
+    },
+    events: {
+      title: "Events",
+      pipeline: "Event Pipeline",
+      upcoming: "Upcoming Events",
+    },
+    quotes: {
+      title: "Quotes",
+      pending: "Pending Quotes",
+    },
+    clients: {
+      title: "Clients",
+      vip: "VIP Clients",
+    },
+    equipment: {
+      title: "Equipment",
+    },
+    finances: {
+      title: "Finances",
+      revenue: "Revenue",
+      outstanding: "Outstanding",
+    },
+    calendar: {
+      title: "Calendar",
+      blocked: "Blocked Dates",
+    },
+    portfolio: {
+      title: "Portfolio",
+    },
+    messages: {
+      title: "Messages",
+    },
+    eventStatus: {
+      inquiry: "Inquiry",
+      quoted: "Quoted",
+      accepted: "Accepted",
+      confirmed: "Confirmed",
+      completed: "Completed",
+      cancelled: "Cancelled",
+    },
+    cateringCommon: {
+      guests: "Guests",
+      amount: "Amount",
+      mad: "MAD",
+      noResults: "No results found",
+      loading: "Loading...",
+      save: "Save",
+      cancel: "Cancel",
+      delete: "Delete",
+      edit: "Edit",
+      create: "Create",
+      export: "Export",
+      search: "Search...",
     },
   },
 };

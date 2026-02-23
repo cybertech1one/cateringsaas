@@ -16,6 +16,7 @@ import {
   orgProcedure,
   orgManagerProcedure,
 } from "~/server/api/trpc";
+import { rateLimit } from "~/server/rateLimit";
 
 const quoteItemInput = z.object({
   sectionName: z.string(),
@@ -299,6 +300,19 @@ export const quotesRouter = createTRPCRouter({
       clientPhone: z.string().min(8),
     }))
     .mutation(async ({ ctx, input }) => {
+      // Rate limit: 10 attempts per phone per hour
+      const rl = rateLimit({
+        key: `quoteAccept:${input.clientPhone}`,
+        limit: 10,
+        windowMs: 60 * 60 * 1000,
+      });
+      if (!rl.success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many attempts. Please try again later.",
+        });
+      }
+
       const quote = await ctx.db.quotes.findFirst({
         where: { id: input.quoteId },
         include: { event: { select: { id: true, customerPhone: true, status: true } } },
@@ -338,6 +352,19 @@ export const quotesRouter = createTRPCRouter({
       clientPhone: z.string().min(8),
     }))
     .mutation(async ({ ctx, input }) => {
+      // Rate limit: 10 attempts per phone per hour
+      const rl = rateLimit({
+        key: `quoteReject:${input.clientPhone}`,
+        limit: 10,
+        windowMs: 60 * 60 * 1000,
+      });
+      if (!rl.success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many attempts. Please try again later.",
+        });
+      }
+
       const quote = await ctx.db.quotes.findFirst({
         where: { id: input.quoteId },
         include: { event: { select: { id: true, customerPhone: true } } },

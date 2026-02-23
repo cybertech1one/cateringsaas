@@ -53,24 +53,28 @@ const font = DM_Sans({
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 const displayFont = Playfair_Display({
   weight: ["400", "500", "600", "700", "800"],
   subsets: ["latin"],
   variable: "--font-display",
+  display: "swap",
 });
 
 const arabicFont = Noto_Sans_Arabic({
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["arabic"],
   variable: "--font-arabic",
+  display: "swap",
 });
 
 const calligraphyFont = Aref_Ruqaa({
   weight: ["400", "700"],
   subsets: ["arabic", "latin"],
   variable: "--font-calligraphy",
+  display: "swap",
 });
 
 async function RootLayout({ children }: { children: React.ReactNode }) {

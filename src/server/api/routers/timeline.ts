@@ -117,6 +117,13 @@ export const timelineRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { orgId: _orgId, taskId, ...data } = input;
 
+      // Verify task belongs to this org via event
+      const task = await ctx.db.prepTasks.findFirst({
+        where: { id: taskId, event: { orgId: ctx.orgId } },
+        select: { id: true },
+      });
+      if (!task) throw new TRPCError({ code: "NOT_FOUND" });
+
       return ctx.db.prepTasks.update({
         where: { id: taskId },
         data,
@@ -133,6 +140,13 @@ export const timelineRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify task belongs to this org via event
+      const task = await ctx.db.prepTasks.findFirst({
+        where: { id: input.taskId, event: { orgId: ctx.orgId } },
+        select: { id: true },
+      });
+      if (!task) throw new TRPCError({ code: "NOT_FOUND" });
+
       return ctx.db.prepTasks.update({
         where: { id: input.taskId },
         data: {
@@ -151,6 +165,13 @@ export const timelineRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify task belongs to this org via event
+      const task = await ctx.db.prepTasks.findFirst({
+        where: { id: input.taskId, event: { orgId: ctx.orgId } },
+        select: { id: true },
+      });
+      if (!task) throw new TRPCError({ code: "NOT_FOUND" });
+
       return ctx.db.prepTasks.delete({
         where: { id: input.taskId },
       });
@@ -265,6 +286,26 @@ export const timelineRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify event belongs to this org
+      const event = await ctx.db.events.findFirst({
+        where: { id: input.eventId, orgId: ctx.orgId },
+        select: { id: true },
+      });
+      if (!event) throw new TRPCError({ code: "NOT_FOUND" });
+
+      // Verify all tasks belong to this event
+      const taskIds = input.taskOrder.map((item) => item.id);
+      const ownedTasks = await ctx.db.prepTasks.findMany({
+        where: { id: { in: taskIds }, eventId: input.eventId },
+        select: { id: true },
+      });
+      if (ownedTasks.length !== taskIds.length) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "One or more tasks not found",
+        });
+      }
+
       await Promise.all(
         input.taskOrder.map((item) =>
           ctx.db.prepTasks.update({

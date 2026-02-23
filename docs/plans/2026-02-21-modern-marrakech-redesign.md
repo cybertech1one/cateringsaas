@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Transform all external-facing pages (Landing, Explore, Auth, Navbar, Footer) into a dual-audience experience with subtle Moroccan visual identity, CSS/SVG food art, and warm palette — making FeastQR competitive with top-tier food platforms.
+**Goal:** Transform all external-facing pages (Landing, Explore, Auth, Navbar, Footer) into a dual-audience experience with subtle Moroccan visual identity, CSS/SVG food art, and warm palette — making Diyafa competitive with top-tier food platforms.
 
 **Architecture:** Modify existing components in-place. Add new CSS custom properties + utility classes for Moroccan visual elements (zellige patterns, arch shapes, 8-pointed stars). Create a new `MoroccanFoodArt` component for the hero CSS art. All decorative elements are pure CSS/SVG — no image assets. i18n translations updated for EN/FR/AR.
 
@@ -327,7 +327,7 @@ Add to `landing.features`:
 
 ```ts
 features: {
-  title: "Why FeastQR?",
+  title: "Why Diyafa?",
   description: "For diners and restaurant owners alike",
   // Diner features
   dinerBrowse: "Browse Menus Anywhere",
@@ -350,7 +350,7 @@ features: {
 
 Rewrite the features array to have 6 cards (3 diner + 3 owner). Add subtle Moroccan arch-top styling via `overflow-hidden` + a top gradient stripe using Moroccan colors. Use an `<svg>` zellige divider between the diner and owner card groups.
 
-Update section badge text: "Why FeastQR?"
+Update section badge text: "Why Diyafa?"
 Update section heading: "For diners and restaurant owners alike"
 
 **Step 3: Commit**

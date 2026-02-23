@@ -43,7 +43,7 @@ Morocco is co-hosting the 2030 FIFA World Cup. $5-6B in infrastructure investmen
 ### 4. Young, Digital Population
 42.4% of Morocco's population is under 25. 92.2% internet penetration. 85%+ of e-commerce via mobile. The generation now planning their weddings and corporate events expects digital booking.
 
-### 5. FeastQR's Battle-Tested Stack
+### 5. Diyafa's Battle-Tested Stack
 We already have: auth, i18n (Arabic RTL!), AI multi-provider, WhatsApp integration, COD payments, order tracking, theme engine, security, PWA, 1894 passing tests. Competitors would need 12-18 months to match this foundation.
 
 ### 6. 83% Informal Sector
@@ -133,18 +133,18 @@ IN_PREPARATION → IN_EXECUTION → COMPLETED →
 SETTLEMENT_PENDING → SETTLED
 ```
 
-### Database: 19 New Tables + 7 Evolved from FeastQR
+### Database: 19 New Tables + 7 Evolved from Diyafa
 - Quotes (versioned), Payment milestones, Equipment inventory
 - Staff scheduling, Real-time messaging, Multi-dimensional reviews
 - TVA-compliant invoicing, Delivery logistics, Prep timelines
 
-### FeastQR Reuse Assessment
+### Diyafa Reuse Assessment
 - **11 modules reuse directly**: Auth, i18n, theme, UI components, security, cache, logger, PWA, AI providers, notifications, cookie consent
 - **8 modules evolve**: Menus → catering menus, orders → event bookings, payments → milestones, etc.
 - **10 modules build new**: Quote builder, event lifecycle, equipment tracking, staff scheduling, etc.
 - **8 modules remove**: QR codes, KDS, cart ordering, loyalty stamps, delivery zones, driver management
 
-### Tech Stack (Same as FeastQR)
+### Tech Stack (Same as Diyafa)
 - Next.js 14 + tRPC + Prisma + Supabase + Tailwind + shadcn/ui
 - WhatsApp Business API (360dialog or MessageBird)
 - CMI payment gateway (Morocco's standard)
@@ -237,7 +237,7 @@ SETTLEMENT_PENDING → SETTLED
 
 3. **Timeline**: Start building now? Or more research first?
 
-4. **Repo Setup**: Clone FeastQR into new folder `cateringsaas/`? Or new GitHub repo?
+4. **Repo Setup**: Clone Diyafa into new folder `cateringsaas/`? Or new GitHub repo?
 
 5. **Database**: Separate Supabase project? Or shared local dev?
 

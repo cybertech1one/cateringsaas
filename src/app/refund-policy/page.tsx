@@ -3,9 +3,12 @@ import { type Metadata } from "next";
 import "./styles.css";
 
 export const metadata: Metadata = {
-  title: "Refund Policy",
-  description: "Diyafa refund and return policy.",
-  robots: { index: false },
+  title: "Refund Policy | Diyafa",
+  description:
+    "Diyafa refund and return policy — our commitment to fair cancellation and refund handling for catering services.",
+  alternates: {
+    canonical: "https://www.diyafa.ma/refund-policy",
+  },
 };
 
 const page = () => (

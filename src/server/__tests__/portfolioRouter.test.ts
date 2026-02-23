@@ -294,6 +294,10 @@ describe("portfolioRouter", () => {
 
   describe("reorder", () => {
     it("should update sort order for multiple images", async () => {
+      mockImages.findMany.mockResolvedValue([
+        { id: "00000000-0000-4000-a000-000000000501" },
+        { id: "00000000-0000-4000-a000-000000000502" },
+      ] as never);
       mockImages.update.mockResolvedValue({} as never);
 
       const caller = createManagerCaller();

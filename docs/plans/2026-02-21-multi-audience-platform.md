@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Transform FeastQR from a single landing page into a 3-audience platform with dedicated pages for consumers, restaurant owners, and delivery drivers.
+**Goal:** Transform Diyafa from a single landing page into a 3-audience platform with dedicated pages for consumers, restaurant owners, and delivery drivers.
 
 **Architecture:** Three top-level pages with per-page color themes via CSS custom property overrides. Shared Navbar/Footer with audience-aware navigation. All i18n in EN/FR/AR.
 

@@ -38,6 +38,7 @@ import {
   Repeat,
   Info,
 } from "lucide-react";
+import { DashboardPageHeader } from "~/components/DashboardPageHeader";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -552,46 +553,42 @@ export default function CalendarView() {
       {/* ================================================================= */}
       {/* Header                                                            */}
       {/* ================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <CalendarDays className="h-6 w-6 text-primary" />
-            Calendar
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            View events, manage availability, and block dates
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {!isCurrentMonth && (
+      <DashboardPageHeader
+        title="Calendar"
+        description="View events, manage availability, and block dates"
+        icon={<CalendarDays className="h-5 w-5" />}
+        actions={
+          <div className="flex items-center gap-2">
+            {!isCurrentMonth && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToToday}
+                className="gap-1.5"
+              >
+                <CalendarCheck className="h-4 w-4" />
+                Today
+              </Button>
+            )}
             <Button
               variant="outline"
-              size="sm"
-              onClick={goToToday}
+              onClick={() => {
+                setBlockSingleDate("");
+                setBlockStartDate("");
+                setBlockEndDate("");
+                setBlockReason("");
+                setBlockIsRecurring(false);
+                setBlockMode("single");
+                setBlockDialogOpen(true);
+              }}
               className="gap-1.5"
             >
-              <CalendarCheck className="h-4 w-4" />
-              Today
+              <Ban className="h-4 w-4" />
+              Block Dates
             </Button>
-          )}
-          <Button
-            variant="outline"
-            onClick={() => {
-              setBlockSingleDate("");
-              setBlockStartDate("");
-              setBlockEndDate("");
-              setBlockReason("");
-              setBlockIsRecurring(false);
-              setBlockMode("single");
-              setBlockDialogOpen(true);
-            }}
-            className="gap-1.5"
-          >
-            <Ban className="h-4 w-4" />
-            Block Dates
-          </Button>
-        </div>
-      </div>
+          </div>
+        }
+      />
 
       {/* ================================================================= */}
       {/* Month Navigation                                                  */}

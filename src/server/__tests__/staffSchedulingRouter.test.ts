@@ -269,6 +269,7 @@ describe("staffSchedulingRouter", () => {
 
   describe("updateAssignment", () => {
     it("should update assignment status and details", async () => {
+      mockAssignments.findFirst.mockResolvedValue({ id: ASSIGNMENT_ID } as never);
       mockAssignments.update.mockResolvedValue({
         id: ASSIGNMENT_ID,
         status: "confirmed",
@@ -297,6 +298,7 @@ describe("staffSchedulingRouter", () => {
 
   describe("checkIn", () => {
     it("should update status to checked_in", async () => {
+      mockAssignments.findFirst.mockResolvedValue({ id: ASSIGNMENT_ID } as never);
       mockAssignments.update.mockResolvedValue({
         id: ASSIGNMENT_ID,
         status: "checked_in",
@@ -319,6 +321,7 @@ describe("staffSchedulingRouter", () => {
 
   describe("checkOut", () => {
     it("should update status to checked_out", async () => {
+      mockAssignments.findFirst.mockResolvedValue({ id: ASSIGNMENT_ID } as never);
       mockAssignments.update.mockResolvedValue({
         id: ASSIGNMENT_ID,
         status: "checked_out",
@@ -341,6 +344,7 @@ describe("staffSchedulingRouter", () => {
 
   describe("removeFromEvent", () => {
     it("should delete the assignment", async () => {
+      mockAssignments.findFirst.mockResolvedValue({ id: ASSIGNMENT_ID } as never);
       mockAssignments.delete.mockResolvedValue({ id: ASSIGNMENT_ID } as never);
 
       const caller = createManagerCaller();

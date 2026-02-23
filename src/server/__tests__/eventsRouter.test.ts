@@ -427,6 +427,55 @@ describe("eventsRouter", () => {
   });
 
   // =========================================================================
+  // getUpcoming
+  // =========================================================================
+
+  describe("getUpcoming", () => {
+    it("should return events in the next 7 days excluding cancelled/settled/inquiry", async () => {
+      const upcomingEvents = [
+        { id: "e1", title: "Corporate Lunch", status: "confirmed", eventDate: new Date() },
+        { id: "e2", title: "Wedding", status: "prep", eventDate: new Date() },
+      ];
+      mockEvents.findMany.mockResolvedValue(upcomingEvents as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.getUpcoming({});
+
+      expect(result).toHaveLength(2);
+      expect(mockEvents.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            orgId: ORG_ID,
+            status: { notIn: ["cancelled", "settled", "inquiry"] },
+          }),
+          take: 10,
+          orderBy: { eventDate: "asc" },
+        }),
+      );
+    });
+
+    it("should return empty array when no upcoming events", async () => {
+      mockEvents.findMany.mockResolvedValue([] as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.getUpcoming({});
+
+      expect(result).toEqual([]);
+    });
+
+    it("should limit results to 10 events", async () => {
+      mockEvents.findMany.mockResolvedValue([] as never);
+
+      const caller = createOrgCaller();
+      await caller.getUpcoming({});
+
+      expect(mockEvents.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ take: 10 }),
+      );
+    });
+  });
+
+  // =========================================================================
   // checkAvailability
   // =========================================================================
 

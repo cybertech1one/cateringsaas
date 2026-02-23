@@ -311,6 +311,7 @@ describe("messagesRouter", () => {
 
   describe("markRead", () => {
     it("should reset org unread count and mark client messages as read", async () => {
+      mockConversations.findFirst.mockResolvedValue({ id: CONVERSATION_ID } as never);
       mockConversations.update.mockResolvedValue({} as never);
       mockMessages.updateMany.mockResolvedValue({ count: 3 } as never);
 
@@ -399,6 +400,7 @@ describe("messagesRouter", () => {
 
   describe("archiveConversation", () => {
     it("should set conversation status to archived", async () => {
+      mockConversations.findFirst.mockResolvedValue({ id: CONVERSATION_ID } as never);
       mockConversations.update.mockResolvedValue({
         id: CONVERSATION_ID,
         status: "archived",

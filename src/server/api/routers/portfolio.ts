@@ -163,6 +163,21 @@ export const portfolioRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify all images belong to this org before updating
+      const imageIds = input.imageOrder.map((item) => item.id);
+      const ownedImages = await ctx.db.portfolioImages.findMany({
+        where: { id: { in: imageIds }, orgId: ctx.orgId },
+        select: { id: true },
+      });
+      const ownedIds = new Set(ownedImages.map((img) => img.id));
+      const unauthorizedIds = imageIds.filter((id) => !ownedIds.has(id));
+      if (unauthorizedIds.length > 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "One or more images not found",
+        });
+      }
+
       await Promise.all(
         input.imageOrder.map((item) =>
           ctx.db.portfolioImages.update({

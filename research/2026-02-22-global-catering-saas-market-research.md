@@ -18,7 +18,7 @@
 7. [AI in Catering SaaS](#7-ai-in-catering-saas)
 8. [Post-COVID Catering Evolution](#8-post-covid-catering-evolution)
 9. [Morocco & MENA Opportunity](#9-morocco--mena-opportunity)
-10. [Strategic Recommendations for FeastQR Catering](#10-strategic-recommendations-for-feastqr-catering)
+10. [Strategic Recommendations for Diyafa Catering](#10-strategic-recommendations-for-diyafa-catering)
 
 ---
 
@@ -532,16 +532,16 @@ Based on reviews across G2, Capterra, BBB, Trustpilot, and SoftwareAdvice:
 
 | Gap | Opportunity | Competitive Advantage |
 |-----|-------------|----------------------|
-| **MENA/Arabic-first platform** | No major catering SaaS serves MENA natively with Arabic RTL | FeastQR already has Arabic i18n + RTL |
+| **MENA/Arabic-first platform** | No major catering SaaS serves MENA natively with Arabic RTL | Diyafa already has Arabic i18n + RTL |
 | **AI-native catering** | Most platforms bolt on AI; none are AI-first | Build AI into the core (forecasting, proposals, pricing) |
 | **Mobile-first design** | Most platforms are web-first with weak mobile | React Native or PWA with offline support |
-| **Integrated delivery** | Catering + delivery logistics in one platform | FeastQR already building delivery module |
+| **Integrated delivery** | Catering + delivery logistics in one platform | Diyafa already building delivery module |
 | **Sustainability tracking** | 52% shifted to sustainable practices; no tools exist | Carbon footprint, waste tracking, sustainable sourcing |
-| **Real-time order tracking** | 97% of buyers want it; only ezCater partially offers it | FeastQR already has order tracking |
-| **Multi-language menus** | No catering platform supports FR/AR natively | FeastQR has EN/FR/AR with auto-translation |
+| **Real-time order tracking** | 97% of buyers want it; only ezCater partially offers it | Diyafa already has order tracking |
+| **Multi-language menus** | No catering platform supports FR/AR natively | Diyafa has EN/FR/AR with auto-translation |
 | **Low-cost entry** | Most platforms cost $100-450/month; prohibitive for MENA SMBs | Freemium + affordable Pro tier in MAD |
-| **COD support** | 60-74% of Morocco transactions are COD; no platform handles this | FeastQR already has COD payment flow |
-| **WhatsApp integration** | Dominant communication channel in MENA; no catering SaaS uses it | FeastQR has WhatsApp ordering + notifications |
+| **COD support** | 60-74% of Morocco transactions are COD; no platform handles this | Diyafa already has COD payment flow |
+| **WhatsApp integration** | Dominant communication channel in MENA; no catering SaaS uses it | Diyafa has WhatsApp ordering + notifications |
 | **Batch production planning** | Caterers need it; few platforms offer it | Kitchen management + batch optimization |
 | **Event + Catering unified** | Either event-focused (Tripleseat) or catering-focused (CaterTrax), never both | Build a unified event + catering + delivery platform |
 
@@ -576,9 +576,9 @@ Based on reviews across G2, Capterra, BBB, Trustpilot, and SoftwareAdvice:
 | **Ingredient Tracking** | Growing | Reduces over-ordering | Multiple |
 | **Voice Ordering** | Emerging | Handles complex modifications | CaterZen (planned) |
 
-### 7.2 AI Opportunity for FeastQR Catering
+### 7.2 AI Opportunity for Diyafa Catering
 
-Given FeastQR's existing AI infrastructure (OpenAI, Anthropic, Gemini multi-provider), the following AI features are buildable:
+Given Diyafa's existing AI infrastructure (OpenAI, Anthropic, Gemini multi-provider), the following AI features are buildable:
 
 **Phase 1 (MVP):**
 - AI menu description generation (already built for regular menus)
@@ -667,9 +667,9 @@ Given FeastQR's existing AI infrastructure (OpenAI, Anthropic, Gemini multi-prov
 4. **Growing corporate sector**: Casablanca, Rabat, Tangier business districts expanding
 5. **Wedding market**: Moroccan weddings are massive (200-500+ guests), highly catered
 6. **Ramadan catering**: Seasonal surge in group/corporate iftar catering
-7. **French-Arabic bilingual**: FeastQR already supports EN/FR/AR
-8. **COD dominance**: FeastQR already has COD payment flow; competitors don't
-9. **WhatsApp-first culture**: FeastQR's WhatsApp integration is a massive advantage
+7. **French-Arabic bilingual**: Diyafa already supports EN/FR/AR
+8. **COD dominance**: Diyafa already has COD payment flow; competitors don't
+9. **WhatsApp-first culture**: Diyafa's WhatsApp integration is a massive advantage
 10. **2030 FIFA World Cup**: Morocco co-hosting = enormous catering infrastructure investment
 
 ### 9.4 Morocco-Specific Feature Requirements
@@ -685,15 +685,15 @@ Given FeastQR's existing AI infrastructure (OpenAI, Anthropic, Gemini multi-prov
 | Ramadan scheduling | Iftar timing, Suhoor options |
 | Multi-city: Casablanca, Rabat, Marrakech, Tangier, Fez, Agadir | Top 6 markets |
 | Local tax compliance (TVA) | 20% standard VAT |
-| Dirham (MAD) currency | Already supported in FeastQR |
+| Dirham (MAD) currency | Already supported in Diyafa |
 
 ---
 
-## 10. Strategic Recommendations for FeastQR Catering
+## 10. Strategic Recommendations for Diyafa Catering
 
 ### 10.1 Competitive Positioning
 
-FeastQR Catering should position as: **"The first AI-powered, Arabic-first catering platform built for Morocco and MENA"**
+Diyafa Catering should position as: **"The first AI-powered, Arabic-first catering platform built for Morocco and MENA"**
 
 This positions against every global competitor because:
 - ezCater = US-only, English-only, commission-heavy
@@ -705,7 +705,7 @@ This positions against every global competitor because:
 ### 10.2 Phased Build Strategy
 
 **Phase 1: Catering Marketplace MVP (8-12 weeks)**
-- Caterer profiles with menu management (leverage existing FeastQR menu system)
+- Caterer profiles with menu management (leverage existing Diyafa menu system)
 - Corporate buyer search and ordering
 - WhatsApp order notifications
 - COD + CMI payment support
@@ -785,9 +785,9 @@ Corporate Buyer Portal (B2B):
 | NPS (buyer) | > 50 | ezCater benchmark |
 | Churn rate | < 5% monthly | SaaS benchmark |
 
-### 10.5 Unfair Advantages (FeastQR-Specific)
+### 10.5 Unfair Advantages (Diyafa-Specific)
 
-FeastQR already has these components that competitors would need to build from scratch:
+Diyafa already has these components that competitors would need to build from scratch:
 
 | Existing Feature | Catering Application |
 |-----------------|---------------------|

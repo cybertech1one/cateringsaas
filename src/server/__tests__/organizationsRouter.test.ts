@@ -385,6 +385,250 @@ describe("organizationsRouter", () => {
   });
 
   // =========================================================================
+  // update (orgAdminProcedure)
+  // =========================================================================
+
+  describe("update", () => {
+    it("should update organization details", async () => {
+      mockMembers.findFirst
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never) // middleware: default org
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never); // middleware: verify membership
+      const updatedOrg = createRestaurant({ name: "Updated Name", city: "Fes" });
+      mockOrgs.update.mockResolvedValue(updatedOrg as never);
+
+      const caller = createOrgCaller("admin");
+      const result = await caller.update({
+        name: "Updated Name",
+        city: "Fes",
+        description: "A fine caterer",
+      });
+
+      expect(mockOrgs.update).toHaveBeenCalledWith({
+        where: { id: ORG_ID },
+        data: expect.objectContaining({
+          name: "Updated Name",
+          city: "Fes",
+          description: "A fine caterer",
+        }),
+      });
+    });
+
+    it("should update cuisines and specialties arrays", async () => {
+      mockMembers.findFirst
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never)
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never);
+      mockOrgs.update.mockResolvedValue(createRestaurant() as never);
+
+      const caller = createOrgCaller("admin");
+      await caller.update({
+        cuisines: ["moroccan", "mediterranean"],
+        specialties: ["weddings", "corporate"],
+      });
+
+      expect(mockOrgs.update).toHaveBeenCalledWith({
+        where: { id: ORG_ID },
+        data: expect.objectContaining({
+          cuisines: ["moroccan", "mediterranean"],
+          specialties: ["weddings", "corporate"],
+        }),
+      });
+    });
+
+    it("should update guest capacity range", async () => {
+      mockMembers.findFirst
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never)
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never);
+      mockOrgs.update.mockResolvedValue(createRestaurant() as never);
+
+      const caller = createOrgCaller("admin");
+      await caller.update({
+        minGuests: 20,
+        maxGuests: 500,
+        priceRange: "premium",
+      });
+
+      expect(mockOrgs.update).toHaveBeenCalledWith({
+        where: { id: ORG_ID },
+        data: expect.objectContaining({
+          minGuests: 20,
+          maxGuests: 500,
+          priceRange: "premium",
+        }),
+      });
+    });
+
+    it("should reject unauthenticated access", async () => {
+      const caller = createPublicCaller();
+      await expect(
+        caller.update({ name: "Hacked" }),
+      ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    });
+
+    it("should reject name shorter than 2 characters", async () => {
+      mockMembers.findFirst
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never)
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never);
+
+      const caller = createOrgCaller("admin");
+      await expect(
+        caller.update({ name: "A" }),
+      ).rejects.toThrow();
+    });
+  });
+
+  // =========================================================================
+  // updateSettings (orgAdminProcedure)
+  // =========================================================================
+
+  describe("updateSettings", () => {
+    it("should merge new settings with existing settings", async () => {
+      mockMembers.findFirst
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never)
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never);
+      mockOrgs.findUnique.mockResolvedValue({
+        id: ORG_ID,
+        settings: { maxEventsPerDay: 3, currency: "MAD" },
+      } as never);
+      mockOrgs.update.mockResolvedValue({ id: ORG_ID } as never);
+
+      const caller = createOrgCaller("admin");
+      await caller.updateSettings({
+        settings: { maxEventsPerDay: 5, timezone: "Africa/Casablanca" },
+      });
+
+      expect(mockOrgs.update).toHaveBeenCalledWith({
+        where: { id: ORG_ID },
+        data: {
+          settings: {
+            maxEventsPerDay: 5, // overwritten
+            currency: "MAD", // preserved
+            timezone: "Africa/Casablanca", // added
+          },
+        },
+      });
+    });
+
+    it("should handle null existing settings", async () => {
+      mockMembers.findFirst
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never)
+        .mockResolvedValueOnce({
+          id: MEMBER_ID,
+          orgId: ORG_ID,
+          role: "admin",
+          permissions: null,
+        } as never);
+      mockOrgs.findUnique.mockResolvedValue({ id: ORG_ID, settings: null } as never);
+      mockOrgs.update.mockResolvedValue({ id: ORG_ID } as never);
+
+      const caller = createOrgCaller("admin");
+      await caller.updateSettings({
+        settings: { language: "fr" },
+      });
+
+      expect(mockOrgs.update).toHaveBeenCalledWith({
+        where: { id: ORG_ID },
+        data: {
+          settings: { language: "fr" },
+        },
+      });
+    });
+
+    it("should reject unauthenticated access", async () => {
+      const caller = createPublicCaller();
+      await expect(
+        caller.updateSettings({ settings: { key: "value" } }),
+      ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    });
+  });
+
+  // =========================================================================
+  // getMembers (orgProcedure)
+  // =========================================================================
+
+  describe("getMembers", () => {
+    it("should return all members of the org", async () => {
+      const members = [
+        { id: MEMBER_ID, orgId: ORG_ID, role: "org_owner", user: { id: USER_ID, email: "owner@example.com" } },
+        { id: "m2", orgId: ORG_ID, role: "staff", user: { id: "u2", email: "staff@example.com" } },
+      ];
+      // middleware mock
+      mockMembers.findFirst.mockResolvedValue({
+        id: MEMBER_ID,
+        orgId: ORG_ID,
+        role: "staff",
+        permissions: null,
+      } as never);
+      mockMembers.findMany.mockResolvedValue(members as never);
+
+      const caller = createOrgCaller();
+      const result = await caller.getMembers({});
+
+      expect(result).toHaveLength(2);
+      expect(mockMembers.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { orgId: ORG_ID },
+          orderBy: { createdAt: "asc" },
+        }),
+      );
+    });
+  });
+
+  // =========================================================================
   // inviteMember (orgAdminProcedure)
   // =========================================================================
 
