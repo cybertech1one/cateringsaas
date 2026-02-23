@@ -4,22 +4,18 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Footer } from "./molecules/Footer";
-import { HeroMockup } from "./molecules/HeroMockup";
 import { PricingSection } from "./molecules/PricingSection";
 import { ComparisonSection } from "./molecules/ComparisonSection";
 import { FAQSection } from "./molecules/FAQSection";
 import { getAppUrl } from "~/utils/getBaseUrl";
 import { ScrollReveal } from "~/components/animations/ScrollReveal";
 import { AnimatedCounter } from "~/components/animations/AnimatedCounter";
-import { Marquee } from "~/components/animations/Marquee";
 
 import {
-  Sparkles,
   ArrowRight,
   Shield,
   Star,
   MapPin,
-  MousePointerClick,
   Languages,
   Utensils,
   CalendarDays,
@@ -31,7 +27,6 @@ import {
   CheckCircle2,
   ChefHat,
   Camera,
-  ClipboardList,
 } from "lucide-react";
 
 const HeroIllustration = dynamic(
@@ -93,161 +88,129 @@ export const LandingPage = async () => {
       />
       <Navbar />
       <main id="main-content">
-        {/* ═══════════════════════════════════════════════════════════
-            HERO -- Warm vibrant split layout with SVG illustration
-        ═══════════════════════════════════════════════════════════ */}
-        <section className="relative overflow-hidden hero-vibrant">
-          {/* Decorative background elements */}
-          <div className="hero-bg-pattern absolute inset-0" aria-hidden="true" />
-          <div className="absolute -top-32 -right-32 h-[500px] w-[500px] rounded-full bg-ember/[0.06] blur-[100px]" aria-hidden="true" />
-          <div className="absolute -bottom-20 -left-20 h-[400px] w-[400px] rounded-full bg-gold/[0.08] blur-[80px]" aria-hidden="true" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-sage/[0.04] blur-[120px]" aria-hidden="true" />
+        {/* ================================================================
+            HERO -- Full-viewport, centered editorial with Arabic calligraphy
+        ================================================================ */}
+        <section className="relative min-h-screen overflow-hidden hero-moroccan">
+          {/* Zellige lattice pattern overlay */}
+          <div
+            className="zellige-lattice absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+          />
+          {/* Warm ambient glows */}
+          <div
+            className="absolute top-0 left-1/2 -translate-x-1/2 h-[700px] w-[700px] rounded-full bg-ember/[0.04] blur-[160px]"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-gold/[0.06] blur-[120px]"
+            aria-hidden="true"
+          />
 
-          <div className="container relative z-10 mx-auto max-w-7xl px-4 pt-20 pb-16 sm:px-6 sm:pt-24 sm:pb-20 md:pt-28 md:pb-24 lg:pt-32 lg:pb-28 lg:px-8">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-              {/* Left -- Copy */}
-              <div className="max-w-xl">
-                <div className="animate-fade-up mb-6 inline-flex items-center gap-2 rounded-full border border-ember/20 bg-ember/[0.06] px-4 py-1.5 text-sm font-medium text-ember">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  {t("landing.hero.badge")}
-                </div>
-
-                <h1 className="animate-fade-up animate-delay-100 font-display text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-[4.25rem]">
-                  {t("landing.hero.title")}{" "}
-                  <span className="text-gradient">
-                    {t("landing.hero.titleHighlight")}
-                  </span>
-                </h1>
-
-                <p className="animate-fade-up animate-delay-200 mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                  {t("landing.hero.subtitle")}
-                </p>
-
-                <div className="animate-fade-up animate-delay-300 mt-10 flex flex-col gap-3 sm:flex-row">
-                  <Link
-                    href="/register"
-                    className="group hero-cta-primary inline-flex items-center justify-center gap-2.5 rounded-2xl bg-ember px-8 py-4 text-base font-semibold text-white shadow-lg shadow-ember/20 transition-all duration-300 hover:shadow-xl hover:shadow-ember/30 hover:-translate-y-0.5"
-                  >
-                    <ChefHat className="h-4.5 w-4.5" />
-                    {t("landing.hero.ctaExplore")}
-                  </Link>
-                  <Link
-                    href="#features"
-                    className="group inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-foreground/10 px-8 py-4 text-base font-semibold text-foreground transition-all duration-300 hover:border-ember/30 hover:bg-ember/[0.04]"
-                  >
-                    {t("landing.hero.ctaBrowse")}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </div>
-
-                <div className="animate-fade-up animate-delay-400 mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-                  <span className="flex items-center gap-2 text-sm font-medium text-foreground/50">
-                    <CheckCircle2 className="h-4 w-4 text-sage" />
-                    {t("landing.hero.trustFreeToStart")}
-                  </span>
-                  <span className="flex items-center gap-2 text-sm font-medium text-foreground/50">
-                    <CheckCircle2 className="h-4 w-4 text-sage" />
-                    {t("landing.hero.trustSetupTime")}
-                  </span>
-                  <span className="hidden items-center gap-2 text-sm font-medium text-foreground/50 sm:flex">
-                    <CheckCircle2 className="h-4 w-4 text-sage" />
-                    {t("landing.hero.trustMultiLanguage")}
-                  </span>
-                </div>
-              </div>
-
-              {/* Right -- SVG Illustration + Dashboard mockup */}
-              <div className="animate-fade-up animate-delay-200 relative">
-                <div className="hidden lg:block">
-                  <HeroIllustration />
-                </div>
-                {/* Mobile: show compact dashboard mockup */}
-                <div className="mx-auto max-w-sm lg:hidden">
-                  <HeroMockup />
-                </div>
-              </div>
+          <div className="container relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-4 py-32 text-center sm:px-6 lg:px-8">
+            {/* Signature Arabic calligraphy */}
+            <div className="animate-fade-up">
+              <span
+                className="font-calligraphy block text-[5.5rem] leading-none tracking-wide text-ember/[0.12] sm:text-[8rem] md:text-[10rem] lg:text-[12rem]"
+                aria-hidden="true"
+              >
+                ضيافة
+              </span>
             </div>
 
-            {/* Cross-audience strip */}
-            <div className="animate-fade-up animate-delay-500 mt-14 flex flex-col gap-4 rounded-2xl border border-border/40 bg-background/60 px-6 py-5 backdrop-blur-sm sm:flex-row sm:items-center sm:gap-10 sm:px-8">
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-ember/[0.08]">
-                  <ChefHat className="h-4 w-4 text-ember" />
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {t("landing.hero.ownerStrip")}
+            {/* English headline -- overlaps slightly with the calligraphy */}
+            <div className="animate-fade-up animate-delay-100 -mt-8 sm:-mt-12 md:-mt-16">
+              <h1 className="font-display text-3xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
+                {t("landing.hero.title")}{" "}
+                <span className="text-gradient">
+                  {t("landing.hero.titleHighlight")}
                 </span>
-                <Link
-                  href="/register"
-                  className="group text-sm font-semibold text-ember transition-colors hover:text-ember/80"
-                >
+              </h1>
+            </div>
+
+            {/* Subline */}
+            <p className="animate-fade-up animate-delay-200 mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+              {t("landing.hero.subtitle")}
+            </p>
+
+            {/* Single prominent CTA */}
+            <div className="animate-fade-up animate-delay-300 mt-10">
+              <Link
+                href="/register"
+                className="group moroccan-shimmer inline-flex items-center justify-center gap-3 rounded-2xl bg-ember px-10 py-4.5 text-lg font-semibold text-white shadow-lg shadow-ember/20 transition-all duration-300 hover:shadow-xl hover:shadow-ember/30 hover:-translate-y-0.5"
+              >
+                <ChefHat className="h-5 w-5" />
+                {t("landing.hero.ctaExplore")}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="animate-fade-up animate-delay-400 mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+              <span className="flex items-center gap-2 text-sm text-muted-foreground/60">
+                <CheckCircle2 className="h-3.5 w-3.5 text-sage/60" />
+                {t("landing.hero.trustFreeToStart")}
+              </span>
+              <span className="flex items-center gap-2 text-sm text-muted-foreground/60">
+                <CheckCircle2 className="h-3.5 w-3.5 text-sage/60" />
+                {t("landing.hero.trustSetupTime")}
+              </span>
+              <span className="hidden items-center gap-2 text-sm text-muted-foreground/60 sm:flex">
+                <CheckCircle2 className="h-3.5 w-3.5 text-sage/60" />
+                {t("landing.hero.trustMultiLanguage")}
+              </span>
+            </div>
+
+            {/* Cross-audience strip -- simplified */}
+            <div className="animate-fade-up animate-delay-500 mt-16 flex flex-col items-center gap-4 sm:flex-row sm:gap-8">
+              <Link
+                href="/register"
+                className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-ember"
+              >
+                <ChefHat className="h-4 w-4 text-ember/40 transition-colors group-hover:text-ember" />
+                <span>{t("landing.hero.ownerStrip")}</span>
+                <span className="font-semibold text-ember">
                   {t("landing.hero.ownerCta")}
-                  <ArrowRight className="ml-1 inline h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              </div>
-              <div className="hidden h-6 w-px bg-border/50 sm:block" />
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sage/[0.08]">
-                  <CalendarDays className="h-4 w-4 text-sage" />
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {t("landing.hero.driverStrip")}
                 </span>
-                <Link
-                  href="/explore"
-                  className="group text-sm font-semibold text-sage transition-colors hover:text-sage/80"
-                >
+              </Link>
+              <span className="hidden h-4 w-px bg-border/50 sm:block" aria-hidden="true" />
+              <Link
+                href="/explore"
+                className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-sage"
+              >
+                <CalendarDays className="h-4 w-4 text-sage/40 transition-colors group-hover:text-sage" />
+                <span>{t("landing.hero.driverStrip")}</span>
+                <span className="font-semibold text-sage">
                   {t("landing.hero.driverCta")}
-                  <ArrowRight className="ml-1 inline h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              </div>
+                </span>
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* ═══════════════════════════════════════════════════════════
-            STATS -- Big numbers with animated counters
-        ═══════════════════════════════════════════════════════════ */}
-        <section className="border-b border-border/40 bg-background">
-          <div className="container mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* ================================================================
+            STATS -- Animated counters with Moroccan accent
+        ================================================================ */}
+        <section className="relative border-b border-border/30">
+          <div className="gold-separator" aria-hidden="true" />
+          <div className="container mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
             <ScrollReveal>
               <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
                 {[
-                  {
-                    target: 200,
-                    suffix: "+",
-                    label: "Caterers",
-                    icon: ChefHat,
-                  },
+                  { target: 200, suffix: "+", label: "Caterers", icon: ChefHat },
                   { target: 12, suffix: "", label: "Cities", icon: MapPin },
-                  {
-                    target: 5,
-                    suffix: "K+",
-                    label: "Events Managed",
-                    icon: CalendarDays,
-                  },
-                  {
-                    target: 3,
-                    suffix: "",
-                    label: "Languages",
-                    icon: Languages,
-                  },
+                  { target: 5, suffix: "K+", label: "Events Managed", icon: CalendarDays },
+                  { target: 3, suffix: "", label: "Languages", icon: Languages },
                 ].map((stat, idx) => (
-                  <div
-                    key={idx}
-                    className="group text-center rounded-xl p-4 transition-all duration-300 hover:stat-shimmer"
-                  >
-                    <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-ember/[0.06] transition-colors duration-300 group-hover:bg-ember/[0.12]">
-                      <stat.icon className="h-5 w-5 text-ember/50 transition-colors duration-300 group-hover:text-ember/80" />
-                    </div>
-                    <p className="font-display text-3xl font-bold text-foreground sm:text-4xl">
+                  <div key={idx} className="group text-center">
+                    <p className="font-display text-4xl font-bold text-foreground sm:text-5xl">
                       <AnimatedCounter
                         target={stat.target}
                         suffix={stat.suffix}
                         duration={2000}
                       />
                     </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-2 text-sm font-medium text-muted-foreground/60">
                       {stat.label}
                     </p>
                   </div>
@@ -255,153 +218,236 @@ export const LandingPage = async () => {
               </div>
             </ScrollReveal>
           </div>
+          <div className="gold-separator" aria-hidden="true" />
         </section>
 
-        {/* ═══════════════════════════════════════════════════════════
-            TRUST MARQUEE -- Repeating trust badges
-        ═══════════════════════════════════════════════════════════ */}
-        <div className="border-b border-border/30 bg-background/50 py-3">
-          <Marquee speed={35} pauseOnHover className="select-none">
-            <span className="text-sm font-medium text-muted-foreground/50">
-              200+ Caterers
-            </span>
-            <span className="text-muted-foreground/20">&bull;</span>
-            <span className="text-sm font-medium text-muted-foreground/50">
-              5,000+ Events Managed
-            </span>
-            <span className="text-muted-foreground/20">&bull;</span>
-            <span className="text-sm font-medium text-muted-foreground/50">
-              12 Cities
-            </span>
-            <span className="text-muted-foreground/20">&bull;</span>
-            <span className="text-sm font-medium text-muted-foreground/50">
-              Weddings &amp; Corporate
-            </span>
-            <span className="text-muted-foreground/20">&bull;</span>
-            <span className="text-sm font-medium text-muted-foreground/50">
-              Zero Commission
-            </span>
-            <span className="text-muted-foreground/20">&bull;</span>
-            <span className="text-sm font-medium text-muted-foreground/50">
-              COD &amp; Milestones
-            </span>
-            <span className="text-muted-foreground/20">&bull;</span>
-            <span className="text-sm font-medium text-muted-foreground/50">
-              EN / FR / AR
-            </span>
-            <span className="text-muted-foreground/20">&bull;</span>
-          </Marquee>
-        </div>
-
-        {/* ═══════════════════════════════════════════════════════════
-            FEATURES -- Bento grid with catering-specific features
-        ═══════════════════════════════════════════════════════════ */}
-        <section id="features" className="relative px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-          <div className="noise-overlay absolute inset-0 pointer-events-none" aria-hidden="true" />
-          <div className="container relative z-10 mx-auto max-w-6xl">
+        {/* ================================================================
+            FEATURES -- Editorial alternating sections, not bento grid
+        ================================================================ */}
+        <section id="features" className="relative bg-riad-cream">
+          <div className="container mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+            {/* Section header */}
             <ScrollReveal>
-              <div className="mb-14 text-center">
-                <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-ember/70">
+              <div className="mb-20 text-center">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-ember/60">
                   {t("landing.features.title")}
                 </p>
-                <h2 className="mx-auto max-w-2xl font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
+                <h2 className="font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
                   {t("landing.features.description")}
                 </h2>
               </div>
             </ScrollReveal>
 
-            {/* Row 1: Large (2-col) + Small (1-col) */}
-            <ScrollReveal>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="card-3d group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-ember/20 hover:shadow-lg hover:glow-ember md:col-span-2 sm:p-10">
-                  <div className="relative z-10">
-                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-ember/[0.08]">
+            {/* Feature 1: Event Management -- Image left, copy right */}
+            <div className="mb-24">
+              <ScrollReveal>
+                <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+                  <div className="moroccan-shimmer relative overflow-hidden rounded-2xl">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ember/[0.06] via-gold/[0.04] to-sand/[0.08] p-8 sm:p-12">
+                      {/* Stylized event pipeline illustration */}
+                      <div className="space-y-4">
+                        {["Wedding", "Corporate", "Ramadan", "Birthday"].map(
+                          (type, i) => (
+                            <div
+                              key={type}
+                              className="flex items-center gap-4 rounded-xl border border-border/30 bg-background/80 px-5 py-3.5 shadow-sm backdrop-blur-sm"
+                              style={{ marginLeft: `${i * 12}px` }}
+                            >
+                              <div
+                                className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                                  i === 0
+                                    ? "bg-ember/10"
+                                    : i === 1
+                                      ? "bg-sage/10"
+                                      : i === 2
+                                        ? "bg-gold/10"
+                                        : "bg-ember/10"
+                                }`}
+                              >
+                                <CalendarDays
+                                  className={`h-4.5 w-4.5 ${
+                                    i === 0
+                                      ? "text-ember"
+                                      : i === 1
+                                        ? "text-sage"
+                                        : i === 2
+                                          ? "text-gold"
+                                          : "text-ember"
+                                  }`}
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm font-semibold text-foreground">
+                                  {type}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {i === 0
+                                    ? "200 guests"
+                                    : i === 1
+                                      ? "80 guests"
+                                      : i === 2
+                                        ? "150 guests"
+                                        : "60 guests"}
+                                </p>
+                              </div>
+                              <span className="rounded-full bg-sage/10 px-2.5 py-1 text-[10px] font-semibold text-sage">
+                                {i === 0
+                                  ? "Confirmed"
+                                  : i === 1
+                                    ? "Quoted"
+                                    : i === 2
+                                      ? "Inquiry"
+                                      : "Draft"}
+                              </span>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-ember/[0.08]">
                       <CalendarDays className="h-6 w-6 text-ember" />
                     </div>
-                    <h3 className="mb-2.5 font-display text-xl font-bold text-foreground sm:text-2xl">
+                    <h3 className="font-display text-2xl font-bold text-foreground sm:text-3xl">
                       {t("landing.features.eventManagementTitle")}
                     </h3>
-                    <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
                       {t("landing.features.eventManagementDesc")}
                     </p>
                   </div>
-                  {/* Decorative event types */}
-                  <div className="absolute -bottom-2 -right-4 flex flex-col gap-2 opacity-[0.15] sm:opacity-[0.2]" aria-hidden="true">
-                    {["Wedding", "Corporate", "Ramadan", "Birthday"].map((type) => (
-                      <span key={type} className="rounded-full bg-ember px-4 py-1.5 text-sm font-medium text-white">
-                        {type}
-                      </span>
-                    ))}
-                  </div>
                 </div>
+              </ScrollReveal>
+            </div>
 
-                <div className="card-3d group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-sage/20 hover:shadow-lg hover:shadow-sage/[0.04]">
-                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-sage/[0.08]">
-                    <FileText className="h-6 w-6 text-sage" />
-                  </div>
-                  <h3 className="mb-2.5 font-display text-xl font-bold text-foreground">
-                    {t("landing.features.quoteBuilderTitle")}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {t("landing.features.quoteBuilderDesc")}
-                  </p>
-                  {/* Mini pricing type badges */}
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {["Per Head", "Per Dish", "Package"].map((mode) => (
-                      <span
-                        key={mode}
-                        className="rounded-full bg-sage/[0.06] px-3 py-1 text-xs font-medium text-sage/70"
-                      >
-                        {mode}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
+            <div className="gold-separator mx-auto mb-24 max-w-md" aria-hidden="true" />
 
-            {/* Row 2: Small (1-col) + Large (2-col) */}
-            <ScrollReveal delay={100}>
-              <div className="mt-4 grid gap-4 md:grid-cols-3">
-                <div className="card-3d group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-gold/20 hover:shadow-lg hover:shadow-gold/[0.04]">
-                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/[0.08]">
-                    <DollarSign className="h-6 w-6 text-gold" />
-                  </div>
-                  <h3 className="mb-2.5 font-display text-xl font-bold text-foreground">
-                    {t("landing.features.financialTitle")}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {t("landing.features.financialDesc")}
-                  </p>
-                  {/* Payment method badges */}
-                  <div className="mt-5 flex items-center gap-3">
-                    <span className="rounded-md bg-background px-2.5 py-1 text-xs font-bold text-foreground/60 shadow-sm ring-1 ring-border/50">
-                      COD
-                    </span>
-                    <span className="rounded-md bg-background px-2.5 py-1 text-xs font-bold text-foreground/60 shadow-sm ring-1 ring-border/50">
-                      Milestones
-                    </span>
-                    <span className="rounded-md bg-background px-2.5 py-1 text-xs font-bold text-foreground/60 shadow-sm ring-1 ring-border/50">
-                      Invoices
-                    </span>
-                  </div>
-                </div>
-
-                <div className="card-3d arch-card-top group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card to-sand/30 p-8 transition-all duration-300 hover:border-ember/20 hover:shadow-lg hover:glow-ember md:col-span-2 sm:p-10">
-                  <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-10">
-                    <div className="flex-1">
-                      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-ember/[0.08]">
-                        <Utensils className="h-6 w-6 text-ember" />
-                      </div>
-                      <h3 className="mb-2.5 font-display text-xl font-bold text-foreground sm:text-2xl">
-                        {t("landing.features.menuManagementTitle")}
-                      </h3>
-                      <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-                        {t("landing.features.menuManagementDesc")}
-                      </p>
+            {/* Feature 2: Quote Builder -- Copy left, image right */}
+            <div className="mb-24">
+              <ScrollReveal>
+                <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+                  <div className="order-2 lg:order-1">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-sage/[0.08]">
+                      <FileText className="h-6 w-6 text-sage" />
                     </div>
-                    {/* Menu feature checklist */}
-                    <div className="flex flex-col gap-2.5 rounded-xl bg-background/60 p-4 ring-1 ring-border/30">
+                    <h3 className="font-display text-2xl font-bold text-foreground sm:text-3xl">
+                      {t("landing.features.quoteBuilderTitle")}
+                    </h3>
+                    <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
+                      {t("landing.features.quoteBuilderDesc")}
+                    </p>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {["Per Head", "Per Dish", "Package"].map((mode) => (
+                        <span
+                          key={mode}
+                          className="rounded-full border border-sage/20 bg-sage/[0.04] px-4 py-1.5 text-xs font-semibold text-sage/70"
+                        >
+                          {mode}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="moroccan-shimmer order-1 overflow-hidden rounded-2xl lg:order-2">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-sage/[0.06] via-background to-sage/[0.04] p-8 sm:p-12">
+                      {/* Stylized quote document */}
+                      <div className="rounded-xl border border-border/40 bg-background/90 p-6 shadow-sm backdrop-blur-sm">
+                        <div className="mb-4 flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-muted-foreground">
+                              DEVIS / QUOTE
+                            </p>
+                            <p className="text-sm font-bold text-foreground">
+                              #DYF-2026-042
+                            </p>
+                          </div>
+                          <span className="rounded-full bg-sage/10 px-3 py-1 text-[10px] font-bold text-sage">
+                            TVA 20%
+                          </span>
+                        </div>
+                        <div className="space-y-2.5 border-t border-border/30 pt-4">
+                          {[
+                            { item: "Appetizers (x200)", price: "8,000" },
+                            { item: "Main Course (x200)", price: "16,000" },
+                            { item: "Pastilla Dessert (x200)", price: "6,000" },
+                            { item: "Service Staff (x8)", price: "4,000" },
+                          ].map((line) => (
+                            <div
+                              key={line.item}
+                              className="flex items-center justify-between text-sm"
+                            >
+                              <span className="text-muted-foreground">
+                                {line.item}
+                              </span>
+                              <span className="font-semibold text-foreground">
+                                {line.price} MAD
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-4 flex items-center justify-between border-t border-border/30 pt-3">
+                          <span className="text-sm font-bold text-foreground">
+                            Total TTC
+                          </span>
+                          <span className="text-lg font-bold text-ember">
+                            40,800 MAD
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+
+            <div className="gold-separator mx-auto mb-24 max-w-md" aria-hidden="true" />
+
+            {/* Feature 3: Menu Management -- Image left, copy right */}
+            <div className="mb-24">
+              <ScrollReveal>
+                <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+                  <div className="moroccan-shimmer overflow-hidden rounded-2xl">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-gold/[0.06] via-background to-ember/[0.04] p-8 sm:p-12">
+                      {/* Menu categories visualization */}
+                      <div className="grid grid-cols-2 gap-3">
+                        {[
+                          { name: "Appetizers", count: "12 items", color: "ember" },
+                          { name: "Tagines", count: "8 items", color: "gold" },
+                          { name: "Couscous", count: "5 items", color: "sage" },
+                          { name: "Pastries", count: "15 items", color: "ember" },
+                        ].map((cat) => (
+                          <div
+                            key={cat.name}
+                            className="rounded-xl border border-border/30 bg-background/80 p-4 backdrop-blur-sm"
+                          >
+                            <div
+                              className={`mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-${cat.color}/[0.08]`}
+                            >
+                              <Utensils
+                                className={`h-4 w-4 text-${cat.color}`}
+                              />
+                            </div>
+                            <p className="text-sm font-semibold text-foreground">
+                              {cat.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {cat.count}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/[0.08]">
+                      <Utensils className="h-6 w-6 text-gold" />
+                    </div>
+                    <h3 className="font-display text-2xl font-bold text-foreground sm:text-3xl">
+                      {t("landing.features.menuManagementTitle")}
+                    </h3>
+                    <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
+                      {t("landing.features.menuManagementDesc")}
+                    </p>
+                    <div className="mt-6 flex flex-col gap-2.5">
                       {[
                         "Per-head pricing",
                         "Package deals",
@@ -419,17 +465,43 @@ export const LandingPage = async () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            </ScrollReveal>
+              </ScrollReveal>
+            </div>
 
-            {/* Row 3: Four equal cards */}
-            <ScrollReveal delay={200}>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-                <div className="card-3d group rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-ember/20 hover:shadow-lg hover:shadow-ember/[0.04]">
+            <div className="gold-separator mx-auto mb-24 max-w-md" aria-hidden="true" />
+
+            {/* Features 4-6: Three cards in a row */}
+            <ScrollReveal>
+              <div className="grid gap-6 sm:grid-cols-3">
+                {/* Financial Tracking */}
+                <div className="moroccan-shimmer group rounded-2xl border border-border/40 bg-background/80 p-8 transition-all duration-300 hover:border-gold/20 hover:shadow-lg">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/[0.08]">
+                    <DollarSign className="h-6 w-6 text-gold" />
+                  </div>
+                  <h3 className="mb-3 font-display text-xl font-bold text-foreground">
+                    {t("landing.features.financialTitle")}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {t("landing.features.financialDesc")}
+                  </p>
+                  <div className="mt-5 flex items-center gap-2">
+                    {["COD", "Milestones", "Invoices"].map((m) => (
+                      <span
+                        key={m}
+                        className="rounded-md bg-background px-2.5 py-1 text-xs font-bold text-foreground/50 shadow-sm ring-1 ring-border/50"
+                      >
+                        {m}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Staff & Equipment */}
+                <div className="moroccan-shimmer group rounded-2xl border border-border/40 bg-background/80 p-8 transition-all duration-300 hover:border-ember/20 hover:shadow-lg">
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-ember/[0.08]">
                     <Users className="h-6 w-6 text-ember" />
                   </div>
-                  <h3 className="mb-2.5 font-display text-lg font-bold text-foreground">
+                  <h3 className="mb-3 font-display text-xl font-bold text-foreground">
                     {t("landing.features.staffEquipmentTitle")}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
@@ -437,23 +509,30 @@ export const LandingPage = async () => {
                   </p>
                 </div>
 
-                <div className="card-3d group rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-sage/20 hover:shadow-lg hover:shadow-sage/[0.04]">
+                {/* Client Hub */}
+                <div className="moroccan-shimmer group rounded-2xl border border-border/40 bg-background/80 p-8 transition-all duration-300 hover:border-sage/20 hover:shadow-lg">
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-sage/[0.08]">
                     <MessageSquare className="h-6 w-6 text-sage" />
                   </div>
-                  <h3 className="mb-2.5 font-display text-lg font-bold text-foreground">
+                  <h3 className="mb-3 font-display text-xl font-bold text-foreground">
                     {t("landing.features.clientHubTitle")}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     {t("landing.features.clientHubDesc")}
                   </p>
                 </div>
+              </div>
+            </ScrollReveal>
 
-                <div className="card-3d group rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-gold/20 hover:shadow-lg hover:shadow-gold/[0.04]">
+            {/* Additional feature cards row */}
+            <ScrollReveal delay={100}>
+              <div className="mt-6 grid gap-6 sm:grid-cols-2">
+                {/* Analytics */}
+                <div className="moroccan-shimmer group rounded-2xl border border-border/40 bg-background/80 p-8 transition-all duration-300 hover:border-gold/20 hover:shadow-lg">
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/[0.08]">
                     <BarChart3 className="h-6 w-6 text-gold" />
                   </div>
-                  <h3 className="mb-2.5 font-display text-lg font-bold text-foreground">
+                  <h3 className="mb-3 font-display text-xl font-bold text-foreground">
                     {t("landing.features.analyticsTitle")}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
@@ -461,11 +540,12 @@ export const LandingPage = async () => {
                   </p>
                 </div>
 
-                <div className="card-3d group rounded-2xl border border-border/50 bg-card p-8 transition-all duration-300 hover:border-ember/20 hover:shadow-lg hover:shadow-ember/[0.04]">
+                {/* Portfolio */}
+                <div className="moroccan-shimmer group rounded-2xl border border-border/40 bg-background/80 p-8 transition-all duration-300 hover:border-ember/20 hover:shadow-lg">
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-ember/[0.08]">
                     <Camera className="h-6 w-6 text-ember" />
                   </div>
-                  <h3 className="mb-2.5 font-display text-lg font-bold text-foreground">
+                  <h3 className="mb-3 font-display text-xl font-bold text-foreground">
                     {t("landing.features.portfolioTitle")}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
@@ -475,8 +555,8 @@ export const LandingPage = async () => {
               </div>
             </ScrollReveal>
 
-            <ScrollReveal delay={300}>
-              <div className="mt-8 text-center">
+            <ScrollReveal delay={200}>
+              <div className="mt-12 text-center">
                 <p className="text-sm text-muted-foreground">
                   {t("landing.features.ownerCtaText")}{" "}
                   <Link
@@ -492,202 +572,18 @@ export const LandingPage = async () => {
           </div>
         </section>
 
-        {/* ═══════════════════════════════════════════════════════════
-            DASHBOARD PREVIEW -- What caterers see in their dashboard
-        ═══════════════════════════════════════════════════════════ */}
-        <section
-          className="relative overflow-hidden zellige-divider"
-          style={{ background: "hsl(36 33% 97%)" }}
-        >
-          <div className="geo-pattern absolute inset-0" aria-hidden="true" />
-          <div className="container relative z-10 mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
-              {/* Left -- Copy */}
-              <ScrollReveal direction="left">
-                <div>
-                  <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-ember/70">
-                    {t("landing.mobile.label")}
-                  </p>
-                  <h2 className="font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
-                    {t("landing.mobile.title")}{" "}
-                    <span className="text-ember">
-                      {t("landing.mobile.titleLine2")}
-                    </span>
-                  </h2>
-                  <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-                    {t("landing.mobile.description")}
-                  </p>
-
-                  <div className="mt-8 grid grid-cols-2 gap-4">
-                    <div className="rounded-xl border border-border/50 bg-background p-5 transition-colors hover:border-ember/20">
-                      <CalendarDays className="mb-3 h-6 w-6 text-ember" />
-                      <p className="font-semibold text-foreground">
-                        {t("landing.mobile.scanAndView")}
-                      </p>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        Manage events on the go
-                      </p>
-                    </div>
-                    <div className="rounded-xl border border-border/50 bg-background p-5 transition-colors hover:border-sage/20">
-                      <ClipboardList className="mb-3 h-6 w-6 text-sage" />
-                      <p className="font-semibold text-foreground">
-                        {t("landing.mobile.instantLoading")}
-                      </p>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        Quotes &amp; payments sync live
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </ScrollReveal>
-
-              {/* Right -- Dashboard mockup showing event pipeline */}
-              <ScrollReveal direction="right">
-                <div className="flex justify-center">
-                  <div className="relative">
-                    {/* Phone frame */}
-                    <div className="w-[280px] overflow-hidden rounded-[2.5rem] border-[6px] border-espresso bg-background shadow-2xl sm:w-[300px]">
-                      {/* Notch */}
-                      <div className="relative z-20 mx-auto -mt-[1px] h-7 w-[120px] rounded-b-2xl bg-espresso" />
-
-                      {/* Screen */}
-                      <div className="relative bg-background pt-2">
-                        {/* Status bar */}
-                        <div className="flex items-center justify-between px-6 py-1 text-[10px] font-medium text-muted-foreground/50">
-                          <span>9:41</span>
-                          <div className="flex items-center gap-1">
-                            <div className="h-2.5 w-5 rounded-sm border border-muted-foreground/20">
-                              <div className="h-full w-3/4 rounded-sm bg-sage" />
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Caterer header */}
-                        <div className="px-4 pb-3 pt-2">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-ember/20 to-gold/20">
-                              <ChefHat className="h-5 w-5 text-ember" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold">My Events</p>
-                              <p className="text-[10px] text-muted-foreground">
-                                3 upcoming this week
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Pipeline tabs */}
-                        <div className="flex gap-2 px-4 pb-3">
-                          <span className="rounded-full bg-ember px-3.5 py-1.5 text-[11px] font-semibold text-white">
-                            Pipeline
-                          </span>
-                          <span className="rounded-full bg-muted px-3.5 py-1.5 text-[11px] text-muted-foreground">
-                            Quotes
-                          </span>
-                          <span className="rounded-full bg-muted px-3.5 py-1.5 text-[11px] text-muted-foreground">
-                            Revenue
-                          </span>
-                        </div>
-
-                        {/* Event cards */}
-                        <div className="space-y-3 px-4 pb-4">
-                          <div className="overflow-hidden rounded-xl border border-border/50">
-                            <div className="relative h-16 bg-gradient-to-br from-amber-200 via-orange-200 to-amber-300 flex items-center px-4">
-                              <div className="flex items-center gap-2">
-                                <span className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-ember">Wedding</span>
-                                <span className="text-[10px] text-white/80 font-medium">Mar 15</span>
-                              </div>
-                              <div className="absolute bottom-2 right-2 rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-bold text-ember shadow-sm">
-                                45,000 MAD
-                              </div>
-                            </div>
-                            <div className="p-3">
-                              <p className="text-[13px] font-bold">
-                                El Amrani Wedding
-                              </p>
-                              <p className="mt-0.5 text-[11px] text-muted-foreground">
-                                200 guests &middot; Full service &middot; Casablanca
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="overflow-hidden rounded-xl border border-border/50">
-                            <div className="relative h-16 bg-gradient-to-br from-emerald-200 via-teal-200 to-emerald-300 flex items-center px-4">
-                              <div className="flex items-center gap-2">
-                                <span className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-sage">Corporate</span>
-                                <span className="text-[10px] text-white/80 font-medium">Mar 20</span>
-                              </div>
-                              <div className="absolute bottom-2 right-2 rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-bold text-sage shadow-sm">
-                                12,000 MAD
-                              </div>
-                            </div>
-                            <div className="p-3">
-                              <p className="text-[13px] font-bold">
-                                OCP Annual Lunch
-                              </p>
-                              <p className="mt-0.5 text-[11px] text-muted-foreground">
-                                80 guests &middot; Buffet &middot; Rabat
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Action button */}
-                        <div className="px-4 pb-6">
-                          <div className="flex items-center justify-center gap-2 rounded-full bg-ember py-3 text-[13px] font-semibold text-white shadow-md shadow-ember/25">
-                            <FileText className="h-4 w-4" />
-                            Create New Quote
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Floating quote badge */}
-                    <div
-                      className="absolute -left-10 top-1/4 hidden animate-float rounded-2xl border border-border bg-background p-3.5 shadow-elevated sm:block"
-                      aria-hidden="true"
-                    >
-                      <FileText className="h-9 w-9 text-ember" />
-                      <p className="mt-1.5 text-center text-[10px] font-bold">
-                        Quote Sent
-                      </p>
-                    </div>
-
-                    {/* Floating booking notification */}
-                    <div
-                      className="absolute -right-6 bottom-1/4 hidden animate-float rounded-xl border border-border bg-background px-3.5 py-2.5 shadow-elevated sm:block"
-                      style={{ animationDelay: "1.5s" }}
-                      aria-hidden="true"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-sage/10">
-                          <CheckCircle2 className="h-4 w-4 text-sage" />
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-bold">Booking Confirmed!</p>
-                          <p className="text-[10px] text-muted-foreground">
-                            Wedding &middot; 200 guests
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </ScrollReveal>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════
-            CITIES -- Caterers across Morocco
-        ═══════════════════════════════════════════════════════════ */}
-        <section className="relative bg-background px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-          <div className="moroccan-geo absolute inset-0 pointer-events-none" aria-hidden="true" />
+        {/* ================================================================
+            CITIES -- Caterers across Morocco with Moorish arch decoration
+        ================================================================ */}
+        <section className="relative bg-background px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+          <div
+            className="moroccan-geo absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+          />
           <div className="container relative z-10 mx-auto max-w-6xl">
             <ScrollReveal>
-              <div className="mb-14 text-center">
-                <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-ember/70">
+              <div className="moroccan-arch mb-16 text-center">
+                <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-ember/60">
                   {t("landing.tasteOfMorocco.badge")}
                 </p>
                 <h2 className="font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
@@ -699,13 +595,13 @@ export const LandingPage = async () => {
               </div>
             </ScrollReveal>
 
-            {/* Bento city grid -- Casablanca large, rest smaller */}
+            {/* Bento city grid */}
             <ScrollReveal delay={100}>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {/* Casablanca -- spans 2 cols on lg */}
+                {/* Casablanca -- featured, spans 2 cols */}
                 <Link
                   href="/explore/casablanca"
-                  className="card-3d group relative overflow-hidden rounded-2xl lg:col-span-2 lg:row-span-2"
+                  className="zellige-hover-border group relative overflow-hidden rounded-2xl lg:col-span-2 lg:row-span-2"
                 >
                   <div className="relative flex aspect-[16/10] items-end p-6 transition-all duration-300 lg:aspect-auto lg:h-full lg:min-h-[320px]">
                     <Image
@@ -764,7 +660,7 @@ export const LandingPage = async () => {
                   <Link
                     key={city.slug}
                     href={`/explore/${city.slug}`}
-                    className="card-3d group relative overflow-hidden rounded-2xl"
+                    className="zellige-hover-border group relative overflow-hidden rounded-2xl"
                   >
                     <div className="relative flex aspect-[16/10] items-end p-5 transition-all duration-300">
                       <Image
@@ -803,18 +699,18 @@ export const LandingPage = async () => {
           </div>
         </section>
 
-        {/* ═══════════════════════════════════════════════════════════
-            HOW IT WORKS -- 3 steps
-        ═══════════════════════════════════════════════════════════ */}
-        <section
-          className="relative px-4 py-20 sm:px-6 sm:py-28 lg:px-8"
-          style={{ background: "hsl(36 33% 97%)" }}
-        >
-          <div className="noise-overlay absolute inset-0 pointer-events-none" aria-hidden="true" />
-          <div className="container relative z-10 mx-auto max-w-5xl">
+        {/* ================================================================
+            HOW IT WORKS -- Arabic numerals, editorial layout
+        ================================================================ */}
+        <section className="relative overflow-hidden bg-riad-cream px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+          <div
+            className="zellige-lattice absolute inset-0 pointer-events-none opacity-50"
+            aria-hidden="true"
+          />
+          <div className="container relative z-10 mx-auto max-w-6xl">
             <ScrollReveal>
-              <div className="mb-16 text-center">
-                <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-ember/70">
+              <div className="mb-20 text-center">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-ember/60">
                   {t("landing.howItWorks.title")}
                 </p>
                 <h2 className="font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
@@ -824,46 +720,52 @@ export const LandingPage = async () => {
             </ScrollReveal>
 
             <ScrollReveal delay={150}>
-              <div className="relative grid gap-12 md:grid-cols-3 md:gap-8">
-                {/* Connecting line */}
-                <div
-                  className="absolute left-[16.67%] right-[16.67%] top-[3.25rem] hidden h-px bg-border md:block"
-                  aria-hidden="true"
-                />
-
+              <div className="grid gap-0 md:grid-cols-3">
                 {[
                   {
-                    num: "01",
+                    arabicNum: "\u0661",
                     icon: ChefHat,
-                    color: "text-ember bg-ember/[0.08]",
+                    iconColor: "text-ember",
                     title: t("landing.howItWorks.step1Title"),
                     desc: t("landing.howItWorks.step1Description"),
                   },
                   {
-                    num: "02",
+                    arabicNum: "\u0662",
                     icon: CalendarDays,
-                    color: "text-gold bg-gold/[0.08]",
+                    iconColor: "text-gold",
                     title: t("landing.howItWorks.step2Title"),
                     desc: t("landing.howItWorks.step2Description"),
                   },
                   {
-                    num: "03",
+                    arabicNum: "\u0663",
                     icon: CheckCircle2,
-                    color: "text-sage bg-sage/[0.08]",
+                    iconColor: "text-sage",
                     title: t("landing.howItWorks.step3Title"),
                     desc: t("landing.howItWorks.step3Description"),
                   },
                 ].map((step, idx) => (
-                  <div key={idx} className="text-center">
-                    <div className="ring-expand relative z-10 mx-auto mb-6 flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-2xl border border-border bg-background shadow-sm">
-                      <step.icon
-                        className={`h-7 w-7 ${step.color.split(" ")[0]}`}
+                  <div key={idx} className="relative px-6 py-8 text-center md:px-10">
+                    {/* Zellige divider between steps on desktop */}
+                    {idx < 2 && (
+                      <div
+                        className="zellige-border-dense absolute right-0 top-1/4 hidden h-1/2 w-px md:block"
+                        aria-hidden="true"
                       />
-                      <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-[10px] font-bold text-background">
-                        {step.num}
-                      </span>
+                    )}
+
+                    {/* Large Arabic numeral */}
+                    <span
+                      className="font-calligraphy block text-6xl leading-none text-ember/[0.15] sm:text-7xl"
+                      aria-hidden="true"
+                    >
+                      {step.arabicNum}
+                    </span>
+
+                    <div className="mx-auto mt-4 mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/40 bg-background shadow-sm">
+                      <step.icon className={`h-6 w-6 ${step.iconColor}`} />
                     </div>
-                    <h3 className="mb-2 font-display text-lg font-bold text-foreground">
+
+                    <h3 className="mb-3 font-display text-lg font-bold text-foreground sm:text-xl">
                       {step.title}
                     </h3>
                     <p className="mx-auto max-w-xs text-sm leading-relaxed text-muted-foreground">
@@ -876,14 +778,18 @@ export const LandingPage = async () => {
           </div>
         </section>
 
-        {/* ═══════════════════════════════════════════════════════════
-            TESTIMONIALS -- Asymmetric cards
-        ═══════════════════════════════════════════════════════════ */}
-        <section className="bg-background px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-          <div className="container mx-auto max-w-6xl">
+        {/* ================================================================
+            TESTIMONIALS -- Large serif quotes with zellige pattern
+        ================================================================ */}
+        <section className="relative overflow-hidden bg-background px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+          <div
+            className="zellige-star-cross absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+          />
+          <div className="container relative z-10 mx-auto max-w-5xl">
             <ScrollReveal>
-              <div className="mb-14 text-center">
-                <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-ember/70">
+              <div className="mb-16 text-center">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-ember/60">
                   {t("landing.testimonials.title")}
                 </p>
                 <h2 className="font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
@@ -895,95 +801,86 @@ export const LandingPage = async () => {
               </div>
             </ScrollReveal>
 
+            {/* Featured testimonial -- large, serif, italic */}
             <ScrollReveal>
-              <div className="mb-10 relative overflow-hidden rounded-2xl h-40 sm:h-48">
-                <Image
-                  src="/images/landing/restaurant-owner.jpg"
-                  alt="Happy catering business owner"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 1152px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+              <div className="mb-10 rounded-2xl border border-border/30 bg-card p-10 sm:p-14">
+                <div className="mb-6 flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-5 w-5 fill-gold text-gold" />
+                  ))}
+                </div>
+                <blockquote className="font-display text-xl italic leading-relaxed text-foreground sm:text-2xl md:text-3xl">
+                  &ldquo;{t("landing.testimonials.review1Quote")}&rdquo;
+                </blockquote>
+                <div className="mt-10 flex items-center gap-4 border-t border-border/30 pt-8">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-ember/20 to-gold/20">
+                    <span className="text-base font-bold text-ember">S</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">
+                      {t("landing.testimonials.review1Name")}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("landing.testimonials.review1Role")},{" "}
+                      {t("landing.testimonials.review1Restaurant")}
+                    </p>
+                  </div>
+                </div>
               </div>
             </ScrollReveal>
 
+            {/* Two smaller testimonials */}
             <ScrollReveal delay={100}>
-              <div className="grid gap-5 md:grid-cols-5">
-                {/* Featured testimonial -- large */}
-                <div className="border-gradient-spin rounded-2xl bg-card p-8 sm:p-10 md:col-span-3">
-                  <div className="mb-6 flex items-center gap-0.5">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="rounded-2xl border border-border/30 bg-card p-8 sm:p-10">
+                  <div className="mb-5 flex items-center gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-gold text-gold" />
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-gold text-gold"
+                      />
                     ))}
                   </div>
-                  <blockquote className="font-display text-xl leading-relaxed text-foreground sm:text-2xl">
-                    &ldquo;{t("landing.testimonials.review1Quote")}&rdquo;
+                  <blockquote className="font-display text-base italic leading-relaxed text-foreground sm:text-lg">
+                    &ldquo;{t("landing.testimonials.review2Quote")}&rdquo;
                   </blockquote>
-                  <div className="mt-8 flex items-center gap-3 border-t border-border/40 pt-6">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-ember/20 to-gold/20">
-                      <span className="text-sm font-bold text-ember">S</span>
+                  <div className="mt-6 flex items-center gap-3 border-t border-border/30 pt-5">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sage/10">
+                      <span className="text-xs font-bold text-sage">K</span>
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-foreground">
-                        {t("landing.testimonials.review1Name")}
+                        {t("landing.testimonials.review2Name")}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {t("landing.testimonials.review1Role")},{" "}
-                        {t("landing.testimonials.review1Restaurant")}
+                        {t("landing.testimonials.review2Restaurant")}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Side testimonials */}
-                <div className="flex flex-col gap-5 md:col-span-2">
-                  <div className="flex-1 rounded-2xl border border-border/40 bg-card p-6 sm:p-8">
-                    <div className="mb-4 flex items-center gap-0.5">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className="h-3.5 w-3.5 fill-gold text-gold"
-                        />
-                      ))}
-                    </div>
-                    <blockquote className="text-sm leading-relaxed text-foreground">
-                      &ldquo;{t("landing.testimonials.review2Quote")}&rdquo;
-                    </blockquote>
-                    <div className="mt-4 flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sage/10">
-                        <span className="text-xs font-bold text-sage">K</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        <span className="font-semibold text-foreground">
-                          {t("landing.testimonials.review2Name")}
-                        </span>{" "}
-                        &middot; {t("landing.testimonials.review2Restaurant")}
-                      </p>
-                    </div>
+                <div className="rounded-2xl border border-border/30 bg-card p-8 sm:p-10">
+                  <div className="mb-5 flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-gold text-gold"
+                      />
+                    ))}
                   </div>
-
-                  <div className="flex-1 rounded-2xl border border-border/40 bg-card p-6 sm:p-8">
-                    <div className="mb-4 flex items-center gap-0.5">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className="h-3.5 w-3.5 fill-gold text-gold"
-                        />
-                      ))}
+                  <blockquote className="font-display text-base italic leading-relaxed text-foreground sm:text-lg">
+                    &ldquo;{t("landing.testimonials.review3Quote")}&rdquo;
+                  </blockquote>
+                  <div className="mt-6 flex items-center gap-3 border-t border-border/30 pt-5">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/10">
+                      <span className="text-xs font-bold text-gold">Y</span>
                     </div>
-                    <blockquote className="text-sm leading-relaxed text-foreground">
-                      &ldquo;{t("landing.testimonials.review3Quote")}&rdquo;
-                    </blockquote>
-                    <div className="mt-4 flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gold/10">
-                        <span className="text-xs font-bold text-gold">Y</span>
-                      </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        {t("landing.testimonials.review3Name")}
+                      </p>
                       <p className="text-xs text-muted-foreground">
-                        <span className="font-semibold text-foreground">
-                          {t("landing.testimonials.review3Name")}
-                        </span>{" "}
-                        &middot; {t("landing.testimonials.review3Restaurant")}
+                        {t("landing.testimonials.review3Restaurant")}
                       </p>
                     </div>
                   </div>
@@ -993,70 +890,69 @@ export const LandingPage = async () => {
           </div>
         </section>
 
-        {/* ═══════════════════════════════════════════════════════════
+        {/* ================================================================
             COMPARISON TABLE
-        ═══════════════════════════════════════════════════════════ */}
+        ================================================================ */}
         <ComparisonSection />
 
-        {/* ═══════════════════════════════════════════════════════════
+        {/* ================================================================
             PRICING
-        ═══════════════════════════════════════════════════════════ */}
+        ================================================================ */}
         <PricingSection />
 
-        {/* ═══════════════════════════════════════════════════════════
+        {/* ================================================================
             FAQ
-        ═══════════════════════════════════════════════════════════ */}
+        ================================================================ */}
         <FAQSection />
 
-        {/* ═══════════════════════════════════════════════════════════
-            CTA -- Dark closing
-        ═══════════════════════════════════════════════════════════ */}
+        {/* ================================================================
+            CTA -- Dark closing with Arabic calligraphy and zellige
+        ================================================================ */}
         <section className="relative overflow-hidden hero-mesh">
+          {/* Zellige pattern overlay on dark section */}
+          <div
+            className="zellige-star-cross absolute inset-0 pointer-events-none opacity-50"
+            aria-hidden="true"
+          />
           <div
             className="absolute inset-0 bg-grain pointer-events-none"
             aria-hidden="true"
           />
-          <div className="absolute inset-0 opacity-[0.06]" aria-hidden="true">
-            <Image
-              src="/images/landing/fine-dining.jpg"
-              alt=""
-              fill
-              className="object-cover"
-              sizes="100vw"
-              aria-hidden="true"
-            />
-          </div>
-          <div className="hero-orb-3 right-1/4 top-0" aria-hidden="true" />
 
-          <div className="container relative z-10 mx-auto max-w-4xl px-4 py-24 text-center sm:px-6 sm:py-32 lg:px-8">
+          <div className="container relative z-10 mx-auto max-w-4xl px-4 py-28 text-center sm:px-6 sm:py-36 lg:px-8">
             <ScrollReveal>
+              {/* Decorative Arabic calligraphy */}
+              <span
+                className="font-calligraphy mb-4 block text-5xl leading-none text-white/[0.06] sm:text-7xl"
+                aria-hidden="true"
+              >
+                ضيافة
+              </span>
+
               <h2 className="font-display text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl">
                 {t("landing.cta.title")}
               </h2>
-              <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-white/40">
+              <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-white/40">
                 {t("landing.cta.description")}
               </p>
-              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+
+              <div className="mt-12">
                 <Link
                   href="/register"
-                  className="glow-pulse-ember group inline-flex items-center justify-center gap-2.5 rounded-full bg-primary px-10 py-4 text-lg font-semibold text-white shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30"
+                  className="group moroccan-shimmer inline-flex items-center justify-center gap-3 rounded-2xl bg-ember px-10 py-4.5 text-lg font-semibold text-white shadow-lg shadow-ember/25 transition-all duration-300 hover:shadow-xl hover:shadow-ember/30 hover:-translate-y-0.5"
                 >
                   <ChefHat className="h-5 w-5" />
                   {t("landing.cta.buttonExplore")}
-                </Link>
-                <Link
-                  href="#features"
-                  className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-8 py-4 text-base font-semibold text-white/80 transition-all duration-200 hover:bg-white/5 hover:text-white"
-                >
-                  {t("landing.cta.buttonCreate")}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
-              <p className="mt-6 flex items-center justify-center gap-2 text-sm text-white/25">
+
+              <p className="mt-8 flex items-center justify-center gap-2 text-sm text-white/25">
                 <Shield className="h-4 w-4" />
                 {t("landing.cta.trustNote")}
               </p>
-              <div className="mt-8 flex items-center justify-center gap-6 text-sm text-white/20">
+
+              <div className="mt-6 flex items-center justify-center gap-6 text-sm text-white/20">
                 <Link
                   href="/for-restaurants"
                   className="transition-colors hover:text-white/50"

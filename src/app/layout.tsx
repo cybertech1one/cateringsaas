@@ -4,7 +4,7 @@ import { isRtlLanguage } from "~/i18n/settings";
 import { Providers } from "~/providers";
 import "~/styles/globals.css";
 import { cn } from "~/utils/cn";
-import { DM_Sans, Playfair_Display, Noto_Sans_Arabic } from "next/font/google";
+import { DM_Sans, Playfair_Display, Noto_Sans_Arabic, Aref_Ruqaa } from "next/font/google";
 import { Toaster } from "~/components/ui/toaster";
 import { TRPCReactProvider } from "~/trpc/react";
 import { headers } from "next/headers";
@@ -67,6 +67,12 @@ const arabicFont = Noto_Sans_Arabic({
   variable: "--font-arabic",
 });
 
+const calligraphyFont = Aref_Ruqaa({
+  weight: ["400", "700"],
+  subsets: ["arabic", "latin"],
+  variable: "--font-calligraphy",
+});
+
 async function RootLayout({ children }: { children: React.ReactNode }) {
   const initialLanguage = detectLanguage(); // Detect on server, pass to client
   const dir = isRtlLanguage(initialLanguage) ? "rtl" : "ltr";
@@ -96,6 +102,7 @@ async function RootLayout({ children }: { children: React.ReactNode }) {
             font.variable,
             displayFont.variable,
             arabicFont.variable,
+            calligraphyFont.variable,
           )}
         >
           <TRPCReactProvider headers={headers()}>

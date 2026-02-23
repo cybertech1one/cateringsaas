@@ -37,6 +37,22 @@
     --sand-dark: 36 20% 90%;
     --indigo: 228 45% 20%;
     --mint: 160 40% 55%;
+
+    /* Moroccan Extended Palette */
+    --majorelle-blue: 226 75% 48%;
+    --chefchaouen: 215 65% 34%;
+    --terracotta-clay: 22 52% 50%;
+    --saffron: 38 63% 58%;
+    --hammered-brass: 43 89% 38%;
+    --harissa: 8 55% 50%;
+    --atlas-olive: 102 22% 46%;
+    --mint-tea: 142 70% 30%;
+    --riad-cream: 30 100% 97%;
+    --desert-sand: 25 100% 95%;
+    --moroccan-espresso: 22 34% 18%;
+    --zellige-teal: 175 84% 32%;
+    --rose-petal: 12 65% 63%;
+    --aged-copper: 28 52% 64%;
   }
 
   .dark {
@@ -97,6 +113,17 @@
   [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3,
   [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
     font-family: var(--font-arabic), 'Noto Sans Arabic', system-ui, sans-serif;
+  }
+  /* Arabic calligraphy font for display headings */
+  .font-calligraphy {
+    font-family: var(--font-calligraphy), 'Aref Ruqaa', serif;
+  }
+  /* Bilingual heading pair */
+  .bilingual-heading .arabic-line {
+    font-family: var(--font-calligraphy), 'Aref Ruqaa', serif;
+    font-size: 1.15em;
+    direction: rtl;
+    line-height: 1.5;
   }
 }
 
@@ -590,6 +617,158 @@
     pointer-events: none;
     z-index: 1;
   }
+
+  /* ── Premium Moroccan Patterns ─────────────────────────────── */
+
+  /* Zellige diamond lattice — full section background */
+  .zellige-lattice {
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C2703E' stroke-width='0.5' opacity='0.08'%3E%3Cpath d='M40 0L80 40L40 80L0 40z'/%3E%3Cpath d='M40 15L65 40L40 65L15 40z'/%3E%3Cpath d='M40 30L50 40L40 50L30 40z'/%3E%3Ccircle cx='40' cy='40' r='5'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 80px 80px;
+  }
+
+  /* Star-and-cross pattern — the most common zellige layout */
+  .zellige-star-cross {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231E4D92' stroke-width='0.5' opacity='0.06'%3E%3Cpath d='M50 10L60 30L80 20L70 40L90 50L70 60L80 80L60 70L50 90L40 70L20 80L30 60L10 50L30 40L20 20L40 30z'/%3E%3Cpath d='M0 0L20 20M80 0L100 20M0 80L20 100M80 80L100 100'/%3E%3Ccircle cx='50' cy='50' r='8'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 100px 100px;
+  }
+
+  /* Moorish arch frame — section header decoration */
+  .moroccan-arch::before {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: url("data:image/svg+xml,%3Csvg width='120' height='80' viewBox='0 0 120 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 80 L10 35 Q10 5 60 5 Q110 5 110 35 L110 80' fill='none' stroke='%23C2703E' stroke-width='1.5' opacity='0.2'/%3E%3Cpath d='M25 80 L25 40 Q25 15 60 15 Q95 15 95 40 L95 80' fill='none' stroke='%23D9A44D' stroke-width='0.8' opacity='0.15'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+
+  /* Moroccan gold shimmer sweep on hover */
+  .moroccan-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .moroccan-shimmer::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      hsla(var(--saffron, 38 63% 58%), 0.08) 50%,
+      transparent 70%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+  }
+  .moroccan-shimmer:hover::after {
+    transform: translateX(100%);
+  }
+
+  /* Editorial staggered card entrance */
+  .editorial-stagger > * {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .editorial-stagger.revealed > * {
+    animation: editorialReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .editorial-stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .editorial-stagger > *:nth-child(2) { animation-delay: 120ms; }
+  .editorial-stagger > *:nth-child(3) { animation-delay: 240ms; }
+  .editorial-stagger > *:nth-child(4) { animation-delay: 360ms; }
+  .editorial-stagger > *:nth-child(5) { animation-delay: 480ms; }
+  .editorial-stagger > *:nth-child(6) { animation-delay: 600ms; }
+
+  /* Arch-shaped card — inspired by Moorish doorways */
+  .arch-card-moroccan {
+    border-radius: 50% 50% 1rem 1rem / 20% 20% 1rem 1rem;
+    overflow: hidden;
+  }
+
+  /* Hero with warm Moroccan gradient — riad plaster walls */
+  .hero-moroccan {
+    background: linear-gradient(
+      180deg,
+      hsl(30 100% 97%) 0%,
+      hsl(25 80% 96%) 30%,
+      hsl(36 45% 97%) 60%,
+      hsl(0 0% 100%) 100%
+    );
+  }
+  .dark .hero-moroccan {
+    background: linear-gradient(
+      180deg,
+      hsl(22 34% 8%) 0%,
+      hsl(228 18% 10%) 50%,
+      hsl(228 22% 7%) 100%
+    );
+  }
+
+  /* Zellige border reveal on hover */
+  .zellige-hover-border {
+    position: relative;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+  }
+  .zellige-hover-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0L20 10L10 20L0 10z' fill='none' stroke='%23C2703E' stroke-width='0.5'/%3E%3C/svg%3E");
+    background-size: 20px 20px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    padding: 2px;
+  }
+  .zellige-hover-border:hover::before {
+    opacity: 0.2;
+  }
+
+  /* Decorative corner accent for images */
+  .moroccan-corner::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 60px;
+    height: 60px;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 0L60 60L0 60' fill='none' stroke='%23C2703E' stroke-width='2' opacity='0.2'/%3E%3Cpath d='M60 15L60 45L15 60' fill='none' stroke='%23D9A44D' stroke-width='1' opacity='0.15'/%3E%3C/svg%3E") no-repeat;
+  }
+
+  /* Magnetic hover */
+  .magnetic-hover {
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .magnetic-hover:hover {
+    transform: translateY(-3px) scale(1.02);
+  }
+
+  /* Dense zellige for borders/dividers */
+  .zellige-border-dense {
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23D9A44D' stroke-width='0.4' opacity='0.12'%3E%3Cpath d='M20 0L40 20L20 40L0 20z'/%3E%3Cpath d='M20 8L32 20L20 32L8 20z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 40px 40px;
+  }
+
+  /* Terracotta warm section */
+  .bg-riad-cream {
+    background-color: hsl(30 100% 97%);
+  }
+
+  /* Gold line separator */
+  .gold-separator {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--saffron, 38 63% 58%)), transparent);
+    opacity: 0.3;
+  }
 }
 
 @keyframes fadeUp {
@@ -703,6 +882,18 @@
   50% { box-shadow: 0 0 30px hsla(var(--sage), 0.25), 0 0 80px hsla(var(--sage), 0.08); }
 }
 
+@keyframes editorialReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtleZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
 @property --border-angle {
   syntax: '<angle>';
   inherits: false;
@@ -725,6 +916,16 @@
   --ring: 160 45% 42%;
   --accent: 42 85% 52%;
   --accent-foreground: 0 0% 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-left, .reveal-right, .reveal-scale,
+  .editorial-stagger > * {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* ── PWA / Mobile optimizations ───────────────────────────────── */
